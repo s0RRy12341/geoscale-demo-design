@@ -1,1 +1,177 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
+
+:root {
+  --geo-teal: #0D9488;
+  --geo-teal-light: #14B8A6;
+  --geo-teal-dark: #0F766E;
+  --geo-black: #111111;
+  --geo-gray-50: #F9FAFB;
+  --geo-gray-100: #F3F4F6;
+  --geo-gray-200: #E5E7EB;
+  --geo-gray-300: #D1D5DB;
+  --geo-gray-400: #9CA3AF;
+  --geo-gray-500: #6B7280;
+  --geo-gray-600: #4B5563;
+  --geo-gray-700: #374151;
+  --geo-gray-800: #1F2937;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #ffffff;
+  color: var(--geo-black);
+  overflow-x: hidden;
+}
+
+/* ===== SCREEN 2: ANALYZING ANIMATION ===== */
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  50% { transform: scale(1.2); opacity: 0; }
+  100% { transform: scale(0.8); opacity: 0.5; }
+}
+
+@keyframes orbit {
+  0% { transform: rotate(0deg) translateX(80px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(80px) rotate(-360deg); }
+}
+
+@keyframes orbit-reverse {
+  0% { transform: rotate(0deg) translateX(120px) rotate(0deg); }
+  100% { transform: rotate(-360deg) translateX(120px) rotate(360deg); }
+}
+
+@keyframes float-particle {
+  0%, 100% { transform: translateY(0px) scale(1); opacity: 0.6; }
+  50% { transform: translateY(-20px) scale(1.2); opacity: 1; }
+}
+
+@keyframes scan-line {
+  0% { top: 0%; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+@keyframes data-stream {
+  0% { transform: translateY(-100%); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
+@keyframes morph-circle {
+  0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+  25% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+  50% { border-radius: 50% 60% 40% 60% / 40% 70% 50% 60%; }
+  75% { border-radius: 40% 50% 60% 50% / 60% 40% 60% 40%; }
+}
+
+@keyframes typing-cursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* ===== SCREEN 4: PROCESS ANIMATION ===== */
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(13, 148, 136, 0.2); }
+  50% { box-shadow: 0 0 40px rgba(13, 148, 136, 0.5), 0 0 80px rgba(13, 148, 136, 0.2); }
+}
+
+@keyframes spin-slow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes spin-reverse {
+  0% { transform: rotate(360deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes slide-up-fade {
+  0% { transform: translateY(20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes progress-glow {
+  0% { left: -30%; }
+  100% { left: 130%; }
+}
+
+@keyframes wave {
+  0%, 100% { transform: scaleY(0.5); }
+  50% { transform: scaleY(1.5); }
+}
+
+@keyframes fade-in-up {
+  0% { transform: translateY(30px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes ping-dot {
+  0% { transform: scale(1); opacity: 1; }
+  75%, 100% { transform: scale(2.5); opacity: 0; }
+}
+
+@keyframes neural-pulse {
+  0%, 100% { stroke-dashoffset: 1000; opacity: 0.2; }
+  50% { stroke-dashoffset: 0; opacity: 0.8; }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out forwards;
+}
+
+.animate-slide-up-fade {
+  animation: slide-up-fade 0.5s ease-out forwards;
+}
+
+/* Progress bar shimmer */
+.progress-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.progress-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -30%;
+  width: 30%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: progress-glow 1.5s ease-in-out infinite;
+}
+
+/* RTL support */
+[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--geo-gray-100);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--geo-gray-300);
+  border-radius: 3px;
+}
+
+/* Screen transitions */
+.screen-enter {
+  animation: fade-in-up 0.5s ease-out forwards;
+}
