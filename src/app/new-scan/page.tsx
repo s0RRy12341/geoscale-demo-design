@@ -10,29 +10,30 @@ import { useState, useEffect, useCallback, useRef } from "react";
 // Screen 4: The Scan Process (queries → ChatGPT → Gemini → Analysis)
 // ============================================================
 
-// ── Brand Constants ──
+// ── Brand Constants (Geoscale exact palette) ──
 const BRAND = {
-  teal: "#0D9488",
-  tealLight: "#14B8A6",
-  tealDark: "#0F766E",
-  black: "#111111",
-  gray50: "#F9FAFB",
-  gray100: "#F3F4F6",
-  gray200: "#E5E7EB",
-  gray300: "#D1D5DB",
-  gray400: "#9CA3AF",
-  gray500: "#6B7280",
-  gray600: "#4B5563",
-  gray700: "#374151",
-  gray800: "#1F2937",
+  teal: "#10A37F",
+  tealLight: "#10A37F",
+  tealDark: "#0D8C6D",
+  black: "#000000",
+  nearBlack: "#141414",
+  gray50: "#F9F9F9",
+  gray100: "#F9F9F9",
+  gray200: "#DDDDDD",
+  gray300: "#BFBFBF",
+  gray400: "#A2A9B0",
+  gray500: "#727272",
+  gray600: "#54595F",
+  gray700: "#333333",
+  gray800: "#141414",
 };
 
 // ── Geoscale Logo SVG (actual brand) ──
 function GeoscaleLogo({ size = 40, className = "" }: { size?: number; className?: string }) {
   return (
     <svg width={size} height={size} viewBox="0 0 102 102" fill="none" className={className}>
-      <circle cx="51" cy="51" r="44" stroke="#ABABAB" strokeWidth="5" fill="none" />
-      <circle cx="51" cy="51" r="34" stroke="#141414" strokeWidth="6" fill="none" strokeLinecap="round" />
+      <circle cx="51" cy="51" r="38" stroke="#ABABAB" strokeWidth="10" fill="none" />
+      <circle cx="51" cy="51" r="25" stroke="#141414" strokeWidth="10" fill="none" strokeLinecap="round" strokeDasharray="120 40" />
     </svg>
   );
 }
@@ -131,7 +132,7 @@ function Screen1({ onSubmit }: { onSubmit: (domain: string, brand: string) => vo
       <div
         className="relative py-12 px-4"
         style={{
-          background: "linear-gradient(135deg, #f8fffe 0%, #f0fdf9 30%, #f5f5f5 70%, #fafafa 100%)",
+          background: "#F9F9F9",
         }}
       >
         {/* Subtle dot pattern overlay */}
@@ -159,7 +160,7 @@ function Screen1({ onSubmit }: { onSubmit: (domain: string, brand: string) => vo
 
       {/* Form Card */}
       <div className="max-w-2xl mx-auto w-full px-4 flex-1 pb-16">
-        <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
+        <div className="bg-white rounded-[10px] border border-gray-200 p-8">
           {/* Card Header */}
           <div className="flex items-center gap-2 mb-8">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={BRAND.teal} strokeWidth="2">
@@ -180,7 +181,7 @@ function Screen1({ onSubmit }: { onSubmit: (domain: string, brand: string) => vo
                 value={domain}
                 onChange={(e) => setDomain(e.target.value)}
                 placeholder="example.com"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-base focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-base focus:outline-none focus:border-[#10A37F] focus:ring-1 focus:ring-[#10A37F]/20 transition-all"
                 style={{ direction: "ltr", textAlign: "left" }}
               />
               <div className="absolute left-3 top-1/2 -translate-y-1/2">
@@ -206,7 +207,7 @@ function Screen1({ onSubmit }: { onSubmit: (domain: string, brand: string) => vo
                 value={brandName}
                 onChange={(e) => setBrandName(e.target.value)}
                 placeholder="שם המותג שלכם"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-base focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-base focus:outline-none focus:border-[#10A37F] focus:ring-1 focus:ring-[#10A37F]/20 transition-all"
               />
               <div className="absolute left-3 top-1/2 -translate-y-1/2">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={BRAND.gray400} strokeWidth="2">
@@ -220,9 +221,9 @@ function Screen1({ onSubmit }: { onSubmit: (domain: string, brand: string) => vo
           {/* Submit Button */}
           <button
             onClick={() => onSubmit(domain || "example.com", brandName || "המותג שלי")}
-            className="w-full py-4 rounded-xl text-white font-semibold text-lg transition-all duration-300 hover:shadow-lg hover:scale-[1.01] active:scale-[0.99]"
+            className="w-full py-4 rounded-xl text-white font-semibold text-lg transition-all duration-300 hover:scale-[1.01] active:scale-[0.99]"
             style={{
-              background: `linear-gradient(135deg, ${BRAND.gray700} 0%, ${BRAND.black} 100%)`,
+              background: "#000",
             }}
           >
             <span className="flex items-center justify-center gap-2">המשך לבחירת קהלים <ArrowLeft size={18} color="white" /></span>
@@ -230,7 +231,7 @@ function Screen1({ onSubmit }: { onSubmit: (domain: string, brand: string) => vo
         </div>
 
         {/* What's New Box */}
-        <div className="mt-6 bg-white rounded-2xl border border-gray-200 p-6">
+        <div className="mt-6 bg-white rounded-[10px] border border-gray-200 p-6">
           <h3 className="font-semibold mb-3" style={{ color: BRAND.teal }}>
             מה חדש?
           </h3>
@@ -368,7 +369,7 @@ function Screen2({ domain, brandName, onComplete }: { domain: string; brandName:
             <div
               className="w-full h-full flex items-center justify-center"
               style={{
-                background: `linear-gradient(135deg, ${BRAND.gray100} 0%, ${BRAND.gray200} 100%)`,
+                background: "#F9F9F9",
                 animation: "morph-circle 8s ease-in-out infinite",
               }}
             >
@@ -415,7 +416,7 @@ function Screen2({ domain, brandName, onComplete }: { domain: string; brandName:
               className="h-full rounded-full progress-shimmer transition-all duration-300 ease-out"
               style={{
                 width: `${progress}%`,
-                background: `linear-gradient(90deg, ${BRAND.tealLight} 0%, ${BRAND.teal} 100%)`,
+                background: "#10A37F",
               }}
             />
           </div>
@@ -500,7 +501,7 @@ const MOCK_PERSONAS = [
 function PersonaCard({ persona, index }: { persona: typeof MOCK_PERSONAS[0]; index: number }) {
   return (
     <div
-      className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg hover:border-teal-200 transition-all duration-300 cursor-pointer"
+      className="bg-white rounded-[10px] border border-gray-200 p-6 hover:border-[#A2A9B0] transition-all duration-300 cursor-pointer"
       style={{ animationDelay: `${index * 0.1}s`, animation: "fade-in-up 0.5s ease-out forwards", opacity: 0 }}
     >
       <div className="flex items-start justify-between mb-3">
@@ -543,7 +544,7 @@ function PersonaCard({ persona, index }: { persona: typeof MOCK_PERSONAS[0]; ind
 
       {/* Tags */}
       <div className="flex flex-wrap gap-2 mb-3">
-        <span className="text-xs px-2 py-1 rounded-full" style={{ background: "#E0F2F1", color: BRAND.tealDark }}>
+        <span className="text-xs px-2 py-1 rounded-full" style={{ background: "#F9F9F9", color: BRAND.tealDark }}>
           {persona.age}
         </span>
         <span className="text-xs px-2 py-1 rounded-full" style={{ background: BRAND.gray100, color: BRAND.gray600 }}>
@@ -567,7 +568,7 @@ function Screen3({ onStartScan }: { onStartScan: () => void }) {
       <div
         className="py-8 px-4"
         style={{
-          background: "linear-gradient(135deg, #f8fffe 0%, #f0fdf9 30%, #f5f5f5 70%, #fafafa 100%)",
+          background: "#F9F9F9",
         }}
       >
         <div className="max-w-4xl mx-auto text-center">
@@ -620,7 +621,7 @@ function Screen3({ onStartScan }: { onStartScan: () => void }) {
           </span>
           <span
             className="text-sm font-semibold px-3 py-1 rounded-full"
-            style={{ background: "#E0F2F1", color: BRAND.tealDark }}
+            style={{ background: "#F9F9F9", color: BRAND.tealDark }}
           >
             5 / 5 נבחר
           </span>
@@ -639,9 +640,9 @@ function Screen3({ onStartScan }: { onStartScan: () => void }) {
         <div className="mt-8 flex justify-center">
           <button
             onClick={onStartScan}
-            className="flex items-center gap-3 px-8 py-4 rounded-xl text-white font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
+            className="flex items-center gap-3 px-8 py-4 rounded-xl text-white font-semibold text-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
             style={{
-              background: `linear-gradient(135deg, ${BRAND.teal} 0%, ${BRAND.tealDark} 100%)`,
+              background: "#000",
             }}
           >
             <span>התחלת סריקה</span>
@@ -832,7 +833,7 @@ function AIEngineCard({
 }) {
   return (
     <div
-      className="relative rounded-2xl border-2 p-5 transition-all duration-500 overflow-hidden"
+      className="relative rounded-[10px] border-2 p-5 transition-all duration-500 overflow-hidden"
       style={{
         borderColor: active ? color : BRAND.gray200,
         background: active ? `${color}08` : "white",
@@ -1011,7 +1012,7 @@ function Screen4({ brandName }: { brandName: string }) {
       <div
         className="py-6 px-4"
         style={{
-          background: "linear-gradient(135deg, #f8fffe 0%, #f0fdf9 30%, #f5f5f5 70%, #fafafa 100%)",
+          background: "#F9F9F9",
         }}
       >
         <div className="max-w-3xl mx-auto text-center">
@@ -1032,7 +1033,7 @@ function Screen4({ brandName }: { brandName: string }) {
       {/* Main Scan Area */}
       <div className="max-w-3xl mx-auto w-full px-4 flex-1 pb-12">
         {/* Scan Status Card */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm relative overflow-hidden">
+        <div className="bg-white rounded-[10px] border border-gray-200 p-8 relative overflow-hidden">
           {/* Animated corner accent */}
           {phase !== "complete" && (
             <div
@@ -1076,7 +1077,7 @@ function Screen4({ brandName }: { brandName: string }) {
                 /* Complete state — checkmark */
                 <div
                   className="w-20 h-20 rounded-full flex items-center justify-center animate-fade-in-up"
-                  style={{ background: `linear-gradient(135deg, ${BRAND.teal}, ${BRAND.tealDark})` }}
+                  style={{ background: "#000" }}
                 >
                   <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
                     <path d="M20 6L9 17l-5-5" />
@@ -1100,7 +1101,7 @@ function Screen4({ brandName }: { brandName: string }) {
                   className="h-full rounded-full progress-shimmer transition-all duration-300"
                   style={{
                     width: `${overallProgress}%`,
-                    background: `linear-gradient(90deg, ${BRAND.tealLight}, ${BRAND.teal})`,
+                    background: "#10A37F",
                   }}
                 />
               </div>
@@ -1327,8 +1328,8 @@ function Screen4({ brandName }: { brandName: string }) {
                   נסרקו 10 שאילתות על פני 5 קהלי יעד ב-ChatGPT וב-Gemini
                 </p>
                 <button
-                  className="px-8 py-3 rounded-xl text-white font-semibold transition-all hover:shadow-lg hover:scale-[1.02]"
-                  style={{ background: `linear-gradient(135deg, ${BRAND.teal}, ${BRAND.tealDark})` }}
+                  className="px-8 py-3 rounded-xl text-white font-semibold transition-all hover:scale-[1.02]"
+                  style={{ background: "#000" }}
                 >
                   <span className="flex items-center justify-center gap-2">צפייה בתוצאות <ArrowLeft size={16} color="white" /></span>
                 </button>
@@ -1378,7 +1379,7 @@ export default function Home() {
           <button
             key={s}
             onClick={() => setScreen(s as 1 | 2 | 3 | 4)}
-            className="w-10 h-10 rounded-full text-sm font-bold transition-all shadow-lg hover:scale-110"
+            className="w-10 h-10 rounded-full text-sm font-bold transition-all hover:scale-110"
             style={{
               background: screen === s ? BRAND.teal : "white",
               color: screen === s ? "white" : BRAND.gray600,

@@ -8,29 +8,30 @@ import { useState } from "react";
 // Tabs: סקירה (Overview) | שאילתות (Queries) | קהלים (Audiences)
 // ============================================================
 
+// Geoscale exact brand palette
 const C = {
-  teal: "#0D9488",
-  tealLight: "#14B8A6",
-  tealDark: "#0F766E",
-  black: "#111111",
-  gray50: "#F9FAFB",
-  gray100: "#F3F4F6",
-  gray200: "#E5E7EB",
-  gray300: "#D1D5DB",
-  gray400: "#9CA3AF",
-  gray500: "#6B7280",
-  gray600: "#4B5563",
-  gray700: "#374151",
-  gray800: "#1F2937",
-  green: "#22C55E",
-  greenBg: "#ECFDF5",
-  greenText: "#059669",
+  teal: "#10A37F",
+  tealLight: "#10A37F",
+  tealDark: "#0D8C6D",
+  black: "#000000",
+  gray50: "#F9F9F9",
+  gray100: "#F9F9F9",
+  gray200: "#DDDDDD",
+  gray300: "#BFBFBF",
+  gray400: "#A2A9B0",
+  gray500: "#727272",
+  gray600: "#54595F",
+  gray700: "#333333",
+  gray800: "#141414",
+  green: "#10A37F",
+  greenBg: "#F9F9F9",
+  greenText: "#10A37F",
   red: "#EF4444",
-  redBg: "#FEF2F2",
-  redText: "#DC2626",
-  amber: "#F59E0B",
-  amberBg: "#FEF3C7",
-  amberText: "#D97706",
+  redBg: "#F9F9F9",
+  redText: "#EF4444",
+  amber: "#A2A9B0",
+  amberBg: "#F9F9F9",
+  amberText: "#727272",
 };
 
 // ── PERSONAS ──
@@ -324,7 +325,7 @@ export default function ScanPage() {
   return (
     <div className="min-h-screen" style={{ background: C.gray50 }} dir="rtl">
       {/* ── Top Navigation Bar ── */}
-      <nav className="bg-white border-b border-gray-100 sticky top-0 z-50">
+      <nav className="sticky top-0 z-50" style={{ background: "rgba(255,255,255,0.96)", borderBottom: "1px solid #BFBFBF" }}>
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3" style={{ direction: "ltr" }}>
             <svg width="36" height="36" viewBox="0 0 102 102" fill="none">
@@ -376,7 +377,7 @@ export default function ScanPage() {
       </nav>
 
       {/* ── Brand Header ── */}
-      <div className="bg-white border-b border-gray-100">
+      <div className="bg-white border-b border-[#BFBFBF]">
         <div className="max-w-7xl mx-auto px-6 py-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-5">
@@ -394,13 +395,13 @@ export default function ScanPage() {
             </div>
 
             <div className="flex items-center gap-3">
-              <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium border transition-all hover:shadow-sm" style={{ borderColor: C.gray200, color: C.gray700 }}>
+              <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium border transition-all" style={{ borderColor: C.gray200, color: C.gray700 }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" />
                 </svg>
                 לוח בקרה
               </button>
-              <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-medium transition-all hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]" style={{ background: C.black }}>
+              <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-medium transition-all hover:scale-[1.02] active:scale-[0.98]" style={{ background: C.black }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
                   <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
                 </svg>
@@ -412,7 +413,7 @@ export default function ScanPage() {
       </div>
 
       {/* ── Tab Bar ── */}
-      <div className="bg-white border-b border-gray-100">
+      <div className="bg-white border-b border-[#BFBFBF]">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex gap-0">
             {([
@@ -459,7 +460,7 @@ export default function ScanPage() {
                 { label: "איכות ציטוט", value: "70%", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={C.teal} strokeWidth="2"><path d="M10 11V6l-6 6 6 6v-5c5.523 0 10 4.477 10 10 0-8.284-4.477-15-10-15z" /></svg> },
                 { label: "סיכון מוניטין", value: "100%", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={C.greenText} strokeWidth="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
               ].map((stat, i) => (
-                <div key={i} className="bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-md transition-all duration-300">
+                <div key={i} className="bg-white rounded-[10px] border border-[#BFBFBF] p-5 transition-all duration-300">
                   <div className="flex items-start justify-between mb-3">
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${C.teal}12` }}>{stat.icon}</div>
                   </div>
@@ -470,7 +471,7 @@ export default function ScanPage() {
             </div>
 
             {/* ── GPT vs Gemini ── */}
-            <div className="bg-white rounded-2xl border border-gray-100 p-6">
+            <div className="bg-white rounded-[10px] border border-[#BFBFBF] p-6">
               <h3 className="text-base font-bold mb-5" style={{ color: C.black }}>השוואת מנועי AI</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 {/* ChatGPT Card */}
@@ -524,7 +525,7 @@ export default function ScanPage() {
             </div>
 
             {/* ── Customer Journey Performance ── */}
-            <div className="bg-white rounded-2xl border border-gray-100 p-6">
+            <div className="bg-white rounded-[10px] border border-[#BFBFBF] p-6">
               <h3 className="text-base font-bold mb-5" style={{ color: C.black }}>ביצועים לפי שלב במסע לקוח</h3>
               <div className="space-y-4">
                 {JOURNEY_STAGES.map((stage, i) => (
@@ -535,7 +536,7 @@ export default function ScanPage() {
                         className="h-full rounded-lg transition-all duration-1000 flex items-center"
                         style={{
                           width: `${stage.percent}%`,
-                          background: `linear-gradient(90deg, ${C.tealDark}, ${C.tealLight})`,
+                          background: C.teal,
                         }}
                       />
                     </div>
@@ -549,7 +550,7 @@ export default function ScanPage() {
             {/* ── Persona + Competitors (side by side) ── */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Identified Persona */}
-              <div className="bg-white rounded-2xl border border-gray-100 p-6">
+              <div className="bg-white rounded-[10px] border border-[#BFBFBF] p-6">
                 <h3 className="text-base font-bold mb-4" style={{ color: C.black }}>פרסונה שזוהתה</h3>
                 <div className="space-y-3">
                   <div className="flex items-start gap-2">
@@ -572,7 +573,7 @@ export default function ScanPage() {
               </div>
 
               {/* Competitors */}
-              <div className="bg-white rounded-2xl border border-gray-100 p-6">
+              <div className="bg-white rounded-[10px] border border-[#BFBFBF] p-6">
                 <h3 className="text-base font-bold mb-4" style={{ color: C.black }}>מתחרים</h3>
                 <div className="space-y-3">
                   {COMPETITORS.map((comp, i) => (
@@ -596,7 +597,7 @@ export default function ScanPage() {
             {/* ── Sentiment + Citation Quality (side by side) ── */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Sentiment */}
-              <div className="bg-white rounded-2xl border border-gray-100 p-6">
+              <div className="bg-white rounded-[10px] border border-[#BFBFBF] p-6">
                 <h3 className="text-base font-bold mb-2" style={{ color: C.black }}>סנטימנט</h3>
                 <p className="text-xs mb-4" style={{ color: C.gray400 }}>איך ה-AI מדבר עליכם</p>
                 <div className="flex items-center gap-6">
@@ -624,7 +625,7 @@ export default function ScanPage() {
               </div>
 
               {/* Citation Quality */}
-              <div className="bg-white rounded-2xl border border-gray-100 p-6">
+              <div className="bg-white rounded-[10px] border border-[#BFBFBF] p-6">
                 <h3 className="text-base font-bold mb-2" style={{ color: C.black }}>איכות ציטוט</h3>
                 <p className="text-xs mb-4" style={{ color: C.gray400 }}>כמה טוב ה-AI מקשר אליכם</p>
                 <div className="flex items-center gap-6">
@@ -661,7 +662,7 @@ export default function ScanPage() {
             {/* ── Signals: What Worked / What's Missing ── */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* What Worked */}
-              <div className="bg-white rounded-2xl border border-gray-100 p-6">
+              <div className="bg-white rounded-[10px] border border-[#BFBFBF] p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: C.greenBg }}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.greenText} strokeWidth="2"><path d="M20 6L9 17l-5-5" /></svg>
@@ -679,7 +680,7 @@ export default function ScanPage() {
               </div>
 
               {/* What's Missing */}
-              <div className="bg-white rounded-2xl border border-gray-100 p-6">
+              <div className="bg-white rounded-[10px] border border-[#BFBFBF] p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: C.redBg }}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.redText} strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
@@ -698,7 +699,7 @@ export default function ScanPage() {
             </div>
 
             {/* ── Target Audiences Summary ── */}
-            <div className="bg-white rounded-2xl border border-gray-100 p-6">
+            <div className="bg-white rounded-[10px] border border-[#BFBFBF] p-6">
               <h3 className="text-base font-bold mb-5" style={{ color: C.black }}>קהלי יעד</h3>
               <div className="space-y-3">
                 {PERSONAS.map((p) => (
@@ -723,7 +724,7 @@ export default function ScanPage() {
             </div>
 
             {/* ── SEO + GEO Connection ── */}
-            <div className="bg-white rounded-2xl border border-gray-100 p-6">
+            <div className="bg-white rounded-[10px] border border-[#BFBFBF] p-6">
               <div className="flex items-center justify-between mb-5">
                 <h3 className="text-base font-bold" style={{ color: C.black }}>קשר בין SEO ל-GEO</h3>
                 <div className="flex items-center gap-4">
@@ -817,7 +818,7 @@ export default function ScanPage() {
             </div>
 
             {/* ── Top 5 Queries Preview ── */}
-            <div className="bg-white rounded-2xl border border-gray-100 p-6">
+            <div className="bg-white rounded-[10px] border border-[#BFBFBF] p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-base font-bold" style={{ color: C.black }}>5 שאילתות מובילות</h3>
                 <button
@@ -862,7 +863,7 @@ export default function ScanPage() {
         {activeTab === "queries" && (
           <div className="animate-fade-in-up">
             {/* Filters Row */}
-            <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-4">
+            <div className="bg-white rounded-[10px] border border-[#BFBFBF] p-4 mb-4">
               <div className="flex flex-wrap items-center gap-3">
                 {/* Status Filters */}
                 <div className="flex items-center gap-1.5">
@@ -920,7 +921,7 @@ export default function ScanPage() {
             </div>
 
             {/* Queries Table */}
-            <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+            <div className="bg-white rounded-[10px] border border-[#BFBFBF] overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
                   <tr style={{ background: C.gray50, borderBottom: `2px solid ${C.gray200}` }}>
@@ -1021,7 +1022,7 @@ export default function ScanPage() {
               </div>
               <button
                 onClick={() => setShowPersonaForm(!showPersonaForm)}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all hover:shadow-md"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all"
                 style={{ background: C.teal, color: "white" }}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
@@ -1033,7 +1034,7 @@ export default function ScanPage() {
 
             {/* Suggest Persona Form (collapsible) */}
             {showPersonaForm && (
-              <div className="bg-white rounded-2xl border border-gray-100 p-6 mb-6" style={{ borderColor: `${C.teal}40` }}>
+              <div className="bg-white rounded-[10px] border border-[#BFBFBF] p-6 mb-6" style={{ borderColor: `${C.teal}40` }}>
                 <div className="flex items-center gap-2 mb-4">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={C.teal} strokeWidth="2">
                     <path d="M12 5v14M5 12h14" />
@@ -1079,7 +1080,7 @@ export default function ScanPage() {
                   </div>
                   <div className="flex items-end">
                     <button
-                      className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-medium transition-all hover:shadow-lg"
+                      className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-medium transition-all"
                       style={{ background: C.teal, color: "white" }}
                     >
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
@@ -1097,7 +1098,7 @@ export default function ScanPage() {
               {PERSONAS.map((p) => {
                 const personaQueries = QUERIES.filter((q) => q.persona === p.id);
                 return (
-                  <div key={p.id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:border-gray-200 transition-all duration-300">
+                  <div key={p.id} className="bg-white rounded-[10px] border border-[#BFBFBF] overflow-hidden hover:border-gray-200 transition-all duration-300">
                     {/* Top color accent */}
                     <div className="h-1" style={{ background: p.color }} />
                     <div className="p-5">
