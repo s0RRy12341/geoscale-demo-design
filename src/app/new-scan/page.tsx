@@ -111,6 +111,34 @@ function StepIndicator({ current, steps }: { current: number; steps: string[] })
   );
 }
 
+// ── Shared Footer (matching all Geoscale pages) ──
+function GeoFooter() {
+  return (
+    <footer style={{ borderTop: "1px solid #BFBFBF", marginTop: "auto" }}>
+      <div dir="rtl" style={{ maxWidth: 1300, margin: "0 auto", padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <svg width={28} height={28} viewBox="0 0 102 102" fill="none">
+            <circle cx="51" cy="51" r="41" stroke="#ABABAB" strokeWidth="10" fill="none" />
+            <circle cx="51" cy="51" r="41" stroke="#141414" strokeWidth="10" fill="none" strokeLinecap="round" strokeDasharray="180 78" />
+          </svg>
+          <span style={{ fontSize: 14, color: "#727272" }}>מונע על ידי AI מתקדם לניתוח הנוכחות שלך בחיפוש</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          {[
+            { label: "פידבק", color: "#10A37F", bg: "#10A37F15" },
+            { label: "דיווח באג", color: "#E07800", bg: "#E0780015" },
+            { label: "הצעות לשיפור", color: "#4285F4", bg: "#4285F415" },
+            { label: "שימוש API", color: "#10A37F", bg: "#10A37F15" },
+          ].map((link, i) => (
+            <span key={i} style={{ fontSize: 12, fontWeight: 500, padding: "4px 12px", borderRadius: 20, color: link.color, background: link.bg, cursor: "pointer" }}>{link.label}</span>
+          ))}
+        </div>
+        <span style={{ fontSize: 12, color: "#A2A9B0" }}>GeoScale 2026 &copy;</span>
+      </div>
+    </footer>
+  );
+}
+
 // ════════════════════════════════════════════
 // SCREEN 1: Brand Input
 // ════════════════════════════════════════════
@@ -260,6 +288,7 @@ function Screen1({ onSubmit }: { onSubmit: (domain: string, brand: string) => vo
           </ul>
         </div>
       </div>
+      <GeoFooter />
     </div>
   );
 }
@@ -450,12 +479,7 @@ function Screen2({ domain, brandName, onComplete }: { domain: string; brandName:
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="py-6 text-center">
-        <p className="text-sm" style={{ color: BRAND.gray400 }}>
-          הסריקה אורכת כ-3-5 דקות ובודקת GPT + Gemini לכל קהל יעד
-        </p>
-      </div>
+      <GeoFooter />
     </div>
   );
 }
@@ -583,7 +607,31 @@ function PersonaCard({ persona, index }: { persona: typeof MOCK_PERSONAS[0]; ind
 function Screen3({ onStartScan }: { onStartScan: () => void }) {
   return (
     <div className="screen-enter min-h-screen flex flex-col" dir="rtl">
-      {/* Header with gradient */}
+      {/* Main Header */}
+      <header style={{ background: "rgba(255,255,255,0.96)", borderBottom: "1px solid #BFBFBF" }}>
+        <div style={{ maxWidth: 1300, margin: "0 auto", padding: "0 24px", height: 72, display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 16, justifySelf: "start" }}>
+            <a href="/new-scan" style={{ display: "inline-flex", alignItems: "center", padding: "8px 20px", background: "#000", color: "#fff", fontSize: 13, fontWeight: 600, borderRadius: 9, border: "1px solid #000", textDecoration: "none" }}>סריקה חדשה</a>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "#727272" }}>
+              <span style={{ width: 8, height: 8, borderRadius: 4, background: "#10A37F", display: "inline-block" }} />
+              <span>מחובר</span>
+            </div>
+          </div>
+          <nav style={{ display: "flex", alignItems: "center", gap: 32 }}>
+            <a href="/" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>דשבורד</a>
+            <a href="/scan" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>סריקות</a>
+            <a href="/products" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>מוצרים / שירותים</a>
+          </nav>
+          <div style={{ justifySelf: "end", direction: "ltr" }}>
+            <svg width={150} height={30} viewBox="0 0 510 102" fill="none">
+              <circle cx="51" cy="51" r="41" stroke="#ABABAB" strokeWidth="13" fill="none" />
+              <circle cx="51" cy="51" r="41" stroke="#141414" strokeWidth="13" fill="none" strokeLinecap="round" strokeDasharray="180 78" />
+              <g fill="#141414"><text x="120" y="66" fontFamily="'Inter', sans-serif" fontSize="52" fontWeight="600" letterSpacing="-2">Geoscale</text></g>
+            </svg>
+          </div>
+        </div>
+      </header>
+      {/* Hero section */}
       <div
         className="py-8 px-4"
         style={{
@@ -672,11 +720,8 @@ function Screen3({ onStartScan }: { onStartScan: () => void }) {
           </button>
         </div>
 
-        {/* Footer note */}
-        <p className="text-center text-xs mt-4" style={{ color: BRAND.gray400 }}>
-          5 קהלים | הסריקה אורכת כ-3-5 דקות ובודקת GPT + Gemini לכל קהל יעד
-        </p>
       </div>
+      <GeoFooter />
     </div>
   );
 }
@@ -1027,6 +1072,30 @@ function Screen4({ brandName }: { brandName: string }) {
 
   return (
     <div className="screen-enter min-h-screen flex flex-col bg-white" dir="rtl">
+      {/* Main Header */}
+      <header style={{ background: "rgba(255,255,255,0.96)", borderBottom: "1px solid #BFBFBF" }}>
+        <div style={{ maxWidth: 1300, margin: "0 auto", padding: "0 24px", height: 72, display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 16, justifySelf: "start" }}>
+            <a href="/new-scan" style={{ display: "inline-flex", alignItems: "center", padding: "8px 20px", background: "#000", color: "#fff", fontSize: 13, fontWeight: 600, borderRadius: 9, border: "1px solid #000", textDecoration: "none" }}>סריקה חדשה</a>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "#727272" }}>
+              <span style={{ width: 8, height: 8, borderRadius: 4, background: "#10A37F", display: "inline-block" }} />
+              <span>מחובר</span>
+            </div>
+          </div>
+          <nav style={{ display: "flex", alignItems: "center", gap: 32 }}>
+            <a href="/" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>דשבורד</a>
+            <a href="/scan" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>סריקות</a>
+            <a href="/products" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>מוצרים / שירותים</a>
+          </nav>
+          <div style={{ justifySelf: "end", direction: "ltr" }}>
+            <svg width={150} height={30} viewBox="0 0 510 102" fill="none">
+              <circle cx="51" cy="51" r="41" stroke="#ABABAB" strokeWidth="13" fill="none" />
+              <circle cx="51" cy="51" r="41" stroke="#141414" strokeWidth="13" fill="none" strokeLinecap="round" strokeDasharray="180 78" />
+              <g fill="#141414"><text x="120" y="66" fontFamily="'Inter', sans-serif" fontSize="52" fontWeight="600" letterSpacing="-2">Geoscale</text></g>
+            </svg>
+          </div>
+        </div>
+      </header>
       {/* Top Bar */}
       <div
         className="py-6 px-4"
@@ -1358,12 +1427,7 @@ function Screen4({ brandName }: { brandName: string }) {
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="py-4 text-center border-t border-gray-100">
-        <p className="text-xs" style={{ color: BRAND.gray400 }}>
-          הסריקה אורכת כ-3-5 דקות ובודקת GPT + Gemini לכל קהל יעד
-        </p>
-      </div>
+      <GeoFooter />
     </div>
   );
 }
