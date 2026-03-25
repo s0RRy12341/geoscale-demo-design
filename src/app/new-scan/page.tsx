@@ -161,7 +161,6 @@ function Screen1({ onSubmit }: { onSubmit: (domain: string, brand: string) => vo
           <nav style={{ display: "flex", alignItems: "center", gap: 32 }}>
             <a href="/" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>דשבורד</a>
             <a href="/scan" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>סריקות</a>
-            <a href="/products" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>מוצרים / שירותים</a>
           </nav>
           <div style={{ justifySelf: "end", direction: "ltr" }}>
             <svg width={150} height={30} viewBox="0 0 510 102" fill="none">
@@ -620,7 +619,6 @@ function Screen3({ onStartScan }: { onStartScan: () => void }) {
           <nav style={{ display: "flex", alignItems: "center", gap: 32 }}>
             <a href="/" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>דשבורד</a>
             <a href="/scan" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>סריקות</a>
-            <a href="/products" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>מוצרים / שירותים</a>
           </nav>
           <div style={{ justifySelf: "end", direction: "ltr" }}>
             <svg width={150} height={30} viewBox="0 0 510 102" fill="none">
@@ -1085,7 +1083,6 @@ function Screen4({ brandName }: { brandName: string }) {
           <nav style={{ display: "flex", alignItems: "center", gap: 32 }}>
             <a href="/" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>דשבורד</a>
             <a href="/scan" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>סריקות</a>
-            <a href="/products" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>מוצרים / שירותים</a>
           </nav>
           <div style={{ justifySelf: "end", direction: "ltr" }}>
             <svg width={150} height={30} viewBox="0 0 510 102" fill="none">

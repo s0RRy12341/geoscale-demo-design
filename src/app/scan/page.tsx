@@ -229,7 +229,7 @@ function MentionBadge({ mentioned }: { mentioned: boolean }) {
 // ════════════════════════════════════════════════════════════
 
 export default function ScanPage() {
-  const [activeTab, setActiveTab] = useState<"overview" | "queries" | "audiences">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "queries" | "audiences" | "products">("overview");
   const [expandedQuery, setExpandedQuery] = useState<number | null>(null);
   const [queryFilter, setQueryFilter] = useState<"all" | "mentioned" | "missing" | "negative">("all");
   const [personaFilter, setPersonaFilter] = useState<string>("all");
@@ -280,7 +280,6 @@ export default function ScanPage() {
           <nav style={{ display: "flex", alignItems: "center", gap: 32 }}>
             <a href="/" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>דשבורד</a>
             <a href="/scan" style={{ fontSize: 14, fontWeight: 600, color: "#000", textDecoration: "none" }}>סריקות</a>
-            <a href="/products" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>מוצרים / שירותים</a>
           </nav>
 
           {/* LEFT in RTL (grid col 3) = Logo */}
@@ -330,6 +329,7 @@ export default function ScanPage() {
               { key: "overview" as const, label: "סקירה", iconPath: <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1" /> },
               { key: "queries" as const, label: "שאילתות", iconPath: <><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" /></>, count: totalQueries },
               { key: "audiences" as const, label: "קהלים", iconPath: <><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" /></>, count: PERSONAS.length },
+              { key: "products" as const, label: "מוצרים / שירותים", iconPath: <><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" /></> },
             ]).map((tab) => (
               <button
                 key={tab.key}
@@ -788,6 +788,89 @@ export default function ScanPage() {
                       </div>
                       <div style={{ flex: 1 }} />
                       <button onClick={() => { setPersonaFilter(p.id); setActiveTab("queries"); }} style={{ fontSize: 12, fontWeight: 500, color: "#10A37F", background: "transparent", border: "none", cursor: "pointer", textDecoration: "underline" }}>הצג שאילתות</button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* TAB 4: PRODUCTS / SERVICES */}
+        {activeTab === "products" && (
+          <div>
+            {/* Banner for Inna */}
+            <div style={{ ...card, padding: 24, marginBottom: 24, borderRight: "4px solid #10A37F" }}>
+              <div style={{ display: "flex", alignItems: "flex-start", gap: 16 }}>
+                <div style={{ width: 40, height: 40, borderRadius: 10, background: "#10A37F15", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10A37F" strokeWidth="2"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4M12 8h.01" /></svg>
+                </div>
+                <div>
+                  <h2 style={{ fontSize: 16, fontWeight: 600, color: "#000000", margin: "0 0 8px" }}>מוצרים / שירותים — מה זה ולמה?</h2>
+                  <p style={{ fontSize: 14, lineHeight: 1.7, color: "#333333", margin: "0 0 12px" }}>
+                    בנוסף לפרסונות (קהלי יעד), Geoscale מאפשר לסרוק את נוכחות המותג לפי <strong>מוצרים ושירותים</strong> ספציפיים. כל מוצר או שירות מייצר סט שאילתות ייעודי — בדיוק כמו שפרסונה מייצרת שאילתות לפי פרופיל קהל היעד.
+                  </p>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                    <span style={{ fontSize: 12, padding: "4px 12px", borderRadius: 20, background: "#10A37F15", color: "#10A37F", fontWeight: 500 }}>מחקר שאילתות פר מוצר</span>
+                    <span style={{ fontSize: 12, padding: "4px 12px", borderRadius: 20, background: "#10A37F15", color: "#10A37F", fontWeight: 500 }}>בדיקת חולשות מול מתחרים</span>
+                    <span style={{ fontSize: 12, padding: "4px 12px", borderRadius: 20, background: "#10A37F15", color: "#10A37F", fontWeight: 500 }}>דומה לסינון פרסונות</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Link to full products page */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+              <div>
+                <h2 style={{ fontSize: 18, fontWeight: 600, color: "#000000", margin: "0 0 4px" }}>מוצרים ושירותים של All4Horses</h2>
+                <p style={{ fontSize: 13, color: "#727272", margin: 0 }}>שאילתות ממוקדות לפי כל מוצר ושירות של המותג</p>
+              </div>
+              <a href="/products" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 20px", background: "#000000", color: "#FFFFFF", fontSize: 13, fontWeight: 600, borderRadius: 9, border: "1px solid #000000", textDecoration: "none" }}>
+                צפה בדף המלא
+              </a>
+            </div>
+
+            {/* Products grid preview */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
+              {[
+                { name: "רכיבה טיפולית", type: "שירות", score: 82, queries: 15, mentioned: 12, topQuery: "רכיבה טיפולית לילדים עם ADHD" },
+                { name: "קייטנת סוסים", type: "שירות", score: 68, queries: 8, mentioned: 5, topQuery: "קייטנת סוסים קיץ 2026 מרכז" },
+                { name: "שיעורי רכיבה", type: "שירות", score: 75, queries: 11, mentioned: 9, topQuery: "שיעורי רכיבה למתחילים מחיר" },
+                { name: "אביזרי רכיבה", type: "מוצר", score: 45, queries: 6, mentioned: 2, topQuery: "ציוד רכיבה לילדים — מה צריך" },
+                { name: "טיולי סוסים", type: "שירות", score: 71, queries: 9, mentioned: 7, topQuery: "טיולי סוסים לגיבוש צוותים" },
+                { name: "אירועים בחווה", type: "שירות", score: 58, queries: 7, mentioned: 4, topQuery: "יום הולדת בחוות סוסים" },
+              ].map((p, i) => (
+                <div key={i} style={{ ...card, overflow: "hidden" }}>
+                  <div style={{ height: 3, background: p.type === "מוצר" ? "#10A37F" : "#4285F4" }} />
+                  <div style={{ padding: 20 }}>
+                    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 10 }}>
+                      <div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                          <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000000", margin: 0 }}>{p.name}</h3>
+                          <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 10, background: p.type === "מוצר" ? "#10A37F15" : "#4285F415", color: p.type === "מוצר" ? "#10A37F" : "#4285F4", fontWeight: 500 }}>{p.type}</span>
+                        </div>
+                      </div>
+                      <div style={{ width: 44, height: 44, borderRadius: 10, background: p.score >= 70 ? "#10A37F12" : "#F9F9F9", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        <span style={{ fontSize: 15, fontWeight: 700, color: p.score >= 70 ? "#10A37F" : "#000000" }}>{p.score}%</span>
+                      </div>
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 12 }}>
+                      <div style={{ textAlign: "center", padding: "6px 0", background: "#F9F9F9", borderRadius: 8 }}>
+                        <div style={{ fontSize: 15, fontWeight: 700, color: "#000000" }}>{p.queries}</div>
+                        <div style={{ fontSize: 11, color: "#727272" }}>שאילתות</div>
+                      </div>
+                      <div style={{ textAlign: "center", padding: "6px 0", background: "#F9F9F9", borderRadius: 8 }}>
+                        <div style={{ fontSize: 15, fontWeight: 700, color: "#10A37F" }}>{p.mentioned}</div>
+                        <div style={{ fontSize: 11, color: "#727272" }}>מוזכר</div>
+                      </div>
+                      <div style={{ textAlign: "center", padding: "6px 0", background: (p.queries - p.mentioned) > 3 ? "#FFF8F0" : "#F9F9F9", borderRadius: 8 }}>
+                        <div style={{ fontSize: 15, fontWeight: 700, color: (p.queries - p.mentioned) > 3 ? "#E07800" : "#000000" }}>{p.queries - p.mentioned}</div>
+                        <div style={{ fontSize: 11, color: "#727272" }}>חסר</div>
+                      </div>
+                    </div>
+                    <div style={{ padding: 10, background: "#F9F9F9", borderRadius: 8, border: thinBorder }}>
+                      <p style={{ fontSize: 11, fontWeight: 600, color: "#10A37F", margin: "0 0 4px" }}>שאילתה מובילה</p>
+                      <p style={{ fontSize: 13, color: "#333333", margin: 0 }}>"{p.topQuery}"</p>
                     </div>
                   </div>
                 </div>
