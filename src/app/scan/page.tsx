@@ -1,38 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 
 // ============================================================
 // GEOSCALE SCAN ANALYSIS — Full Brand Scan Results Page
 // Brand: All4Horses | all4horses.co.il | Score: 76%
 // Tabs: סקירה (Overview) | שאילתות (Queries) | קהלים (Audiences)
+// Design: Ultra-minimal Geoscale brand language
 // ============================================================
-
-// Geoscale exact brand palette
-const C = {
-  teal: "#10A37F",
-  tealLight: "#10A37F",
-  tealDark: "#0D8C6D",
-  black: "#000000",
-  gray50: "#F9F9F9",
-  gray100: "#F9F9F9",
-  gray200: "#DDDDDD",
-  gray300: "#BFBFBF",
-  gray400: "#A2A9B0",
-  gray500: "#727272",
-  gray600: "#54595F",
-  gray700: "#333333",
-  gray800: "#141414",
-  green: "#10A37F",
-  greenBg: "#F9F9F9",
-  greenText: "#10A37F",
-  red: "#EF4444",
-  redBg: "#F9F9F9",
-  redText: "#EF4444",
-  amber: "#A2A9B0",
-  amberBg: "#F9F9F9",
-  amberText: "#727272",
-};
 
 // ── PERSONAS ──
 const PERSONAS = [
@@ -46,7 +21,6 @@ const PERSONAS = [
     score: 82,
     queries: 9,
     mentions: 7,
-    color: "#8B5CF6",
   },
   {
     id: "yossi",
@@ -58,7 +32,6 @@ const PERSONAS = [
     score: 71,
     queries: 7,
     mentions: 5,
-    color: "#3B82F6",
   },
   {
     id: "ori",
@@ -70,7 +43,6 @@ const PERSONAS = [
     score: 68,
     queries: 8,
     mentions: 6,
-    color: "#F97316",
   },
   {
     id: "david",
@@ -82,7 +54,6 @@ const PERSONAS = [
     score: 75,
     queries: 7,
     mentions: 5,
-    color: "#EC4899",
   },
   {
     id: "ronit",
@@ -94,7 +65,6 @@ const PERSONAS = [
     score: 63,
     queries: 6,
     mentions: 4,
-    color: "#06B6D4",
   },
 ];
 
@@ -181,7 +151,6 @@ const NEGATIVE_SIGNALS = [
   "היעדר תוכן על לינה וחבילות סופ\"ש",
 ];
 
-// ── TOP 5 QUERIES ──
 const TOP_5_QUERIES = QUERIES.slice(0, 5);
 
 // ════════════════════════════════════════════════════════════
@@ -192,16 +161,14 @@ function ProgressRing({ percent, size = 88, strokeWidth = 6 }: { percent: number
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (percent / 100) * circumference;
-  const color = percent >= 80 ? C.teal : percent >= 60 ? C.amber : C.red;
-
   return (
-    <div className="relative" style={{ width: size, height: size }}>
-      <svg width={size} height={size} className="-rotate-90">
-        <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke={C.gray200} strokeWidth={strokeWidth} />
-        <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke={color} strokeWidth={strokeWidth} strokeDasharray={circumference} strokeDashoffset={offset} strokeLinecap="round" className="transition-all duration-1000" />
+    <div style={{ position: "relative", width: size, height: size }}>
+      <svg width={size} height={size} style={{ transform: "rotate(-90deg)" }}>
+        <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="#F9F9F9" strokeWidth={strokeWidth} />
+        <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="#10A37F" strokeWidth={strokeWidth} strokeDasharray={circumference} strokeDashoffset={offset} strokeLinecap="round" style={{ transition: "all 1s ease" }} />
       </svg>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-xl font-bold" style={{ color }}>{percent}%</span>
+      <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <span style={{ fontSize: 18, fontWeight: 600, color: "#000000" }}>{percent}%</span>
       </div>
     </div>
   );
@@ -211,31 +178,16 @@ function DonutChart({ data, size = 140, strokeWidth = 20 }: { data: { label: str
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   let accumulatedOffset = 0;
-
   return (
-    <div className="relative" style={{ width: size, height: size }}>
-      <svg width={size} height={size} className="-rotate-90">
-        <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke={C.gray100} strokeWidth={strokeWidth} />
+    <div style={{ position: "relative", width: size, height: size }}>
+      <svg width={size} height={size} style={{ transform: "rotate(-90deg)" }}>
+        <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="#F9F9F9" strokeWidth={strokeWidth} />
         {data.map((segment, i) => {
           const segLength = (segment.value / 100) * circumference;
-          const dashoffset = circumference - segLength;
           const rotation = (accumulatedOffset / 100) * 360;
           accumulatedOffset += segment.value;
           return (
-            <circle
-              key={i}
-              cx={size / 2}
-              cy={size / 2}
-              r={radius}
-              fill="none"
-              stroke={segment.color}
-              strokeWidth={strokeWidth}
-              strokeDasharray={`${segLength} ${circumference - segLength}`}
-              strokeDashoffset={0}
-              strokeLinecap="butt"
-              transform={`rotate(${rotation} ${size / 2} ${size / 2})`}
-              className="transition-all duration-700"
-            />
+            <circle key={i} cx={size / 2} cy={size / 2} r={radius} fill="none" stroke={segment.color} strokeWidth={strokeWidth} strokeDasharray={`${segLength} ${circumference - segLength}`} strokeDashoffset={0} strokeLinecap="butt" transform={`rotate(${rotation} ${size / 2} ${size / 2})`} style={{ transition: "all 0.7s ease" }} />
           );
         })}
       </svg>
@@ -247,26 +199,15 @@ function PersonaBadge({ personaId }: { personaId: string }) {
   const p = PERSONAS.find((pp) => pp.id === personaId);
   if (!p) return null;
   return (
-    <span
-      className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full"
-      style={{ background: `${p.color}15`, color: p.color }}
-    >
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 12, fontWeight: 500, padding: "2px 8px", borderRadius: 10, border: "1px solid #DDDDDD", background: "#FFFFFF", color: "#333333" }}>
       {p.name}
     </span>
   );
 }
 
 function StageBadge({ stage }: { stage: string }) {
-  const colors: Record<string, { bg: string; text: string }> = {
-    "חשיפה": { bg: "#EFF6FF", text: "#2563EB" },
-    "מחקר": { bg: "#F5F3FF", text: "#7C3AED" },
-    "החלטה": { bg: "#FFF7ED", text: "#EA580C" },
-    "תמיכה": { bg: "#ECFDF5", text: "#059669" },
-    "מוניטין": { bg: "#FDF2F8", text: "#DB2777" },
-  };
-  const c = colors[stage] || { bg: C.gray100, text: C.gray600 };
   return (
-    <span className="inline-flex text-xs font-medium px-2 py-0.5 rounded-full" style={{ background: c.bg, color: c.text }}>
+    <span style={{ display: "inline-flex", fontSize: 12, fontWeight: 500, padding: "2px 8px", borderRadius: 10, border: "1px solid #DDDDDD", background: "#F9F9F9", color: "#333333" }}>
       {stage}
     </span>
   );
@@ -274,13 +215,7 @@ function StageBadge({ stage }: { stage: string }) {
 
 function MentionBadge({ mentioned }: { mentioned: boolean }) {
   return (
-    <span
-      className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full"
-      style={{
-        background: mentioned ? C.greenBg : C.redBg,
-        color: mentioned ? C.greenText : C.redText,
-      }}
-    >
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 12, fontWeight: 500, padding: "2px 8px", borderRadius: 10, background: mentioned ? "#FFFFFF" : "#F9F9F9", color: mentioned ? "#10A37F" : "#727272", border: `1px solid ${mentioned ? "#10A37F" : "#DDDDDD"}` }}>
       <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
         {mentioned ? <path d="M20 6L9 17l-5-5" /> : <path d="M18 6L6 18M6 6l12 12" />}
       </svg>
@@ -295,7 +230,6 @@ function MentionBadge({ mentioned }: { mentioned: boolean }) {
 
 export default function ScanPage() {
   const [activeTab, setActiveTab] = useState<"overview" | "queries" | "audiences">("overview");
-  const [navTab, setNavTab] = useState<"dashboard" | "scan">("scan");
   const [expandedQuery, setExpandedQuery] = useState<number | null>(null);
   const [queryFilter, setQueryFilter] = useState<"all" | "mentioned" | "missing" | "negative">("all");
   const [personaFilter, setPersonaFilter] = useState<string>("all");
@@ -322,89 +256,69 @@ export default function ScanPage() {
     negative: 0,
   };
 
+  const card: React.CSSProperties = { background: "#FFFFFF", border: "1px solid #BFBFBF", borderRadius: 10 };
+  const sectionTitle: React.CSSProperties = { fontSize: 15, fontWeight: 600, color: "#000000", margin: 0 };
+  const bodyText: React.CSSProperties = { fontSize: 14, color: "#333333" };
+  const thinBorder = "1px solid #DDDDDD";
+
   return (
-    <div className="min-h-screen" style={{ background: C.gray50 }} dir="rtl">
-      {/* ── Top Navigation Bar ── */}
-      <nav className="sticky top-0 z-50" style={{ background: "rgba(255,255,255,0.96)", borderBottom: "1px solid #BFBFBF" }}>
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3" style={{ direction: "ltr" }}>
-            <svg width="36" height="36" viewBox="0 0 102 102" fill="none">
-              <circle cx="51" cy="51" r="44" stroke="#ABABAB" strokeWidth="5" fill="none" />
-              <circle cx="51" cy="51" r="34" stroke="#141414" strokeWidth="6" fill="none" strokeLinecap="round" />
-            </svg>
-            <span className="text-xl font-bold tracking-tight" style={{ color: C.black }}>Geoscale</span>
-          </div>
+    <div style={{ minHeight: "100vh", background: "#FFFFFF", fontFamily: "'Inter', 'Heebo', sans-serif", display: "flex", flexDirection: "column" }} dir="rtl">
 
-          <div className="flex items-center gap-1 bg-gray-100 rounded-xl p-1">
-            <button
-              onClick={() => setNavTab("dashboard")}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all"
-              style={{
-                background: navTab === "dashboard" ? "white" : "transparent",
-                color: navTab === "dashboard" ? C.black : C.gray500,
-                boxShadow: navTab === "dashboard" ? "0 1px 3px rgba(0,0,0,0.1)" : "none",
-              }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" />
-              </svg>
-              דשבורד
-            </button>
-            <button
-              onClick={() => setNavTab("scan")}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all"
-              style={{
-                background: navTab === "scan" ? "white" : "transparent",
-                color: navTab === "scan" ? C.black : C.gray500,
-                boxShadow: navTab === "scan" ? "0 1px 3px rgba(0,0,0,0.1)" : "none",
-              }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
-              </svg>
-              סריקה
-            </button>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 text-sm" style={{ color: C.gray500 }}>
-              <div className="w-2 h-2 rounded-full" style={{ background: "#22C55E" }} />
+      {/* ── Sticky Header — Logo LEFT, Nav Center, Actions RIGHT ── */}
+      <header style={{ position: "sticky", top: 0, zIndex: 50, background: "rgba(255,255,255,0.96)", borderBottom: "1px solid #BFBFBF" }}>
+        <div style={{ maxWidth: 1300, margin: "0 auto", padding: "0 24px", height: 72, display: "flex", alignItems: "center" }}>
+          {/* RIGHT side in RTL = Actions */}
+          <div style={{ display: "flex", alignItems: "center", gap: 16, marginInlineEnd: "auto" }}>
+            <a href="/new-scan" style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 18px", background: "#000000", color: "#FFFFFF", fontSize: 13, fontWeight: 600, border: "1px solid #000000", borderRadius: 9, cursor: "pointer", textDecoration: "none" }}>
+              סריקה חדשה
+            </a>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "#727272" }}>
+              <span style={{ width: 8, height: 8, borderRadius: 4, background: "#10A37F", display: "inline-block" }} />
               <span>מחובר</span>
             </div>
-            <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-medium" style={{ background: `${C.teal}15`, color: C.teal }}>A</div>
+          </div>
+
+          {/* CENTER: Nav */}
+          <div style={{ display: "flex", alignItems: "center", gap: 32, margin: "0 32px" }}>
+            <a href="/" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>דשבורד</a>
+            <a href="/scan" style={{ fontSize: 14, fontWeight: 600, color: "#000000", textDecoration: "none" }}>סריקות</a>
+            <a href="/products" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>מוצרים / שירותים</a>
+          </div>
+
+          {/* LEFT side in RTL = Logo */}
+          <div style={{ marginInlineStart: "auto", direction: "ltr" }}>
+            <svg width={150} height={30} viewBox="0 0 510 102" fill="none">
+              <circle cx="51" cy="51" r="41" stroke="#ABABAB" strokeWidth="13" fill="none" />
+              <circle cx="51" cy="51" r="41" stroke="#141414" strokeWidth="13" fill="none" strokeLinecap="round" strokeDasharray="180 78" />
+              <g fill="#141414">
+                <text x="120" y="66" fontFamily="'Inter', sans-serif" fontSize="52" fontWeight="600" letterSpacing="-2">Geoscale</text>
+              </g>
+            </svg>
           </div>
         </div>
-      </nav>
+      </header>
 
       {/* ── Brand Header ── */}
-      <div className="bg-white border-b border-[#BFBFBF]">
-        <div className="max-w-7xl mx-auto px-6 py-5">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-5">
-              <ProgressRing percent={76} size={80} strokeWidth={6} />
+      <div style={{ background: "#FFFFFF", borderBottom: "1px solid #BFBFBF" }}>
+        <div style={{ maxWidth: 1300, margin: "0 auto", padding: "20px 24px" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+              <ProgressRing percent={76} size={72} strokeWidth={5} />
               <div>
-                <div className="flex items-center gap-3 mb-1">
-                  <h1 className="text-2xl font-bold" style={{ color: C.black }}>All4Horses</h1>
-                  <span className="text-xs font-medium px-3 py-1 rounded-full" style={{ background: C.greenBg, color: C.greenText }}>
-                    נוכחות חזקה
-                  </span>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+                  <h1 style={{ fontSize: 22, fontWeight: 600, color: "#000000", margin: 0 }}>All4Horses</h1>
+                  <span style={{ fontSize: 12, fontWeight: 500, padding: "3px 10px", borderRadius: 10, border: "1px solid #10A37F", color: "#10A37F", background: "#FFFFFF" }}>נוכחות חזקה</span>
                 </div>
-                <p className="text-sm mb-1" style={{ color: C.gray400, direction: "ltr", textAlign: "right" }}>all4horses.co.il</p>
-                <a href="#" className="text-sm font-medium hover:underline" style={{ color: C.teal }}>דשבורד מותג</a>
+                <p style={{ fontSize: 13, color: "#727272", margin: "2px 0 0", direction: "ltr", textAlign: "right" }}>all4horses.co.il</p>
               </div>
             </div>
-
-            <div className="flex items-center gap-3">
-              <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium border transition-all" style={{ borderColor: C.gray200, color: C.gray700 }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" />
-                </svg>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <button style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 18px", background: "#FFFFFF", color: "#333333", fontSize: 13, fontWeight: 500, border: "1px solid #BFBFBF", borderRadius: 9, cursor: "pointer" }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /></svg>
                 לוח בקרה
               </button>
-              <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-medium transition-all hover:scale-[1.02] active:scale-[0.98]" style={{ background: C.black }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-                </svg>
+              <button style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 18px", background: "#000000", color: "#FFFFFF", fontSize: 13, fontWeight: 600, border: "1px solid #000000", borderRadius: 9, cursor: "pointer" }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>
                 סריקה חדשה
               </button>
             </div>
@@ -413,30 +327,30 @@ export default function ScanPage() {
       </div>
 
       {/* ── Tab Bar ── */}
-      <div className="bg-white border-b border-[#BFBFBF]">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex gap-0">
+      <div style={{ background: "#FFFFFF", borderBottom: "1px solid #BFBFBF" }}>
+        <div style={{ maxWidth: 1300, margin: "0 auto", padding: "0 24px" }}>
+          <div style={{ display: "flex", gap: 0 }}>
             {([
-              { key: "overview", label: "סקירה", icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1" /></svg> },
-              { key: "queries", label: "שאילתות", icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" /></svg> },
-              { key: "audiences", label: "קהלים", icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" /></svg> },
-            ] as const).map((tab) => (
+              { key: "overview" as const, label: "סקירה", iconPath: <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1" /> },
+              { key: "queries" as const, label: "שאילתות", iconPath: <><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" /></>, count: totalQueries },
+              { key: "audiences" as const, label: "קהלים", iconPath: <><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" /></>, count: PERSONAS.length },
+            ]).map((tab) => (
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className="flex items-center gap-2 px-5 py-3.5 text-sm font-medium transition-all border-b-2 -mb-px"
                 style={{
-                  borderColor: activeTab === tab.key ? C.teal : "transparent",
-                  color: activeTab === tab.key ? C.teal : C.gray500,
+                  display: "flex", alignItems: "center", gap: 8, padding: "12px 20px", fontSize: 14,
+                  fontWeight: activeTab === tab.key ? 600 : 400,
+                  color: activeTab === tab.key ? "#000000" : "#727272",
+                  background: "transparent", border: "none",
+                  borderBottom: activeTab === tab.key ? "2px solid #000000" : "2px solid transparent",
+                  marginBottom: -1, cursor: "pointer",
                 }}
               >
-                {tab.icon}
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">{tab.iconPath}</svg>
                 {tab.label}
-                {tab.key === "queries" && (
-                  <span className="text-xs px-1.5 py-0.5 rounded-full" style={{ background: C.gray100, color: C.gray500 }}>{totalQueries}</span>
-                )}
-                {tab.key === "audiences" && (
-                  <span className="text-xs px-1.5 py-0.5 rounded-full" style={{ background: C.gray100, color: C.gray500 }}>{PERSONAS.length}</span>
+                {tab.count !== undefined && (
+                  <span style={{ fontSize: 11, padding: "1px 6px", borderRadius: 10, background: "#F9F9F9", color: "#727272", border: "1px solid #DDDDDD" }}>{tab.count}</span>
                 )}
               </button>
             ))}
@@ -445,371 +359,233 @@ export default function ScanPage() {
       </div>
 
       {/* ── Main Content ── */}
-      <div className="max-w-7xl mx-auto px-6 py-6">
+      <div style={{ maxWidth: 1300, margin: "0 auto", padding: "24px 24px" }}>
 
-        {/* ════════════════════════════════════════════════ */}
-        {/* TAB 1: OVERVIEW (סקירה) */}
-        {/* ════════════════════════════════════════════════ */}
+        {/* TAB 1: OVERVIEW */}
         {activeTab === "overview" && (
-          <div className="space-y-6 animate-fade-in-up">
-            {/* ── 4 Stat Cards ── */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+            {/* 4 Stat Cards */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
               {[
-                { label: "שיעור אזכור", value: "76%", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={C.teal} strokeWidth="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" /></svg> },
-                { label: "מיקום ממוצע", value: "#9.7", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={C.teal} strokeWidth="2"><path d="M12 20V10M18 20V4M6 20v-4" /></svg> },
-                { label: "איכות ציטוט", value: "70%", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={C.teal} strokeWidth="2"><path d="M10 11V6l-6 6 6 6v-5c5.523 0 10 4.477 10 10 0-8.284-4.477-15-10-15z" /></svg> },
-                { label: "סיכון מוניטין", value: "100%", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={C.greenText} strokeWidth="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
+                { label: "שיעור אזכור", value: "76%", iconPath: <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" /> },
+                { label: "מיקום ממוצע", value: "#9.7", iconPath: <path d="M12 20V10M18 20V4M6 20v-4" /> },
+                { label: "איכות ציטוט", value: "70%", iconPath: <path d="M10 11V6l-6 6 6 6v-5c5.523 0 10 4.477 10 10 0-8.284-4.477-15-10-15z" /> },
+                { label: "סיכון מוניטין", value: "100%", iconPath: <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /> },
               ].map((stat, i) => (
-                <div key={i} className="bg-white rounded-[10px] border border-[#BFBFBF] p-5 transition-all duration-300">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${C.teal}12` }}>{stat.icon}</div>
+                <div key={i} style={{ ...card, padding: 20 }}>
+                  <div style={{ marginBottom: 12 }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10A37F" strokeWidth="2">{stat.iconPath}</svg>
                   </div>
-                  <div className="text-2xl font-bold mb-0.5" style={{ color: C.black }}>{stat.value}</div>
-                  <div className="text-sm" style={{ color: C.gray500 }}>{stat.label}</div>
+                  <div style={{ fontSize: 24, fontWeight: 600, color: "#000000", marginBottom: 2 }}>{stat.value}</div>
+                  <div style={{ fontSize: 13, color: "#727272" }}>{stat.label}</div>
                 </div>
               ))}
             </div>
 
-            {/* ── GPT vs Gemini ── */}
-            <div className="bg-white rounded-[10px] border border-[#BFBFBF] p-6">
-              <h3 className="text-base font-bold mb-5" style={{ color: C.black }}>השוואת מנועי AI</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                {/* ChatGPT Card */}
-                <div className="rounded-xl border p-4" style={{ borderColor: C.gray200 }}>
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "#10A37F15" }}>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="#10A37F"><path d="M22.282 9.821a5.985 5.985 0 00-.516-4.91 6.046 6.046 0 00-6.51-2.9A6.065 6.065 0 0011.702.418 6.004 6.004 0 005.354 2.08a5.974 5.974 0 00-3.994 2.9 6.042 6.042 0 00.743 7.097 5.98 5.98 0 00.51 4.911 6.051 6.051 0 006.515 2.9A5.985 5.985 0 0013.702 22a6.003 6.003 0 006.349-1.662 5.98 5.98 0 003.994-2.9 6.042 6.042 0 00-.743-7.097l-.02-.02z" /></svg>
-                      </div>
-                      <span className="text-sm font-semibold" style={{ color: C.black }}>ChatGPT (GPT-4o)</span>
+            {/* GPT vs Gemini */}
+            <div style={{ ...card, padding: 24 }}>
+              <h3 style={{ ...sectionTitle, marginBottom: 20 }}>השוואת מנועי AI</h3>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 20 }}>
+                <div style={{ border: thinBorder, borderRadius: 10, padding: 16 }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="#10A37F"><path d="M22.282 9.821a5.985 5.985 0 00-.516-4.91 6.046 6.046 0 00-6.51-2.9A6.065 6.065 0 0011.702.418 6.004 6.004 0 005.354 2.08a5.974 5.974 0 00-3.994 2.9 6.042 6.042 0 00.743 7.097 5.98 5.98 0 00.51 4.911 6.051 6.051 0 006.515 2.9A5.985 5.985 0 0013.702 22a6.003 6.003 0 006.349-1.662 5.98 5.98 0 003.994-2.9 6.042 6.042 0 00-.743-7.097l-.02-.02z" /></svg>
+                      <span style={{ fontSize: 14, fontWeight: 600, color: "#000000" }}>ChatGPT (GPT-4o)</span>
                     </div>
-                    <span className="text-xl font-bold" style={{ color: "#10A37F" }}>57%</span>
+                    <span style={{ fontSize: 20, fontWeight: 600, color: "#10A37F" }}>57%</span>
                   </div>
-                  <div className="w-full h-2.5 rounded-full overflow-hidden" style={{ background: C.gray100 }}>
-                    <div className="h-full rounded-full transition-all duration-1000" style={{ width: "57%", background: "#10A37F" }} />
+                  <div style={{ width: "100%", height: 6, borderRadius: 3, background: "#F9F9F9", overflow: "hidden" }}>
+                    <div style={{ width: "57%", height: "100%", borderRadius: 3, background: "#10A37F", transition: "width 1s ease" }} />
                   </div>
-                  <p className="text-xs mt-2" style={{ color: C.gray500 }}>{gptMentioned} / {totalQueries} שאילתות מוזכר</p>
+                  <p style={{ fontSize: 12, color: "#727272", marginTop: 8 }}>{gptMentioned} / {totalQueries} שאילתות מוזכר</p>
                 </div>
-                {/* Gemini Card */}
-                <div className="rounded-xl border p-4" style={{ borderColor: C.gray200 }}>
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "#4285F415" }}>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="#4285F4"><path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zm0 3.6c2.21 0 4.122.84 5.64 2.16l-2.4 2.4A5.356 5.356 0 0012 7.2c-2.652 0-4.8 2.148-4.8 4.8s2.148 4.8 4.8 4.8c2.316 0 4.128-1.488 4.56-3.6H12v-3.6h8.28c.12.6.12 1.2.12 1.8 0 4.644-3.156 8.4-8.4 8.4-4.632 0-8.4-3.768-8.4-8.4S7.368 3.6 12 3.6z" /></svg>
-                      </div>
-                      <span className="text-sm font-semibold" style={{ color: C.black }}>Google Gemini</span>
+                <div style={{ border: thinBorder, borderRadius: 10, padding: 16 }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="#4285F4"><path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zm0 3.6c2.21 0 4.122.84 5.64 2.16l-2.4 2.4A5.356 5.356 0 0012 7.2c-2.652 0-4.8 2.148-4.8 4.8s2.148 4.8 4.8 4.8c2.316 0 4.128-1.488 4.56-3.6H12v-3.6h8.28c.12.6.12 1.2.12 1.8 0 4.644-3.156 8.4-8.4 8.4-4.632 0-8.4-3.768-8.4-8.4S7.368 3.6 12 3.6z" /></svg>
+                      <span style={{ fontSize: 14, fontWeight: 600, color: "#000000" }}>Google Gemini</span>
                     </div>
-                    <span className="text-xl font-bold" style={{ color: "#4285F4" }}>73%</span>
+                    <span style={{ fontSize: 20, fontWeight: 600, color: "#4285F4" }}>73%</span>
                   </div>
-                  <div className="w-full h-2.5 rounded-full overflow-hidden" style={{ background: C.gray100 }}>
-                    <div className="h-full rounded-full transition-all duration-1000" style={{ width: "73%", background: "#4285F4" }} />
+                  <div style={{ width: "100%", height: 6, borderRadius: 3, background: "#F9F9F9", overflow: "hidden" }}>
+                    <div style={{ width: "73%", height: "100%", borderRadius: 3, background: "#4285F4", transition: "width 1s ease" }} />
                   </div>
-                  <p className="text-xs mt-2" style={{ color: C.gray500 }}>{geminiMentioned} / {totalQueries} שאילתות מוזכר</p>
+                  <p style={{ fontSize: 12, color: "#727272", marginTop: 8 }}>{geminiMentioned} / {totalQueries} שאילתות מוזכר</p>
                 </div>
               </div>
-              {/* Comparison Bar */}
-              <div className="flex items-center gap-3">
-                <span className="text-xs font-medium w-16 text-left" style={{ color: "#10A37F" }}>GPT</span>
-                <div className="flex-1 flex h-6 rounded-full overflow-hidden" style={{ background: C.gray100 }}>
-                  <div className="h-full flex items-center justify-center text-xs font-medium text-white" style={{ width: `${(gptMentioned / totalQueries) * 100}%`, background: "#10A37F" }}>{gptMentioned}</div>
-                  <div className="h-full flex items-center justify-center text-xs font-medium text-white" style={{ width: `${((totalQueries - gptMentioned) / totalQueries) * 100}%`, background: "#10A37F40" }}>{totalQueries - gptMentioned}</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
+                <span style={{ fontSize: 12, fontWeight: 500, width: 50, textAlign: "left", color: "#10A37F" }}>GPT</span>
+                <div style={{ flex: 1, display: "flex", height: 20, borderRadius: 3, overflow: "hidden", background: "#F9F9F9" }}>
+                  <div style={{ width: `${(gptMentioned / totalQueries) * 100}%`, height: "100%", background: "#10A37F", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 500, color: "#FFFFFF" }}>{gptMentioned}</div>
+                  <div style={{ width: `${((totalQueries - gptMentioned) / totalQueries) * 100}%`, height: "100%", background: "#10A37F40", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 500, color: "#FFFFFF" }}>{totalQueries - gptMentioned}</div>
                 </div>
               </div>
-              <div className="flex items-center gap-3 mt-2">
-                <span className="text-xs font-medium w-16 text-left" style={{ color: "#4285F4" }}>Gemini</span>
-                <div className="flex-1 flex h-6 rounded-full overflow-hidden" style={{ background: C.gray100 }}>
-                  <div className="h-full flex items-center justify-center text-xs font-medium text-white" style={{ width: `${(geminiMentioned / totalQueries) * 100}%`, background: "#4285F4" }}>{geminiMentioned}</div>
-                  <div className="h-full flex items-center justify-center text-xs font-medium text-white" style={{ width: `${((totalQueries - geminiMentioned) / totalQueries) * 100}%`, background: "#4285F440" }}>{totalQueries - geminiMentioned}</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <span style={{ fontSize: 12, fontWeight: 500, width: 50, textAlign: "left", color: "#4285F4" }}>Gemini</span>
+                <div style={{ flex: 1, display: "flex", height: 20, borderRadius: 3, overflow: "hidden", background: "#F9F9F9" }}>
+                  <div style={{ width: `${(geminiMentioned / totalQueries) * 100}%`, height: "100%", background: "#4285F4", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 500, color: "#FFFFFF" }}>{geminiMentioned}</div>
+                  <div style={{ width: `${((totalQueries - geminiMentioned) / totalQueries) * 100}%`, height: "100%", background: "#4285F440", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 500, color: "#FFFFFF" }}>{totalQueries - geminiMentioned}</div>
                 </div>
               </div>
             </div>
 
-            {/* ── Customer Journey Performance ── */}
-            <div className="bg-white rounded-[10px] border border-[#BFBFBF] p-6">
-              <h3 className="text-base font-bold mb-5" style={{ color: C.black }}>ביצועים לפי שלב במסע לקוח</h3>
-              <div className="space-y-4">
+            {/* Customer Journey */}
+            <div style={{ ...card, padding: 24 }}>
+              <h3 style={{ ...sectionTitle, marginBottom: 20 }}>ביצועים לפי שלב במסע לקוח</h3>
+              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                 {JOURNEY_STAGES.map((stage, i) => (
-                  <div key={i} className="flex items-center gap-4">
-                    <span className="text-sm font-medium w-20 shrink-0" style={{ color: C.gray700 }}>{stage.name}</span>
-                    <div className="flex-1 h-8 rounded-lg overflow-hidden relative" style={{ background: C.gray100 }}>
-                      <div
-                        className="h-full rounded-lg transition-all duration-1000 flex items-center"
-                        style={{
-                          width: `${stage.percent}%`,
-                          background: C.teal,
-                        }}
-                      />
+                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                    <span style={{ fontSize: 13, fontWeight: 500, width: 64, flexShrink: 0, color: "#333333" }}>{stage.name}</span>
+                    <div style={{ flex: 1, height: 8, borderRadius: 4, overflow: "hidden", background: "#F9F9F9" }}>
+                      <div style={{ width: `${stage.percent}%`, height: "100%", borderRadius: 4, background: "#10A37F", transition: "width 1s ease" }} />
                     </div>
-                    <span className="text-sm font-bold w-12 text-left" style={{ color: C.teal }}>{stage.percent}%</span>
-                    <span className="text-xs w-16 text-left" style={{ color: C.gray400 }}>{stage.count} שאילתות</span>
+                    <span style={{ fontSize: 13, fontWeight: 600, width: 40, textAlign: "left", color: "#000000" }}>{stage.percent}%</span>
+                    <span style={{ fontSize: 12, width: 64, textAlign: "left", color: "#727272" }}>{stage.count} שאילתות</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* ── Persona + Competitors (side by side) ── */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Identified Persona */}
-              <div className="bg-white rounded-[10px] border border-[#BFBFBF] p-6">
-                <h3 className="text-base font-bold mb-4" style={{ color: C.black }}>פרסונה שזוהתה</h3>
-                <div className="space-y-3">
-                  <div className="flex items-start gap-2">
-                    <span className="text-sm font-medium shrink-0" style={{ color: C.gray500 }}>קהל יעד:</span>
-                    <span className="text-sm" style={{ color: C.gray700 }}>הורים לילדים עם צרכים מיוחדים, מטפלים, מורים לחינוך מיוחד ובני נוער</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <span className="text-sm font-medium shrink-0" style={{ color: C.gray500 }}>תעשייה:</span>
-                    <span className="text-sm" style={{ color: C.gray700 }}>רכיבה טיפולית, חוות סוסים, טיפול משלים</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <span className="text-sm font-medium shrink-0" style={{ color: C.gray500 }}>מיקום גיאוגרפי:</span>
-                    <span className="text-sm" style={{ color: C.gray700 }}>ישראל</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <span className="text-sm font-medium shrink-0" style={{ color: C.gray500 }}>ערך ייחודי:</span>
-                    <span className="text-sm" style={{ color: C.gray700 }}>שילוב רכיבה טיפולית מקצועית עם גישה אישית ומחקרית</span>
-                  </div>
+            {/* Persona + Competitors */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+              <div style={{ ...card, padding: 24 }}>
+                <h3 style={{ ...sectionTitle, marginBottom: 16 }}>פרסונה שזוהתה</h3>
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  {[
+                    { label: "קהל יעד:", value: "הורים לילדים עם צרכים מיוחדים, מטפלים, מורים לחינוך מיוחד ובני נוער" },
+                    { label: "תעשייה:", value: "רכיבה טיפולית, חוות סוסים, טיפול משלים" },
+                    { label: "מיקום גיאוגרפי:", value: "ישראל" },
+                    { label: "ערך ייחודי:", value: "שילוב רכיבה טיפולית מקצועית עם גישה אישית ומחקרית" },
+                  ].map((item, i) => (
+                    <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+                      <span style={{ fontSize: 13, fontWeight: 500, flexShrink: 0, color: "#727272" }}>{item.label}</span>
+                      <span style={{ ...bodyText }}>{item.value}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
-
-              {/* Competitors */}
-              <div className="bg-white rounded-[10px] border border-[#BFBFBF] p-6">
-                <h3 className="text-base font-bold mb-4" style={{ color: C.black }}>מתחרים</h3>
-                <div className="space-y-3">
+              <div style={{ ...card, padding: 24 }}>
+                <h3 style={{ ...sectionTitle, marginBottom: 16 }}>מתחרים</h3>
+                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                   {COMPETITORS.map((comp, i) => (
-                    <div key={i} className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold" style={{ background: C.gray100, color: C.gray600 }}>
-                        {i + 1}
+                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                      <div style={{ width: 28, height: 28, borderRadius: 7, border: "1px solid #DDDDDD", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 600, color: "#333333" }}>{i + 1}</div>
+                      <span style={{ flex: 1, fontSize: 14, fontWeight: 500, color: "#333333" }}>{comp.name}</span>
+                      <div style={{ width: 80, height: 6, borderRadius: 3, overflow: "hidden", background: "#F9F9F9" }}>
+                        <div style={{ width: `${comp.score}%`, height: "100%", borderRadius: 3, background: "#10A37F" }} />
                       </div>
-                      <span className="text-sm font-medium flex-1" style={{ color: C.gray700 }}>{comp.name}</span>
-                      <div className="w-24 h-2 rounded-full overflow-hidden" style={{ background: C.gray100 }}>
-                        <div className="h-full rounded-full" style={{ width: `${comp.score}%`, background: comp.score >= 60 ? C.teal : comp.score >= 40 ? C.amber : C.red }} />
-                      </div>
-                      <span className="text-sm font-bold w-10 text-left" style={{ color: comp.score >= 60 ? C.teal : comp.score >= 40 ? C.amberText : C.redText }}>
-                        {comp.score}%
-                      </span>
+                      <span style={{ fontSize: 13, fontWeight: 600, width: 36, textAlign: "left", color: "#000000" }}>{comp.score}%</span>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
 
-            {/* ── Sentiment + Citation Quality (side by side) ── */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Sentiment */}
-              <div className="bg-white rounded-[10px] border border-[#BFBFBF] p-6">
-                <h3 className="text-base font-bold mb-2" style={{ color: C.black }}>סנטימנט</h3>
-                <p className="text-xs mb-4" style={{ color: C.gray400 }}>איך ה-AI מדבר עליכם</p>
-                <div className="flex items-center gap-6">
-                  <DonutChart
-                    size={120}
-                    strokeWidth={18}
-                    data={[
-                      { label: "חיובי", value: 80, color: C.teal },
-                      { label: "ניטרלי", value: 20, color: C.gray300 },
-                    ]}
-                  />
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full" style={{ background: C.teal }} />
-                      <span className="text-sm" style={{ color: C.gray700 }}>חיובי</span>
-                      <span className="text-sm font-bold" style={{ color: C.teal }}>80%</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full" style={{ background: C.gray300 }} />
-                      <span className="text-sm" style={{ color: C.gray700 }}>ניטרלי</span>
-                      <span className="text-sm font-bold" style={{ color: C.gray500 }}>20%</span>
-                    </div>
+            {/* Sentiment + Citation Quality */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+              <div style={{ ...card, padding: 24 }}>
+                <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000000", margin: "0 0 4px" }}>סנטימנט</h3>
+                <p style={{ fontSize: 12, color: "#727272", margin: "0 0 16px" }}>איך ה-AI מדבר עליכם</p>
+                <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
+                  <DonutChart size={110} strokeWidth={16} data={[{ label: "חיובי", value: 80, color: "#10A37F" }, { label: "ניטרלי", value: 20, color: "#BFBFBF" }]} />
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}><div style={{ width: 10, height: 10, borderRadius: 5, background: "#10A37F" }} /><span style={{ fontSize: 13, color: "#333333" }}>חיובי</span><span style={{ fontSize: 13, fontWeight: 600, color: "#000000" }}>80%</span></div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}><div style={{ width: 10, height: 10, borderRadius: 5, background: "#BFBFBF" }} /><span style={{ fontSize: 13, color: "#333333" }}>ניטרלי</span><span style={{ fontSize: 13, fontWeight: 600, color: "#000000" }}>20%</span></div>
                   </div>
                 </div>
               </div>
-
-              {/* Citation Quality */}
-              <div className="bg-white rounded-[10px] border border-[#BFBFBF] p-6">
-                <h3 className="text-base font-bold mb-2" style={{ color: C.black }}>איכות ציטוט</h3>
-                <p className="text-xs mb-4" style={{ color: C.gray400 }}>כמה טוב ה-AI מקשר אליכם</p>
-                <div className="flex items-center gap-6">
-                  <DonutChart
-                    size={120}
-                    strokeWidth={18}
-                    data={[
-                      { label: "גבוה", value: 35, color: C.teal },
-                      { label: "בינוני", value: 30, color: C.amber },
-                      { label: "נמוך", value: 35, color: C.red },
-                    ]}
-                  />
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full" style={{ background: C.teal }} />
-                      <span className="text-sm" style={{ color: C.gray700 }}>גבוה</span>
-                      <span className="text-sm font-bold" style={{ color: C.teal }}>35%</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full" style={{ background: C.amber }} />
-                      <span className="text-sm" style={{ color: C.gray700 }}>בינוני</span>
-                      <span className="text-sm font-bold" style={{ color: C.amberText }}>30%</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full" style={{ background: C.red }} />
-                      <span className="text-sm" style={{ color: C.gray700 }}>נמוך</span>
-                      <span className="text-sm font-bold" style={{ color: C.redText }}>35%</span>
-                    </div>
+              <div style={{ ...card, padding: 24 }}>
+                <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000000", margin: "0 0 4px" }}>איכות ציטוט</h3>
+                <p style={{ fontSize: 12, color: "#727272", margin: "0 0 16px" }}>כמה טוב ה-AI מקשר אליכם</p>
+                <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
+                  <DonutChart size={110} strokeWidth={16} data={[{ label: "גבוה", value: 35, color: "#10A37F" }, { label: "בינוני", value: 30, color: "#BFBFBF" }, { label: "נמוך", value: 35, color: "#000000" }]} />
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}><div style={{ width: 10, height: 10, borderRadius: 5, background: "#10A37F" }} /><span style={{ fontSize: 13, color: "#333333" }}>גבוה</span><span style={{ fontSize: 13, fontWeight: 600, color: "#000000" }}>35%</span></div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}><div style={{ width: 10, height: 10, borderRadius: 5, background: "#BFBFBF" }} /><span style={{ fontSize: 13, color: "#333333" }}>בינוני</span><span style={{ fontSize: 13, fontWeight: 600, color: "#000000" }}>30%</span></div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}><div style={{ width: 10, height: 10, borderRadius: 5, background: "#000000" }} /><span style={{ fontSize: 13, color: "#333333" }}>נמוך</span><span style={{ fontSize: 13, fontWeight: 600, color: "#000000" }}>35%</span></div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* ── Signals: What Worked / What's Missing ── */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* What Worked */}
-              <div className="bg-white rounded-[10px] border border-[#BFBFBF] p-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: C.greenBg }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.greenText} strokeWidth="2"><path d="M20 6L9 17l-5-5" /></svg>
-                  </div>
-                  <h3 className="text-base font-bold" style={{ color: C.greenText }}>מה עבד</h3>
+            {/* Signals */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+              <div style={{ ...card, padding: 24 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10A37F" strokeWidth="2.5"><path d="M20 6L9 17l-5-5" /></svg>
+                  <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000000", margin: 0 }}>מה עבד</h3>
                 </div>
-                <div className="space-y-2.5">
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   {POSITIVE_SIGNALS.map((signal, i) => (
-                    <div key={i} className="flex items-start gap-2.5">
-                      <div className="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style={{ background: C.greenText }} />
-                      <span className="text-sm" style={{ color: C.gray700 }}>{signal}</span>
+                    <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+                      <div style={{ width: 5, height: 5, borderRadius: 3, marginTop: 7, flexShrink: 0, background: "#10A37F" }} />
+                      <span style={{ ...bodyText }}>{signal}</span>
                     </div>
                   ))}
                 </div>
               </div>
-
-              {/* What's Missing */}
-              <div className="bg-white rounded-[10px] border border-[#BFBFBF] p-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: C.redBg }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.redText} strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
-                  </div>
-                  <h3 className="text-base font-bold" style={{ color: C.redText }}>מה חסר</h3>
+              <div style={{ ...card, padding: 24 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12" /></svg>
+                  <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000000", margin: 0 }}>מה חסר</h3>
                 </div>
-                <div className="space-y-2.5">
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   {NEGATIVE_SIGNALS.map((signal, i) => (
-                    <div key={i} className="flex items-start gap-2.5">
-                      <div className="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style={{ background: C.redText }} />
-                      <span className="text-sm" style={{ color: C.gray700 }}>{signal}</span>
+                    <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+                      <div style={{ width: 5, height: 5, borderRadius: 3, marginTop: 7, flexShrink: 0, background: "#000000" }} />
+                      <span style={{ ...bodyText }}>{signal}</span>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
 
-            {/* ── Target Audiences Summary ── */}
-            <div className="bg-white rounded-[10px] border border-[#BFBFBF] p-6">
-              <h3 className="text-base font-bold mb-5" style={{ color: C.black }}>קהלי יעד</h3>
-              <div className="space-y-3">
-                {PERSONAS.map((p) => (
-                  <div key={p.id} className="flex items-center gap-4">
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{ background: p.color }}>
-                      {p.name.charAt(0)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-sm font-semibold" style={{ color: C.black }}>{p.name}</span>
-                        <span className="text-xs" style={{ color: C.gray400 }}>{p.role}</span>
-                      </div>
-                      <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: C.gray100 }}>
-                        <div className="h-full rounded-full transition-all duration-700" style={{ width: `${p.score}%`, background: p.color }} />
-                      </div>
-                    </div>
-                    <span className="text-sm font-bold w-10 text-left" style={{ color: p.color }}>{p.score}%</span>
-                    <span className="text-xs w-20 text-left" style={{ color: C.gray400 }}>{p.queries} שאילתות</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* ── SEO + GEO Connection ── */}
-            <div className="bg-white rounded-[10px] border border-[#BFBFBF] p-6">
-              <div className="flex items-center justify-between mb-5">
-                <h3 className="text-base font-bold" style={{ color: C.black }}>קשר בין SEO ל-GEO</h3>
-                <div className="flex items-center gap-4">
-                  {/* SEO Toggle */}
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-medium" style={{ color: C.gray600 }}>SEO</span>
-                    <button
-                      onClick={() => setSeoToggle(!seoToggle)}
-                      className="relative w-10 h-5.5 rounded-full transition-all duration-300"
-                      style={{ background: seoToggle ? C.teal : C.gray300, width: 40, height: 22 }}
-                    >
-                      <div
-                        className="absolute top-0.5 w-4.5 h-4.5 rounded-full bg-white shadow-sm transition-all duration-300"
-                        style={{ width: 18, height: 18, top: 2, left: seoToggle ? 20 : 2 }}
-                      />
+            {/* SEO + GEO */}
+            <div style={{ ...card, padding: 24 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+                <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000000", margin: 0 }}>קשר בין SEO ל-GEO</h3>
+                <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <span style={{ fontSize: 12, fontWeight: 500, color: "#333333" }}>SEO</span>
+                    <button onClick={() => setSeoToggle(!seoToggle)} style={{ position: "relative", width: 36, height: 20, borderRadius: 10, border: "1px solid #BFBFBF", background: seoToggle ? "#10A37F" : "#F9F9F9", cursor: "pointer", transition: "background 0.3s ease" }}>
+                      <div style={{ position: "absolute", width: 16, height: 16, borderRadius: 8, background: "#FFFFFF", top: 1, left: seoToggle ? 17 : 1, transition: "left 0.3s ease", border: "1px solid #DDDDDD" }} />
                     </button>
                   </div>
-                  {/* GEO Toggle */}
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-medium" style={{ color: C.gray600 }}>GEO</span>
-                    <button
-                      onClick={() => setGeoToggle(!geoToggle)}
-                      className="relative rounded-full transition-all duration-300"
-                      style={{ background: geoToggle ? C.teal : C.gray300, width: 40, height: 22 }}
-                    >
-                      <div
-                        className="absolute rounded-full bg-white shadow-sm transition-all duration-300"
-                        style={{ width: 18, height: 18, top: 2, left: geoToggle ? 20 : 2 }}
-                      />
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <span style={{ fontSize: 12, fontWeight: 500, color: "#333333" }}>GEO</span>
+                    <button onClick={() => setGeoToggle(!geoToggle)} style={{ position: "relative", width: 36, height: 20, borderRadius: 10, border: "1px solid #BFBFBF", background: geoToggle ? "#10A37F" : "#F9F9F9", cursor: "pointer", transition: "background 0.3s ease" }}>
+                      <div style={{ position: "absolute", width: 16, height: 16, borderRadius: 8, background: "#FFFFFF", top: 1, left: geoToggle ? 17 : 1, transition: "left 0.3s ease", border: "1px solid #DDDDDD" }} />
                     </button>
                   </div>
                 </div>
               </div>
-
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+              <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", fontSize: 14, borderCollapse: "collapse" }}>
                   <thead>
-                    <tr style={{ borderBottom: `2px solid ${C.gray100}` }}>
-                      <th className="text-right py-3 px-3 font-semibold" style={{ color: C.gray500 }}>מילת מפתח</th>
-                      {seoToggle && (
-                        <>
-                          <th className="text-right py-3 px-3 font-semibold" style={{ color: C.gray500 }}>נפח חיפוש</th>
-                          <th className="text-right py-3 px-3 font-semibold" style={{ color: C.gray500 }}>קושי</th>
-                        </>
-                      )}
-                      {geoToggle && (
-                        <th className="text-right py-3 px-3 font-semibold" style={{ color: C.gray500 }}>שאילתות קשורות</th>
-                      )}
+                    <tr style={{ borderBottom: "1px solid #BFBFBF" }}>
+                      <th style={{ textAlign: "right", padding: "10px 12px", fontWeight: 600, color: "#727272", fontSize: 13 }}>מילת מפתח</th>
+                      {seoToggle && <><th style={{ textAlign: "right", padding: "10px 12px", fontWeight: 600, color: "#727272", fontSize: 13 }}>נפח חיפוש</th><th style={{ textAlign: "right", padding: "10px 12px", fontWeight: 600, color: "#727272", fontSize: 13 }}>קושי</th></>}
+                      {geoToggle && <th style={{ textAlign: "right", padding: "10px 12px", fontWeight: 600, color: "#727272", fontSize: 13 }}>שאילתות קשורות</th>}
                     </tr>
                   </thead>
                   <tbody>
                     {SEO_GEO_DATA.map((row, i) => (
-                      <tr key={i} style={{ borderBottom: `1px solid ${C.gray100}` }}>
-                        <td className="py-3 px-3">
-                          <span className="font-medium" style={{ color: C.black }}>{row.keyword}</span>
-                        </td>
-                        {seoToggle && (
-                          <>
-                            <td className="py-3 px-3">
-                              <span className="text-sm font-medium" style={{ color: C.gray700 }}>{row.volume.toLocaleString()}</span>
-                            </td>
-                            <td className="py-3 px-3">
-                              <div className="flex items-center gap-2">
-                                <div className="w-10 h-1.5 rounded-full overflow-hidden" style={{ background: C.gray100 }}>
-                                  <div className="h-full rounded-full" style={{
-                                    width: `${row.difficulty}%`,
-                                    background: row.difficulty >= 50 ? C.red : row.difficulty >= 30 ? C.amber : C.green,
-                                  }} />
-                                </div>
-                                <span className="text-xs" style={{ color: row.difficulty >= 50 ? C.redText : row.difficulty >= 30 ? C.amberText : C.greenText }}>{row.difficulty}</span>
-                              </div>
-                            </td>
-                          </>
-                        )}
-                        {geoToggle && (
-                          <td className="py-3 px-3">
-                            <div className="flex flex-wrap gap-1.5">
-                              {row.relatedQueries.map((q, j) => (
-                                <span key={j} className="inline-flex text-xs px-2 py-1 rounded-lg" style={{ background: `${C.teal}10`, color: C.tealDark }}>
-                                  {q}
-                                </span>
-                              ))}
+                      <tr key={i} style={{ borderBottom: thinBorder }}>
+                        <td style={{ padding: "10px 12px" }}><span style={{ fontWeight: 500, color: "#000000" }}>{row.keyword}</span></td>
+                        {seoToggle && <>
+                          <td style={{ padding: "10px 12px" }}><span style={{ fontSize: 14, fontWeight: 500, color: "#333333" }}>{row.volume.toLocaleString()}</span></td>
+                          <td style={{ padding: "10px 12px" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                              <div style={{ width: 40, height: 4, borderRadius: 2, overflow: "hidden", background: "#F9F9F9" }}><div style={{ width: `${row.difficulty}%`, height: "100%", borderRadius: 2, background: "#10A37F" }} /></div>
+                              <span style={{ fontSize: 12, color: "#333333" }}>{row.difficulty}</span>
                             </div>
                           </td>
-                        )}
+                        </>}
+                        {geoToggle && <td style={{ padding: "10px 12px" }}>
+                          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                            {row.relatedQueries.map((q, j) => (<span key={j} style={{ display: "inline-flex", fontSize: 12, padding: "3px 8px", borderRadius: 7, border: thinBorder, background: "#F9F9F9", color: "#333333" }}>{q}</span>))}
+                          </div>
+                        </td>}
                       </tr>
                     ))}
                   </tbody>
@@ -817,275 +593,167 @@ export default function ScanPage() {
               </div>
             </div>
 
-            {/* ── Top 5 Queries Preview ── */}
-            <div className="bg-white rounded-[10px] border border-[#BFBFBF] p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-base font-bold" style={{ color: C.black }}>5 שאילתות מובילות</h3>
-                <button
-                  onClick={() => setActiveTab("queries")}
-                  className="text-sm font-medium hover:underline"
-                  style={{ color: C.teal }}
-                >
-                  הצג את כל {totalQueries} השאילתות
-                </button>
+            {/* Top 5 Queries */}
+            <div style={{ ...card, padding: 24 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+                <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000000", margin: 0 }}>5 שאילתות מובילות</h3>
+                <button onClick={() => setActiveTab("queries")} style={{ fontSize: 13, fontWeight: 500, color: "#10A37F", background: "transparent", border: "none", cursor: "pointer", textDecoration: "underline" }}>הצג את כל {totalQueries} השאילתות</button>
               </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr style={{ borderBottom: `2px solid ${C.gray100}` }}>
-                      <th className="text-right py-2.5 px-2 font-semibold" style={{ color: C.gray500 }}>שאילתה</th>
-                      <th className="text-right py-2.5 px-2 font-semibold" style={{ color: C.gray500 }}>פרסונה</th>
-                      <th className="text-right py-2.5 px-2 font-semibold" style={{ color: C.gray500 }}>שלב</th>
-                      <th className="text-center py-2.5 px-2 font-semibold" style={{ color: C.gray500 }}>GPT</th>
-                      <th className="text-center py-2.5 px-2 font-semibold" style={{ color: C.gray500 }}>Gemini</th>
+              <table style={{ width: "100%", fontSize: 14, borderCollapse: "collapse" }}>
+                <thead>
+                  <tr style={{ borderBottom: "1px solid #BFBFBF" }}>
+                    <th style={{ textAlign: "right", padding: "8px 10px", fontWeight: 600, color: "#727272", fontSize: 13 }}>שאילתה</th>
+                    <th style={{ textAlign: "right", padding: "8px 10px", fontWeight: 600, color: "#727272", fontSize: 13 }}>פרסונה</th>
+                    <th style={{ textAlign: "right", padding: "8px 10px", fontWeight: 600, color: "#727272", fontSize: 13 }}>שלב</th>
+                    <th style={{ textAlign: "center", padding: "8px 10px", fontWeight: 600, color: "#727272", fontSize: 13 }}>GPT</th>
+                    <th style={{ textAlign: "center", padding: "8px 10px", fontWeight: 600, color: "#727272", fontSize: 13 }}>Gemini</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {TOP_5_QUERIES.map((q) => (
+                    <tr key={q.id} style={{ borderBottom: thinBorder }}>
+                      <td style={{ padding: "10px 10px", fontWeight: 500, color: "#333333" }}>{q.text}</td>
+                      <td style={{ padding: "10px 10px" }}><PersonaBadge personaId={q.persona} /></td>
+                      <td style={{ padding: "10px 10px" }}><StageBadge stage={q.stage} /></td>
+                      <td style={{ padding: "10px 10px", textAlign: "center" }}><MentionBadge mentioned={q.gpt} /></td>
+                      <td style={{ padding: "10px 10px", textAlign: "center" }}><MentionBadge mentioned={q.gemini} /></td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {TOP_5_QUERIES.map((q) => (
-                      <tr key={q.id} style={{ borderBottom: `1px solid ${C.gray100}` }}>
-                        <td className="py-3 px-2 font-medium" style={{ color: C.gray700 }}>{q.text}</td>
-                        <td className="py-3 px-2"><PersonaBadge personaId={q.persona} /></td>
-                        <td className="py-3 px-2"><StageBadge stage={q.stage} /></td>
-                        <td className="py-3 px-2 text-center"><MentionBadge mentioned={q.gpt} /></td>
-                        <td className="py-3 px-2 text-center"><MentionBadge mentioned={q.gemini} /></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         )}
 
-        {/* ════════════════════════════════════════════════ */}
-        {/* TAB 2: QUERIES (שאילתות) */}
-        {/* ════════════════════════════════════════════════ */}
+        {/* TAB 2: QUERIES */}
         {activeTab === "queries" && (
-          <div className="animate-fade-in-up">
-            {/* Filters Row */}
-            <div className="bg-white rounded-[10px] border border-[#BFBFBF] p-4 mb-4">
-              <div className="flex flex-wrap items-center gap-3">
-                {/* Status Filters */}
-                <div className="flex items-center gap-1.5">
-                  {([
-                    { key: "all", label: "הכל" },
-                    { key: "mentioned", label: "מוזכר" },
-                    { key: "missing", label: "חסר" },
-                    { key: "negative", label: "שלילי" },
-                  ] as const).map((f) => (
-                    <button
-                      key={f.key}
-                      onClick={() => setQueryFilter(f.key)}
-                      className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
-                      style={{
-                        background: queryFilter === f.key ? C.teal : C.gray50,
-                        color: queryFilter === f.key ? "white" : C.gray600,
-                      }}
-                    >
-                      {f.label}
-                      <span className="opacity-70">({filterCounts[f.key]})</span>
+          <div>
+            <div style={{ ...card, padding: 16, marginBottom: 16 }}>
+              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  {([{ key: "all" as const, label: "הכל" }, { key: "mentioned" as const, label: "מוזכר" }, { key: "missing" as const, label: "חסר" }, { key: "negative" as const, label: "שלילי" }]).map((f) => (
+                    <button key={f.key} onClick={() => setQueryFilter(f.key)} style={{ display: "flex", alignItems: "center", gap: 4, padding: "5px 12px", borderRadius: 9, fontSize: 12, fontWeight: queryFilter === f.key ? 600 : 400, background: queryFilter === f.key ? "#000000" : "#FFFFFF", color: queryFilter === f.key ? "#FFFFFF" : "#333333", border: queryFilter === f.key ? "1px solid #000000" : "1px solid #BFBFBF", cursor: "pointer" }}>
+                      {f.label} <span style={{ opacity: 0.7 }}>({filterCounts[f.key]})</span>
                     </button>
                   ))}
                 </div>
-
-                <div className="w-px h-6" style={{ background: C.gray200 }} />
-
-                {/* Persona Filter */}
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <button
-                    onClick={() => setPersonaFilter("all")}
-                    className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
-                    style={{
-                      background: personaFilter === "all" ? C.black : C.gray50,
-                      color: personaFilter === "all" ? "white" : C.gray600,
-                    }}
-                  >
-                    כל הפרסונות
-                  </button>
+                <div style={{ width: 1, height: 24, background: "#BFBFBF" }} />
+                <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+                  <button onClick={() => setPersonaFilter("all")} style={{ padding: "5px 12px", borderRadius: 9, fontSize: 12, fontWeight: personaFilter === "all" ? 600 : 400, background: personaFilter === "all" ? "#000000" : "#FFFFFF", color: personaFilter === "all" ? "#FFFFFF" : "#333333", border: personaFilter === "all" ? "1px solid #000000" : "1px solid #BFBFBF", cursor: "pointer" }}>כל הפרסונות</button>
                   {PERSONAS.map((p) => (
-                    <button
-                      key={p.id}
-                      onClick={() => setPersonaFilter(p.id)}
-                      className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
-                      style={{
-                        background: personaFilter === p.id ? `${p.color}20` : C.gray50,
-                        color: personaFilter === p.id ? p.color : C.gray600,
-                        border: personaFilter === p.id ? `1px solid ${p.color}40` : "1px solid transparent",
-                      }}
-                    >
-                      {p.name} — {p.role}
-                    </button>
+                    <button key={p.id} onClick={() => setPersonaFilter(p.id)} style={{ padding: "5px 12px", borderRadius: 9, fontSize: 12, fontWeight: personaFilter === p.id ? 600 : 400, background: personaFilter === p.id ? "#000000" : "#FFFFFF", color: personaFilter === p.id ? "#FFFFFF" : "#333333", border: personaFilter === p.id ? "1px solid #000000" : "1px solid #BFBFBF", cursor: "pointer" }}>{p.name} - {p.role}</button>
                   ))}
                 </div>
               </div>
             </div>
 
-            {/* Queries Table */}
-            <div className="bg-white rounded-[10px] border border-[#BFBFBF] overflow-hidden">
-              <table className="w-full text-sm">
+            <div style={{ ...card, overflow: "hidden" }}>
+              <table style={{ width: "100%", fontSize: 14, borderCollapse: "collapse" }}>
                 <thead>
-                  <tr style={{ background: C.gray50, borderBottom: `2px solid ${C.gray200}` }}>
-                    <th className="text-right py-3 px-4 font-semibold" style={{ color: C.gray500 }}>#</th>
-                    <th className="text-right py-3 px-4 font-semibold" style={{ color: C.gray500 }}>שאילתה</th>
-                    <th className="text-right py-3 px-4 font-semibold" style={{ color: C.gray500 }}>פרסונה</th>
-                    <th className="text-right py-3 px-4 font-semibold" style={{ color: C.gray500 }}>שלב</th>
-                    <th className="text-center py-3 px-4 font-semibold" style={{ color: C.gray500 }}>ChatGPT</th>
-                    <th className="text-center py-3 px-4 font-semibold" style={{ color: C.gray500 }}>Gemini</th>
-                    <th className="text-center py-3 px-4 font-semibold" style={{ color: C.gray500 }}></th>
+                  <tr style={{ background: "#F9F9F9", borderBottom: "1px solid #BFBFBF" }}>
+                    <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>#</th>
+                    <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>שאילתה</th>
+                    <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>פרסונה</th>
+                    <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>שלב</th>
+                    <th style={{ textAlign: "center", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>ChatGPT</th>
+                    <th style={{ textAlign: "center", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>Gemini</th>
+                    <th style={{ textAlign: "center", padding: "10px 14px", width: 40 }}></th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredQueries.map((q) => (
-                    <>
-                      <tr
-                        key={q.id}
-                        className="cursor-pointer hover:bg-gray-50 transition-colors"
-                        onClick={() => setExpandedQuery(expandedQuery === q.id ? null : q.id)}
-                        style={{ borderBottom: expandedQuery === q.id ? "none" : `1px solid ${C.gray100}` }}
-                      >
-                        <td className="py-3 px-4 font-medium" style={{ color: C.gray400 }}>{q.id}</td>
-                        <td className="py-3 px-4 font-medium" style={{ color: C.gray700, maxWidth: 320 }}>{q.text}</td>
-                        <td className="py-3 px-4"><PersonaBadge personaId={q.persona} /></td>
-                        <td className="py-3 px-4"><StageBadge stage={q.stage} /></td>
-                        <td className="py-3 px-4 text-center"><MentionBadge mentioned={q.gpt} /></td>
-                        <td className="py-3 px-4 text-center"><MentionBadge mentioned={q.gemini} /></td>
-                        <td className="py-3 px-4 text-center">
-                          <svg
-                            width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.gray400} strokeWidth="2"
-                            className="transition-transform duration-300 inline-block"
-                            style={{ transform: expandedQuery === q.id ? "rotate(180deg)" : "rotate(0deg)" }}
-                          >
-                            <path d="M6 9l6 6 6-6" />
-                          </svg>
+                    <React.Fragment key={q.id}>
+                      <tr onClick={() => setExpandedQuery(expandedQuery === q.id ? null : q.id)} style={{ borderBottom: expandedQuery === q.id ? "none" : thinBorder, cursor: "pointer" }} onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "#F9F9F9"; }} onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "#FFFFFF"; }}>
+                        <td style={{ padding: "10px 14px", fontWeight: 500, color: "#A2A9B0" }}>{q.id}</td>
+                        <td style={{ padding: "10px 14px", fontWeight: 500, color: "#333333", maxWidth: 320 }}>{q.text}</td>
+                        <td style={{ padding: "10px 14px" }}><PersonaBadge personaId={q.persona} /></td>
+                        <td style={{ padding: "10px 14px" }}><StageBadge stage={q.stage} /></td>
+                        <td style={{ padding: "10px 14px", textAlign: "center" }}><MentionBadge mentioned={q.gpt} /></td>
+                        <td style={{ padding: "10px 14px", textAlign: "center" }}><MentionBadge mentioned={q.gemini} /></td>
+                        <td style={{ padding: "10px 14px", textAlign: "center" }}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#727272" strokeWidth="2" style={{ display: "inline-block", transform: expandedQuery === q.id ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.3s ease" }}><path d="M6 9l6 6 6-6" /></svg>
                         </td>
                       </tr>
                       {expandedQuery === q.id && (
                         <tr key={`${q.id}-detail`}>
-                          <td colSpan={7} className="px-4 pb-4">
-                            <div className="rounded-xl p-4 space-y-4" style={{ background: C.gray50, border: `1px solid ${C.gray200}` }}>
-                              {/* GPT Response */}
-                              <div className="rounded-lg p-4" style={{ background: "white", border: `1px solid ${C.gray200}` }}>
-                                <div className="flex items-center gap-2 mb-2">
-                                  <div className="w-6 h-6 rounded flex items-center justify-center" style={{ background: "#10A37F15" }}>
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="#10A37F"><path d="M22.282 9.821a5.985 5.985 0 00-.516-4.91 6.046 6.046 0 00-6.51-2.9A6.065 6.065 0 0011.702.418 6.004 6.004 0 005.354 2.08a5.974 5.974 0 00-3.994 2.9 6.042 6.042 0 00.743 7.097 5.98 5.98 0 00.51 4.911 6.051 6.051 0 006.515 2.9A5.985 5.985 0 0013.702 22a6.003 6.003 0 006.349-1.662 5.98 5.98 0 003.994-2.9 6.042 6.042 0 00-.743-7.097l-.02-.02z" /></svg>
-                                  </div>
-                                  <span className="text-xs font-semibold" style={{ color: "#10A37F" }}>ChatGPT (GPT-4o)</span>
+                          <td colSpan={7} style={{ padding: "0 14px 14px" }}>
+                            <div style={{ borderRadius: 10, padding: 16, background: "#F9F9F9", border: thinBorder, display: "flex", flexDirection: "column", gap: 12 }}>
+                              <div style={{ borderRadius: 10, padding: 14, background: "#FFFFFF", border: thinBorder }}>
+                                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#10A37F"><path d="M22.282 9.821a5.985 5.985 0 00-.516-4.91 6.046 6.046 0 00-6.51-2.9A6.065 6.065 0 0011.702.418 6.004 6.004 0 005.354 2.08a5.974 5.974 0 00-3.994 2.9 6.042 6.042 0 00.743 7.097 5.98 5.98 0 00.51 4.911 6.051 6.051 0 006.515 2.9A5.985 5.985 0 0013.702 22a6.003 6.003 0 006.349-1.662 5.98 5.98 0 003.994-2.9 6.042 6.042 0 00-.743-7.097l-.02-.02z" /></svg>
+                                  <span style={{ fontSize: 12, fontWeight: 600, color: "#10A37F" }}>ChatGPT (GPT-4o)</span>
                                   <MentionBadge mentioned={q.gpt} />
                                 </div>
-                                <p className="text-sm leading-relaxed" style={{ color: C.gray600 }}>{q.gptSnippet}</p>
+                                <p style={{ fontSize: 13, lineHeight: 1.6, color: "#333333", margin: 0 }}>{q.gptSnippet}</p>
                               </div>
-                              {/* Gemini Response */}
-                              <div className="rounded-lg p-4" style={{ background: "white", border: `1px solid ${C.gray200}` }}>
-                                <div className="flex items-center gap-2 mb-2">
-                                  <div className="w-6 h-6 rounded flex items-center justify-center" style={{ background: "#4285F415" }}>
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="#4285F4"><path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zm0 3.6c2.21 0 4.122.84 5.64 2.16l-2.4 2.4A5.356 5.356 0 0012 7.2c-2.652 0-4.8 2.148-4.8 4.8s2.148 4.8 4.8 4.8c2.316 0 4.128-1.488 4.56-3.6H12v-3.6h8.28c.12.6.12 1.2.12 1.8 0 4.644-3.156 8.4-8.4 8.4-4.632 0-8.4-3.768-8.4-8.4S7.368 3.6 12 3.6z" /></svg>
-                                  </div>
-                                  <span className="text-xs font-semibold" style={{ color: "#4285F4" }}>Google Gemini</span>
+                              <div style={{ borderRadius: 10, padding: 14, background: "#FFFFFF", border: thinBorder }}>
+                                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#4285F4"><path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zm0 3.6c2.21 0 4.122.84 5.64 2.16l-2.4 2.4A5.356 5.356 0 0012 7.2c-2.652 0-4.8 2.148-4.8 4.8s2.148 4.8 4.8 4.8c2.316 0 4.128-1.488 4.56-3.6H12v-3.6h8.28c.12.6.12 1.2.12 1.8 0 4.644-3.156 8.4-8.4 8.4-4.632 0-8.4-3.768-8.4-8.4S7.368 3.6 12 3.6z" /></svg>
+                                  <span style={{ fontSize: 12, fontWeight: 600, color: "#4285F4" }}>Google Gemini</span>
                                   <MentionBadge mentioned={q.gemini} />
                                 </div>
-                                <p className="text-sm leading-relaxed" style={{ color: C.gray600 }}>{q.geminiSnippet}</p>
+                                <p style={{ fontSize: 13, lineHeight: 1.6, color: "#333333", margin: 0 }}>{q.geminiSnippet}</p>
                               </div>
                             </div>
                           </td>
                         </tr>
                       )}
-                    </>
+                    </React.Fragment>
                   ))}
                 </tbody>
               </table>
-
-              {/* Table Footer */}
-              <div className="px-4 py-3 flex items-center justify-between" style={{ borderTop: `1px solid ${C.gray200}`, background: C.gray50 }}>
-                <span className="text-xs" style={{ color: C.gray500 }}>
-                  מציג {filteredQueries.length} מתוך {totalQueries} שאילתות
-                </span>
-                <div className="flex items-center gap-4 text-xs" style={{ color: C.gray500 }}>
-                  <span style={{ color: C.greenText }}>מוזכר: {filterCounts.mentioned}</span>
-                  <span style={{ color: C.redText }}>חסר: {filterCounts.missing}</span>
-                  <span>שלילי: 0</span>
+              <div style={{ padding: "10px 14px", display: "flex", alignItems: "center", justifyContent: "space-between", borderTop: "1px solid #BFBFBF", background: "#F9F9F9" }}>
+                <span style={{ fontSize: 12, color: "#727272" }}>מציג {filteredQueries.length} מתוך {totalQueries} שאילתות</span>
+                <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 12 }}>
+                  <span style={{ color: "#10A37F" }}>מוזכר: {filterCounts.mentioned}</span>
+                  <span style={{ color: "#000000" }}>חסר: {filterCounts.missing}</span>
+                  <span style={{ color: "#727272" }}>שלילי: 0</span>
                 </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* ════════════════════════════════════════════════ */}
-        {/* TAB 3: AUDIENCES (קהלים) */}
-        {/* ════════════════════════════════════════════════ */}
+        {/* TAB 3: AUDIENCES */}
         {activeTab === "audiences" && (
-          <div className="animate-fade-in-up">
-            {/* Header with "Suggest Persona" button */}
-            <div className="flex items-center justify-between mb-6">
+          <div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
               <div>
-                <h2 className="text-lg font-bold" style={{ color: C.black }}>קהלי יעד שזוהו</h2>
-                <p className="text-sm" style={{ color: C.gray500 }}>{PERSONAS.length} פרסונות זוהו בסריקה האחרונה</p>
+                <h2 style={{ fontSize: 18, fontWeight: 600, color: "#000000", margin: "0 0 4px" }}>קהלי יעד שזוהו</h2>
+                <p style={{ fontSize: 13, color: "#727272", margin: 0 }}>{PERSONAS.length} פרסונות זוהו בסריקה האחרונה</p>
               </div>
-              <button
-                onClick={() => setShowPersonaForm(!showPersonaForm)}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all"
-                style={{ background: C.teal, color: "white" }}
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-                  <path d="M12 5v14M5 12h14" />
-                </svg>
+              <button onClick={() => setShowPersonaForm(!showPersonaForm)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 18px", background: "#000000", color: "#FFFFFF", fontSize: 13, fontWeight: 600, border: "1px solid #000000", borderRadius: 9, cursor: "pointer" }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2"><path d="M12 5v14M5 12h14" /></svg>
                 הצע פרסונה
               </button>
             </div>
 
-            {/* Suggest Persona Form (collapsible) */}
             {showPersonaForm && (
-              <div className="bg-white rounded-[10px] border border-[#BFBFBF] p-6 mb-6" style={{ borderColor: `${C.teal}40` }}>
-                <div className="flex items-center gap-2 mb-4">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={C.teal} strokeWidth="2">
-                    <path d="M12 5v14M5 12h14" />
-                  </svg>
-                  <h3 className="text-base font-bold" style={{ color: C.black }}>הצעת פרסונה חדשה</h3>
+              <div style={{ ...card, padding: 24, marginBottom: 24 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10A37F" strokeWidth="2"><path d="M12 5v14M5 12h14" /></svg>
+                  <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000000", margin: 0 }}>הצעת פרסונה חדשה</h3>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                   <div>
-                    <label className="block text-sm font-medium mb-1.5" style={{ color: C.gray700 }}>שם הפרסונה</label>
-                    <input
-                      type="text"
-                      placeholder="לדוגמה: שרה"
-                      className="w-full px-3 py-2.5 rounded-xl text-sm border outline-none focus:ring-2 transition-all"
-                      style={{ borderColor: C.gray200, color: C.black }}
-                    />
+                    <label style={{ display: "block", fontSize: 13, fontWeight: 500, marginBottom: 6, color: "#333333" }}>שם הפרסונה</label>
+                    <input type="text" placeholder="לדוגמה: שרה" style={{ width: "100%", padding: "8px 12px", borderRadius: 10, fontSize: 14, border: "1px solid #BFBFBF", color: "#000000", outline: "none", background: "#FFFFFF", boxSizing: "border-box" }} />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1.5" style={{ color: C.gray700 }}>תפקיד / תיאור</label>
-                    <input
-                      type="text"
-                      placeholder="לדוגמה: פיזיותרפיסטית המחפשת שיתוף פעולה"
-                      className="w-full px-3 py-2.5 rounded-xl text-sm border outline-none focus:ring-2 transition-all"
-                      style={{ borderColor: C.gray200, color: C.black }}
-                    />
+                    <label style={{ display: "block", fontSize: 13, fontWeight: 500, marginBottom: 6, color: "#333333" }}>תפקיד / תיאור</label>
+                    <input type="text" placeholder="לדוגמה: פיזיותרפיסטית המחפשת שיתוף פעולה" style={{ width: "100%", padding: "8px 12px", borderRadius: 10, fontSize: 14, border: "1px solid #BFBFBF", color: "#000000", outline: "none", background: "#FFFFFF", boxSizing: "border-box" }} />
                   </div>
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium mb-1.5" style={{ color: C.gray700 }}>תיאור מפורט</label>
-                    <textarea
-                      rows={3}
-                      placeholder="תאר/י את הפרסונה, מה היא מחפשת, מהם הצרכים שלה..."
-                      className="w-full px-3 py-2.5 rounded-xl text-sm border outline-none focus:ring-2 transition-all resize-none"
-                      style={{ borderColor: C.gray200, color: C.black }}
-                    />
+                  <div style={{ gridColumn: "span 2" }}>
+                    <label style={{ display: "block", fontSize: 13, fontWeight: 500, marginBottom: 6, color: "#333333" }}>תיאור מפורט</label>
+                    <textarea rows={3} placeholder="תאר/י את הפרסונה, מה היא מחפשת, מהם הצרכים שלה..." style={{ width: "100%", padding: "8px 12px", borderRadius: 10, fontSize: 14, border: "1px solid #BFBFBF", color: "#000000", outline: "none", resize: "none", background: "#FFFFFF", boxSizing: "border-box" }} />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1.5" style={{ color: C.gray700 }}>תגיות</label>
-                    <input
-                      type="text"
-                      placeholder="גיל, מיקום, תחום — מופרדים בפסיקים"
-                      className="w-full px-3 py-2.5 rounded-xl text-sm border outline-none focus:ring-2 transition-all"
-                      style={{ borderColor: C.gray200, color: C.black }}
-                    />
+                    <label style={{ display: "block", fontSize: 13, fontWeight: 500, marginBottom: 6, color: "#333333" }}>תגיות</label>
+                    <input type="text" placeholder="גיל, מיקום, תחום - מופרדים בפסיקים" style={{ width: "100%", padding: "8px 12px", borderRadius: 10, fontSize: 14, border: "1px solid #BFBFBF", color: "#000000", outline: "none", background: "#FFFFFF", boxSizing: "border-box" }} />
                   </div>
-                  <div className="flex items-end">
-                    <button
-                      className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-medium transition-all"
-                      style={{ background: C.teal, color: "white" }}
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-                        <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
-                      </svg>
+                  <div style={{ display: "flex", alignItems: "flex-end" }}>
+                    <button style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 20px", background: "#000000", color: "#FFFFFF", fontSize: 13, fontWeight: 600, border: "1px solid #000000", borderRadius: 9, cursor: "pointer" }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" /></svg>
                       שלח הצעה
                     </button>
                   </div>
@@ -1093,76 +761,69 @@ export default function ScanPage() {
               </div>
             )}
 
-            {/* Personas Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {PERSONAS.map((p) => {
-                const personaQueries = QUERIES.filter((q) => q.persona === p.id);
-                return (
-                  <div key={p.id} className="bg-white rounded-[10px] border border-[#BFBFBF] overflow-hidden hover:border-gray-200 transition-all duration-300">
-                    {/* Top color accent */}
-                    <div className="h-1" style={{ background: p.color }} />
-                    <div className="p-5">
-                      {/* Header */}
-                      <div className="flex items-start gap-3 mb-4">
-                        <div className="w-12 h-12 rounded-xl flex items-center justify-center text-lg font-bold text-white shrink-0" style={{ background: p.color }}>
-                          {p.name.charAt(0)}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-base font-bold truncate" style={{ color: C.black }}>{p.name}</h3>
-                          <p className="text-sm" style={{ color: p.color }}>{p.role}</p>
-                        </div>
-                        <div className="text-left">
-                          <div className="text-xl font-bold" style={{ color: p.color }}>{p.score}%</div>
-                          <div className="text-xs" style={{ color: C.gray400 }}>רלוונטיות</div>
-                        </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
+              {PERSONAS.map((p) => (
+                <div key={p.id} style={{ ...card, overflow: "hidden" }}>
+                  <div style={{ height: 3, background: "#10A37F" }} />
+                  <div style={{ padding: 20 }}>
+                    <div style={{ display: "flex", alignItems: "flex-start", gap: 12, marginBottom: 14 }}>
+                      <div style={{ width: 40, height: 40, borderRadius: 10, border: "1px solid #BFBFBF", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, fontWeight: 600, color: "#000000", flexShrink: 0 }}>{p.name.charAt(0)}</div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000000", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.name}</h3>
+                        <p style={{ fontSize: 13, color: "#727272", margin: "2px 0 0" }}>{p.role}</p>
                       </div>
-
-                      {/* Description */}
-                      <p className="text-sm leading-relaxed mb-4" style={{ color: C.gray600 }}>{p.description}</p>
-
-                      {/* Tags */}
-                      <div className="flex flex-wrap gap-1.5 mb-4">
-                        {p.tags.map((tag, i) => (
-                          <span key={i} className="text-xs px-2.5 py-1 rounded-full" style={{ background: C.gray100, color: C.gray600 }}>
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-
-                      {/* Stats Row */}
-                      <div className="flex items-center gap-4 pt-4" style={{ borderTop: `1px solid ${C.gray100}` }}>
-                        <div className="flex items-center gap-1.5">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C.gray400} strokeWidth="2">
-                            <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
-                          </svg>
-                          <span className="text-xs" style={{ color: C.gray500 }}>{p.queries} שאילתות</span>
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C.gray400} strokeWidth="2">
-                            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-                          </svg>
-                          <span className="text-xs" style={{ color: C.gray500 }}>{p.mentions} אזכורים</span>
-                        </div>
-                        <div className="flex-1" />
-                        <button
-                          onClick={() => {
-                            setPersonaFilter(p.id);
-                            setActiveTab("queries");
-                          }}
-                          className="text-xs font-medium hover:underline"
-                          style={{ color: C.teal }}
-                        >
-                          הצג שאילתות
-                        </button>
+                      <div style={{ textAlign: "left" }}>
+                        <div style={{ fontSize: 20, fontWeight: 600, color: "#000000" }}>{p.score}%</div>
+                        <div style={{ fontSize: 11, color: "#A2A9B0" }}>רלוונטיות</div>
                       </div>
                     </div>
+                    <p style={{ fontSize: 13, lineHeight: 1.6, color: "#333333", margin: "0 0 14px" }}>{p.description}</p>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 14 }}>
+                      {p.tags.map((tag, i) => (<span key={i} style={{ fontSize: 11, padding: "3px 10px", borderRadius: 10, border: thinBorder, background: "#F9F9F9", color: "#333333" }}>{tag}</span>))}
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 16, paddingTop: 14, borderTop: thinBorder }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#727272" strokeWidth="2"><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" /></svg>
+                        <span style={{ fontSize: 12, color: "#727272" }}>{p.queries} שאילתות</span>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#727272" strokeWidth="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" /></svg>
+                        <span style={{ fontSize: 12, color: "#727272" }}>{p.mentions} אזכורים</span>
+                      </div>
+                      <div style={{ flex: 1 }} />
+                      <button onClick={() => { setPersonaFilter(p.id); setActiveTab("queries"); }} style={{ fontSize: 12, fontWeight: 500, color: "#10A37F", background: "transparent", border: "none", cursor: "pointer", textDecoration: "underline" }}>הצג שאילתות</button>
+                    </div>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           </div>
         )}
       </div>
+
+      {/* ── Footer ── */}
+      <footer style={{ borderTop: "1px solid #BFBFBF", marginTop: "auto" }}>
+        <div dir="rtl" style={{ maxWidth: 1300, margin: "0 auto", padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <svg width={28} height={28} viewBox="0 0 102 102" fill="none">
+              <circle cx="51" cy="51" r="41" stroke="#ABABAB" strokeWidth="10" fill="none" />
+              <circle cx="51" cy="51" r="41" stroke="#141414" strokeWidth="10" fill="none" strokeLinecap="round" strokeDasharray="180 78" />
+            </svg>
+            <span style={{ fontSize: 14, color: "#727272" }}>מונע על ידי AI מתקדם לניתוח הנוכחות שלך בחיפוש</span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            {[
+              { label: "פידבק", color: "#10A37F", bg: "#10A37F15" },
+              { label: "דיווח באג", color: "#E07800", bg: "#E0780015" },
+              { label: "הצעות לשיפור", color: "#4285F4", bg: "#4285F415" },
+              { label: "שימוש API", color: "#10A37F", bg: "#10A37F15" },
+            ].map((link, i) => (
+              <span key={i} style={{ fontSize: 12, fontWeight: 500, padding: "4px 12px", borderRadius: 20, color: link.color, background: link.bg, cursor: "pointer" }}>{link.label}</span>
+            ))}
+          </div>
+          <span style={{ fontSize: 12, color: "#A2A9B0" }}>GeoScale 2026 &copy;</span>
+        </div>
+      </footer>
     </div>
   );
 }
