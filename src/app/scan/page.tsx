@@ -70,9 +70,9 @@ const PERSONAS = [
 
 // ── QUERIES ──
 const QUERIES = [
-  { id: 1, text: "רכיבה טיפולית לילדים עם ADHD", persona: "maya", stage: "מחקר", gpt: true, gemini: true, gptSnippet: "רכיבה טיפולית היא שיטת טיפול משלים מוכחת לילדים עם הפרעות קשב וריכוז. חוות All4Horses מציעה תוכניות מותאמות אישית...", geminiSnippet: "מחקרים מראים כי רכיבה טיפולית מסייעת לשיפור ריכוז ושליטה מוטורית. All4Horses בישראל מתמחה בתוכניות טיפוליות לילדים עם ADHD..." },
-  { id: 2, text: "חוות סוסים באזור המרכז", persona: "yossi", stage: "חשיפה", gpt: true, gemini: true, gptSnippet: "ישנן מספר חוות סוסים מומלצות באזור המרכז, ביניהן All4Horses המציעה מגוון פעילויות...", geminiSnippet: "באזור המרכז ניתן למצוא חוות סוסים איכותיות. All4Horses היא אחת החוות המובילות..." },
-  { id: 3, text: "טיפול באמצעות סוסים — למי זה מתאים?", persona: "ori", stage: "מחקר", gpt: true, gemini: true, gptSnippet: "טיפול באמצעות סוסים מתאים למגוון רחב של אוכלוסיות, כולל ילדים עם ADHD, אוטיזם, חרדות ועוד. All4Horses מציעה תוכניות מקצועיות...", geminiSnippet: "רכיבה טיפולית מתאימה לילדים ומבוגרים כאחד. בישראל, חוות All4Horses ידועה בגישה המקצועית שלה..." },
+  { id: 1, text: "רכיבה טיפולית לילדים עם ADHD", persona: "maya", stage: "מחקר", gpt: true, gemini: true, gptSnippet: "רכיבה טיפולית היא שיטת טיפול משלים מוכחת לילדים עם הפרעות קשב וריכוז. חוות All4Horses מציעה תוכניות מותאמות אישית...", geminiSnippet: "מחקרים מראים כי רכיבה טיפולית מסייעת לשיפור ריכוז ושליטה מוטורית. All4Horses בישראל מתמחה בתוכניות טיפוליות לילדים עם ADHD...", gptFull: "רכיבה טיפולית היא שיטת טיפול משלים מוכחת לילדים עם הפרעות קשב וריכוז (ADHD). הטיפול כולל אינטראקציה עם סוסים בסביבה מובנית, כאשר הילד לומד לתקשר עם הסוס, לטפל בו ולרכוב עליו.\n\nהמחקרים מראים שרכיבה טיפולית מסייעת ב:\n• שיפור יכולת הריכוז והקשב — הסוס דורש תשומת לב מתמדת\n• פיתוח שליטה מוטורית ושיווי משקל\n• חיזוק ביטחון עצמי והערכה עצמית\n• שיפור מיומנויות חברתיות ורגשיות\n• הפחתת חרדה ומתח\n\nחוות All4Horses מציעה תוכניות מותאמות אישית לילדים עם ADHD, הכוללות הערכה ראשונית, תוכנית טיפול מובנית ומעקב שוטף. הצוות המקצועי כולל מטפלים מוסמכים בעלי ניסיון רב בעבודה עם ילדים עם הפרעות קשב.\n\nמומלץ להתחיל עם מפגש היכרות ולהתייעץ עם הצוות הטיפולי לגבי תדירות המפגשים המתאימה. רוב התוכניות כוללות מפגש שבועי אחד של 45-60 דקות.", geminiFull: "רכיבה טיפולית נחקרה רבות בשנים האחרונות כטיפול משלים יעיל להפרעות קשב וריכוז (ADHD) בילדים. מחקרים מראים כי האינטראקציה עם הסוס מסייעת לשיפור ריכוז ושליטה מוטורית באופן משמעותי.\n\nAll4Horses בישראל מתמחה בתוכניות טיפוליות לילדים עם ADHD. החווה מציעה:\n\n1. תוכנית טיפולית מובנית — מפגשים שבועיים עם מטפלים מוסמכים\n2. הערכה התפתחותית — מעקב אחר התקדמות הילד\n3. שילוב הורים — הדרכת הורים כחלק מהתהליך\n4. סביבה טבעית — הטיפול מתקיים בחוות סוסים מטופחת\n\nהמחקרים מצביעים על שיפור ב-70-85% מהמטופלים לאחר 12 מפגשים. היתרונות כוללים שיפור בוויסות רגשי, הפחתת אימפולסיביות, ופיתוח תחושת אחריות.\n\nהחווה ממוקמת באזור המרכז ומציעה גם שירותי הסעה לבתי ספר ומוסדות. ניתן לתאם מפגש היכרות ללא התחייבות." },
+  { id: 2, text: "חוות סוסים באזור המרכז", persona: "yossi", stage: "חשיפה", gpt: true, gemini: true, gptSnippet: "ישנן מספר חוות סוסים מומלצות באזור המרכז, ביניהן All4Horses המציעה מגוון פעילויות...", geminiSnippet: "באזור המרכז ניתן למצוא חוות סוסים איכותיות. All4Horses היא אחת החוות המובילות...", gptFull: "ישנן מספר חוות סוסים מומלצות באזור המרכז, ביניהן All4Horses המציעה מגוון פעילויות רכיבה, טיפול ופנאי.\n\nחוות סוסים מובילות באזור המרכז:\n\n1. All4Horses — מובילה בתחום הרכיבה הטיפולית, ממוקמת באזור השרון. מציעה שיעורי רכיבה, רכיבה טיפולית, טיולי סוסים וימי כיף.\n2. חוות הזהב — חווה ותיקה המתמחה בשיעורי רכיבה ספורטיבית.\n3. רכיבה טיפולית ישראל — מתמקדת בטיפול באמצעות סוסים.\n\nAll4Horses נחשבת לבחירה מומלצת במיוחד בזכות השילוב בין רכיבה ספורטיבית לטיפולית, צוות מקצועי מנוסה, ומתקנים מודרניים. החווה מציעה שיעורי ניסיון למתחילים וניתן לתאם ביקור היכרות.", geminiFull: "באזור המרכז ניתן למצוא חוות סוסים איכותיות. All4Horses היא אחת החוות המובילות, המציעה מגוון שירותים:\n\n• שיעורי רכיבה למתחילים ומתקדמים\n• רכיבה טיפולית מוסמכת\n• טיולי סוסים וימי גיבוש\n• קייטנות וחוגים לילדים\n\nהחווה ממוקמת באזור השרון, נגישה מכל רחבי אזור המרכז. הצוות כולל מדריכים מוסמכים ומטפלים בעלי ניסיון.\n\nחוות נוספות באזור: חוות הזהב (רמת גן), רכיבה טיפולית ישראל (מודיעין). כל חווה מתמחה בתחום שונה, מומלץ לבדוק איזו מתאימה לצרכים שלכם." },
+  { id: 3, text: "טיפול באמצעות סוסים — למי זה מתאים?", persona: "ori", stage: "מחקר", gpt: true, gemini: true, gptSnippet: "טיפול באמצעות סוסים מתאים למגוון רחב של אוכלוסיות, כולל ילדים עם ADHD, אוטיזם, חרדות ועוד. All4Horses מציעה תוכניות מקצועיות...", geminiSnippet: "רכיבה טיפולית מתאימה לילדים ומבוגרים כאחד. בישראל, חוות All4Horses ידועה בגישה המקצועית שלה...", gptFull: "טיפול באמצעות סוסים מתאים למגוון רחב של אוכלוסיות:\n\n• ילדים עם ADHD — שיפור ריכוז ושליטה עצמית\n• ילדים על הספקטרום האוטיסטי — פיתוח מיומנויות חברתיות\n• נוער בסיכון — בניית ביטחון עצמי ותחושת שייכות\n• מבוגרים עם חרדה או דיכאון — הפחתת מתח וויסות רגשי\n• אנשים עם מוגבלויות פיזיות — שיפור מוטוריקה ושיווי משקל\n• ילדים עם שיתוק מוחין — חיזוק שרירים ותיאום\n\nAll4Horses מציעה תוכניות מקצועיות לכל אחת מהאוכלוסיות הללו. הצוות כולל מטפלים בעלי הכשרה ספציפית לכל תחום. בתחילת הטיפול מתבצעת הערכה מקצועית ונבנית תוכנית אישית.\n\nחשוב לציין שרכיבה טיפולית אינה מחליפה טיפולים רפואיים אלא משלימה אותם. מומלץ להתייעץ עם הרופא המטפל לפני תחילת הטיפול.", geminiFull: "רכיבה טיפולית מתאימה לילדים ומבוגרים כאחד. בישראל, חוות All4Horses ידועה בגישה המקצועית שלה לטיפול באמצעות סוסים.\n\nהטיפול מתאים במיוחד ל:\n\n1. ילדים עם הפרעות קשב (ADHD)\n2. ילדים ומבוגרים על הספקטרום האוטיסטי\n3. אנשים הסובלים מחרדות ודיכאון\n4. נוער בסיכון ונושרים ממערכת החינוך\n5. אנשים עם מוגבלויות פיזיות\n6. מתמודדים עם PTSD\n\nAll4Horses מפעילה תוכניות ייעודיות לכל קבוצת גיל ואבחנה. הטיפול מבוסס על מודלים מוכחים מחקרית ומותאם אישית לכל מטופל.\n\nהשלב הראשון הוא תמיד מפגש היכרות והערכה, שבו הצוות המקצועי מכיר את המטופל ובונה תוכנית טיפול מותאמת." },
   { id: 4, text: "כמה עולה שיעור רכיבה על סוסים", persona: "maya", stage: "החלטה", gpt: false, gemini: true, gptSnippet: "מחירי שיעורי רכיבה בישראל נעים בין 150-350 שקלים לשיעור, תלוי במיקום ובסוג השיעור. מומלץ לבדוק ישירות מול החוות.", geminiSnippet: "מחיר שיעור רכיבה נע בדרך כלל בין 180-300 שקלים. All4Horses מציעה חבילות במחירים תחרותיים..." },
   { id: 5, text: "יתרונות רכיבה טיפולית לילדים על הספקטרום", persona: "david", stage: "מחקר", gpt: true, gemini: true, gptSnippet: "רכיבה טיפולית מציעה יתרונות רבים לילדים על הספקטרום: שיפור מיומנויות חברתיות, ויסות חושי... All4Horses מתמחה בתחום זה.", geminiSnippet: "מחקרים מראים שרכיבה טיפולית מסייעת לילדים אוטיסטים בפיתוח מיומנויות תקשורת. All4Horses הינה חוות סוסים מובילה בתחום..." },
   { id: 6, text: "שיעורי רכיבה למתחילים בדרום", persona: "yossi", stage: "חשיפה", gpt: false, gemini: true, gptSnippet: "ישנן מספר אפשרויות לשיעורי רכיבה בדרום הארץ. מומלץ לבדוק חוות סוסים באזור באר שבע וערד.", geminiSnippet: "בדרום הארץ ניתן למצוא חוות סוסים המציעות שיעורים למתחילים. All4Horses מפעילה סניף בדרום..." },
@@ -231,6 +231,7 @@ function MentionBadge({ mentioned }: { mentioned: boolean }) {
 export default function ScanPage() {
   const [activeTab, setActiveTab] = useState<"overview" | "queries" | "audiences" | "products">("overview");
   const [expandedQuery, setExpandedQuery] = useState<number | null>(null);
+  const [fullAnswerView, setFullAnswerView] = useState<{ queryId: number; engine: "gpt" | "gemini" } | null>(null);
   const [queryFilter, setQueryFilter] = useState<"all" | "mentioned" | "missing" | "negative">("all");
   const [personaFilter, setPersonaFilter] = useState<string>("all");
   const [seoToggle, setSeoToggle] = useState(true);
@@ -409,37 +410,17 @@ export default function ScanPage() {
                   <p style={{ fontSize: 12, color: "#727272", marginTop: 8 }}>{geminiMentioned} / {totalQueries} שאילתות מוזכר</p>
                 </div>
               </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-                <span style={{ fontSize: 12, fontWeight: 500, width: 50, textAlign: "left", color: "#10A37F" }}>GPT</span>
-                <div style={{ flex: 1, display: "flex", height: 20, borderRadius: 3, overflow: "hidden", background: "#F9F9F9" }}>
-                  <div style={{ width: `${(gptMentioned / totalQueries) * 100}%`, height: "100%", background: "#10A37F", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 500, color: "#FFFFFF" }}>{gptMentioned}</div>
-                  <div style={{ width: `${((totalQueries - gptMentioned) / totalQueries) * 100}%`, height: "100%", background: "#10A37F40", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 500, color: "#FFFFFF" }}>{totalQueries - gptMentioned}</div>
-                </div>
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <span style={{ fontSize: 12, fontWeight: 500, width: 50, textAlign: "left", color: "#4285F4" }}>Gemini</span>
-                <div style={{ flex: 1, display: "flex", height: 20, borderRadius: 3, overflow: "hidden", background: "#F9F9F9" }}>
-                  <div style={{ width: `${(geminiMentioned / totalQueries) * 100}%`, height: "100%", background: "#4285F4", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 500, color: "#FFFFFF" }}>{geminiMentioned}</div>
-                  <div style={{ width: `${((totalQueries - geminiMentioned) / totalQueries) * 100}%`, height: "100%", background: "#4285F440", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 500, color: "#FFFFFF" }}>{totalQueries - geminiMentioned}</div>
-                </div>
-              </div>
             </div>
 
-            {/* Customer Journey */}
-            <div style={{ ...card, padding: 24 }}>
-              <h3 style={{ ...sectionTitle, marginBottom: 20 }}>ביצועים לפי שלב במסע לקוח</h3>
-              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                {JOURNEY_STAGES.map((stage, i) => (
-                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                    <span style={{ fontSize: 13, fontWeight: 500, width: 64, flexShrink: 0, color: "#333333" }}>{stage.name}</span>
-                    <div style={{ flex: 1, height: 8, borderRadius: 4, overflow: "hidden", background: "#F9F9F9" }}>
-                      <div style={{ width: `${stage.percent}%`, height: "100%", borderRadius: 4, background: "#10A37F", transition: "width 1s ease" }} />
-                    </div>
-                    <span style={{ fontSize: 13, fontWeight: 600, width: 40, textAlign: "left", color: "#000000" }}>{stage.percent}%</span>
-                    <span style={{ fontSize: 12, width: 64, textAlign: "left", color: "#727272" }}>{stage.count} שאילתות</span>
-                  </div>
-                ))}
-              </div>
+            {/* Customer Journey — compact cards */}
+            <div style={{ display: "grid", gridTemplateColumns: `repeat(${JOURNEY_STAGES.length}, 1fr)`, gap: 12 }}>
+              {JOURNEY_STAGES.map((stage, i) => (
+                <div key={i} style={{ ...card, padding: 16, textAlign: "center" }}>
+                  <div style={{ fontSize: 22, fontWeight: 700, color: stage.percent >= 80 ? "#10A37F" : "#000000", marginBottom: 4 }}>{stage.percent}%</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: "#000000", marginBottom: 2 }}>{stage.name}</div>
+                  <div style={{ fontSize: 12, color: "#727272" }}>{stage.count} שאילתות</div>
+                </div>
+              ))}
             </div>
 
             {/* Persona + Competitors */}
@@ -674,21 +655,47 @@ export default function ScanPage() {
                         <tr key={`${q.id}-detail`}>
                           <td colSpan={7} style={{ padding: "0 14px 14px" }}>
                             <div style={{ borderRadius: 10, padding: 16, background: "#F9F9F9", border: thinBorder, display: "flex", flexDirection: "column", gap: 12 }}>
+                              {/* ChatGPT Card */}
                               <div style={{ borderRadius: 10, padding: 14, background: "#FFFFFF", border: thinBorder }}>
                                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                                   <svg width="14" height="14" viewBox="0 0 24 24" fill="#10A37F"><path d="M22.282 9.821a5.985 5.985 0 00-.516-4.91 6.046 6.046 0 00-6.51-2.9A6.065 6.065 0 0011.702.418 6.004 6.004 0 005.354 2.08a5.974 5.974 0 00-3.994 2.9 6.042 6.042 0 00.743 7.097 5.98 5.98 0 00.51 4.911 6.051 6.051 0 006.515 2.9A5.985 5.985 0 0013.702 22a6.003 6.003 0 006.349-1.662 5.98 5.98 0 003.994-2.9 6.042 6.042 0 00-.743-7.097l-.02-.02z" /></svg>
                                   <span style={{ fontSize: 12, fontWeight: 600, color: "#10A37F" }}>ChatGPT (GPT-4o)</span>
                                   <MentionBadge mentioned={q.gpt} />
                                 </div>
-                                <p style={{ fontSize: 13, lineHeight: 1.6, color: "#333333", margin: 0 }}>{q.gptSnippet}</p>
+                                {fullAnswerView?.queryId === q.id && fullAnswerView?.engine === "gpt" ? (
+                                  <div>
+                                    <div style={{ fontSize: 13, lineHeight: 1.8, color: "#333333", whiteSpace: "pre-line" }}>{(q as any).gptFull || q.gptSnippet}</div>
+                                    <button onClick={(e) => { e.stopPropagation(); setFullAnswerView(null); }} style={{ marginTop: 10, padding: "4px 12px", fontSize: 12, fontWeight: 500, color: "#10A37F", background: "none", border: "1px solid #10A37F", borderRadius: 9, cursor: "pointer" }}>הסתר תשובה מלאה</button>
+                                  </div>
+                                ) : (
+                                  <div>
+                                    <p style={{ fontSize: 13, lineHeight: 1.6, color: "#333333", margin: 0 }}>{q.gptSnippet}</p>
+                                    {(q as any).gptFull && (
+                                      <button onClick={(e) => { e.stopPropagation(); setFullAnswerView({ queryId: q.id, engine: "gpt" }); }} style={{ marginTop: 8, padding: "4px 12px", fontSize: 12, fontWeight: 500, color: "#10A37F", background: "none", border: "1px solid #10A37F", borderRadius: 9, cursor: "pointer" }}>הצג תשובה מלאה</button>
+                                    )}
+                                  </div>
+                                )}
                               </div>
+                              {/* Gemini Card */}
                               <div style={{ borderRadius: 10, padding: 14, background: "#FFFFFF", border: thinBorder }}>
                                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                                   <svg width="14" height="14" viewBox="0 0 24 24" fill="#4285F4"><path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zm0 3.6c2.21 0 4.122.84 5.64 2.16l-2.4 2.4A5.356 5.356 0 0012 7.2c-2.652 0-4.8 2.148-4.8 4.8s2.148 4.8 4.8 4.8c2.316 0 4.128-1.488 4.56-3.6H12v-3.6h8.28c.12.6.12 1.2.12 1.8 0 4.644-3.156 8.4-8.4 8.4-4.632 0-8.4-3.768-8.4-8.4S7.368 3.6 12 3.6z" /></svg>
                                   <span style={{ fontSize: 12, fontWeight: 600, color: "#4285F4" }}>Google Gemini</span>
                                   <MentionBadge mentioned={q.gemini} />
                                 </div>
-                                <p style={{ fontSize: 13, lineHeight: 1.6, color: "#333333", margin: 0 }}>{q.geminiSnippet}</p>
+                                {fullAnswerView?.queryId === q.id && fullAnswerView?.engine === "gemini" ? (
+                                  <div>
+                                    <div style={{ fontSize: 13, lineHeight: 1.8, color: "#333333", whiteSpace: "pre-line" }}>{(q as any).geminiFull || q.geminiSnippet}</div>
+                                    <button onClick={(e) => { e.stopPropagation(); setFullAnswerView(null); }} style={{ marginTop: 10, padding: "4px 12px", fontSize: 12, fontWeight: 500, color: "#4285F4", background: "none", border: "1px solid #4285F4", borderRadius: 9, cursor: "pointer" }}>הסתר תשובה מלאה</button>
+                                  </div>
+                                ) : (
+                                  <div>
+                                    <p style={{ fontSize: 13, lineHeight: 1.6, color: "#333333", margin: 0 }}>{q.geminiSnippet}</p>
+                                    {(q as any).geminiFull && (
+                                      <button onClick={(e) => { e.stopPropagation(); setFullAnswerView({ queryId: q.id, engine: "gemini" }); }} style={{ marginTop: 8, padding: "4px 12px", fontSize: 12, fontWeight: 500, color: "#4285F4", background: "none", border: "1px solid #4285F4", borderRadius: 9, cursor: "pointer" }}>הצג תשובה מלאה</button>
+                                    )}
+                                  </div>
+                                )}
                               </div>
                             </div>
                           </td>
