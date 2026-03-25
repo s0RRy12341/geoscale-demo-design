@@ -121,11 +121,28 @@ function Screen1({ onSubmit }: { onSubmit: (domain: string, brand: string) => vo
   return (
     <div className="screen-enter min-h-screen flex flex-col" dir="rtl">
       {/* Header */}
-      <header className="flex items-center justify-between px-8 py-5 border-b border-gray-100">
-        <div style={{ direction: "ltr" }}>
-          <GeoscaleWordmark />
+      <header style={{ background: "rgba(255,255,255,0.96)", borderBottom: "1px solid #BFBFBF" }}>
+        <div style={{ maxWidth: 1300, margin: "0 auto", padding: "0 24px", height: 72, display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 16, justifySelf: "start" }}>
+            <a href="/new-scan" style={{ display: "inline-flex", alignItems: "center", padding: "8px 20px", background: "#000", color: "#fff", fontSize: 13, fontWeight: 600, borderRadius: 9, border: "1px solid #000", textDecoration: "none" }}>סריקה חדשה</a>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "#727272" }}>
+              <span style={{ width: 8, height: 8, borderRadius: 4, background: "#10A37F", display: "inline-block" }} />
+              <span>מחובר</span>
+            </div>
+          </div>
+          <nav style={{ display: "flex", alignItems: "center", gap: 32 }}>
+            <a href="/" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>דשבורד</a>
+            <a href="/scan" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>סריקות</a>
+            <a href="/products" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>מוצרים / שירותים</a>
+          </nav>
+          <div style={{ justifySelf: "end", direction: "ltr" }}>
+            <svg width={150} height={30} viewBox="0 0 510 102" fill="none">
+              <circle cx="51" cy="51" r="41" stroke="#ABABAB" strokeWidth="13" fill="none" />
+              <circle cx="51" cy="51" r="41" stroke="#141414" strokeWidth="13" fill="none" strokeLinecap="round" strokeDasharray="180 78" />
+              <g fill="#141414"><text x="120" y="66" fontFamily="'Inter', sans-serif" fontSize="52" fontWeight="600" letterSpacing="-2">Geoscale</text></g>
+            </svg>
+          </div>
         </div>
-        <div />
       </header>
 
       {/* Hero Section */}
@@ -295,7 +312,8 @@ function Screen2({ domain, brandName, onComplete }: { domain: string; brandName:
   return (
     <div className="screen-enter min-h-screen flex flex-col" dir="rtl">
       {/* Header */}
-      <header className="flex items-center justify-between px-8 py-5 border-b border-gray-100">
+      <header style={{ background: "rgba(255,255,255,0.96)", borderBottom: "1px solid #BFBFBF" }}>
+        <div style={{ maxWidth: 1300, margin: "0 auto", padding: "0 24px", height: 56, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div className="flex items-center gap-3">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={BRAND.gray600} strokeWidth="2">
             <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2" />
@@ -309,6 +327,7 @@ function Screen2({ domain, brandName, onComplete }: { domain: string; brandName:
           <ArrowRight size={14} color={BRAND.gray500} />
           חזרה
         </span>
+        </div>
       </header>
 
       {/* Main Content */}

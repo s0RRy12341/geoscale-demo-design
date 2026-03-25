@@ -352,33 +352,27 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#FFFFFF" }} dir="rtl">
-      {/* ═══ HEADER — Logo on LEFT side visually ═══ */}
+      {/* ═══ HEADER — 3-column grid: actions | nav | logo ═══ */}
       <header className="sticky top-0 z-50" style={{ background: "rgba(255,255,255,0.96)", borderBottom: "1px solid #BFBFBF" }}>
-        <div className="max-w-[1300px] mx-auto px-6 h-[72px] flex items-center">
-          {/* RIGHT side in RTL = visual LEFT: Actions */}
-          <div className="flex items-center gap-4" style={{ marginInlineEnd: "auto" }}>
-            <button
-              onClick={() => window.location.href = "/new-scan"}
-              className="text-sm font-semibold px-5 py-2.5"
-              style={{ background: "#000", color: "#fff", borderRadius: 9, border: "1px solid #000" }}
-            >
-              סריקה חדשה
-            </button>
-            <div className="flex items-center gap-2 text-xs" style={{ color: "#727272" }}>
-              <span className="w-2 h-2 rounded-full" style={{ background: "#10A37F", display: "inline-block" }} />
+        <div style={{ maxWidth: 1300, margin: "0 auto", padding: "0 24px", height: 72, display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center" }}>
+          {/* RIGHT in RTL (grid col 1) = Actions */}
+          <div style={{ display: "flex", alignItems: "center", gap: 16, justifySelf: "start" }}>
+            <a href="/new-scan" style={{ display: "inline-flex", alignItems: "center", padding: "8px 20px", background: "#000", color: "#fff", fontSize: 13, fontWeight: 600, borderRadius: 9, border: "1px solid #000", textDecoration: "none" }}>סריקה חדשה</a>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "#727272" }}>
+              <span style={{ width: 8, height: 8, borderRadius: 4, background: "#10A37F", display: "inline-block" }} />
               <span>מחובר</span>
             </div>
           </div>
 
-          {/* CENTER: Nav */}
-          <div className="flex items-center gap-8 mx-8">
-            <button className="text-sm font-semibold" style={{ color: "#000" }}>דשבורד</button>
-            <button onClick={() => window.location.href = "/scan"} className="text-sm font-medium" style={{ color: "#727272" }}>סריקות</button>
-            <button onClick={() => window.location.href = "/products"} className="text-sm font-medium" style={{ color: "#727272" }}>מוצרים / שירותים</button>
-          </div>
+          {/* CENTER (grid col 2) = Nav */}
+          <nav style={{ display: "flex", alignItems: "center", gap: 32 }}>
+            <a href="/" style={{ fontSize: 14, fontWeight: 600, color: "#000", textDecoration: "none" }}>דשבורד</a>
+            <a href="/scan" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>סריקות</a>
+            <a href="/products" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>מוצרים / שירותים</a>
+          </nav>
 
-          {/* LEFT side in RTL = visual LEFT: Logo */}
-          <div style={{ marginInlineStart: "auto" }}>
+          {/* LEFT in RTL (grid col 3) = Logo */}
+          <div style={{ justifySelf: "end" }}>
             <GeoscaleLogo width={150} />
           </div>
         </div>

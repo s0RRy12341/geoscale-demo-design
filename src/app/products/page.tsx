@@ -183,32 +183,31 @@ export default function ProductsPage() {
   return (
     <div style={{ minHeight: "100vh", background: "#FFFFFF", fontFamily: "'Inter', 'Heebo', sans-serif", display: "flex", flexDirection: "column" }} dir="rtl">
 
-      {/* ── Header ── */}
+      {/* ── Header — 3-column grid: actions | nav | logo ── */}
       <header style={{ position: "sticky", top: 0, zIndex: 50, background: "rgba(255,255,255,0.96)", borderBottom: "1px solid #BFBFBF" }}>
-        <div style={{ maxWidth: 1300, margin: "0 auto", padding: "0 24px", height: 72, display: "flex", alignItems: "center" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 16, marginInlineEnd: "auto" }}>
-            <a href="/new-scan" style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 18px", background: "#000000", color: "#FFFFFF", fontSize: 13, fontWeight: 600, border: "1px solid #000000", borderRadius: 9, cursor: "pointer", textDecoration: "none" }}>
-              סריקה חדשה
-            </a>
+        <div style={{ maxWidth: 1300, margin: "0 auto", padding: "0 24px", height: 72, display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center" }}>
+          {/* RIGHT in RTL (grid col 1) = Actions */}
+          <div style={{ display: "flex", alignItems: "center", gap: 16, justifySelf: "start" }}>
+            <a href="/new-scan" style={{ display: "inline-flex", alignItems: "center", padding: "8px 20px", background: "#000", color: "#fff", fontSize: 13, fontWeight: 600, borderRadius: 9, border: "1px solid #000", textDecoration: "none" }}>סריקה חדשה</a>
             <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "#727272" }}>
               <span style={{ width: 8, height: 8, borderRadius: 4, background: "#10A37F", display: "inline-block" }} />
               <span>מחובר</span>
             </div>
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", gap: 32, margin: "0 32px" }}>
+          {/* CENTER (grid col 2) = Nav */}
+          <nav style={{ display: "flex", alignItems: "center", gap: 32 }}>
             <a href="/" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>דשבורד</a>
             <a href="/scan" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>סריקות</a>
-            <a href="/products" style={{ fontSize: 14, fontWeight: 600, color: "#000000", textDecoration: "none" }}>מוצרים / שירותים</a>
-          </div>
+            <a href="/products" style={{ fontSize: 14, fontWeight: 600, color: "#000", textDecoration: "none" }}>מוצרים / שירותים</a>
+          </nav>
 
-          <div style={{ marginInlineStart: "auto", direction: "ltr" }}>
+          {/* LEFT in RTL (grid col 3) = Logo */}
+          <div style={{ justifySelf: "end", direction: "ltr" }}>
             <svg width={150} height={30} viewBox="0 0 510 102" fill="none">
               <circle cx="51" cy="51" r="41" stroke="#ABABAB" strokeWidth="13" fill="none" />
               <circle cx="51" cy="51" r="41" stroke="#141414" strokeWidth="13" fill="none" strokeLinecap="round" strokeDasharray="180 78" />
-              <g fill="#141414">
-                <text x="120" y="66" fontFamily="'Inter', sans-serif" fontSize="52" fontWeight="600" letterSpacing="-2">Geoscale</text>
-              </g>
+              <g fill="#141414"><text x="120" y="66" fontFamily="'Inter', sans-serif" fontSize="52" fontWeight="600" letterSpacing="-2">Geoscale</text></g>
             </svg>
           </div>
         </div>
