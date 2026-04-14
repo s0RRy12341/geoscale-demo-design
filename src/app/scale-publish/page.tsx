@@ -1,0 +1,1477 @@
+"use client";
+
+import { useState, useMemo, useCallback, useEffect } from "react";
+
+// ============================================================
+// SCALEPUBLISH — Publisher Marketplace
+// Browse external publisher sites, view SEO/GIO metrics,
+// add to cart, build work plans, publisher portal
+// ============================================================
+
+// ── Logo Components ──
+function GeoscaleLogo({ width = 150 }: { width?: number }) {
+  return (
+    <div style={{ direction: "ltr", width }}>
+      <svg width={width} height={width * 0.2} viewBox="0 0 510 102" fill="none">
+        <circle cx="51" cy="51" r="41" stroke="#ABABAB" strokeWidth="13" fill="none" />
+        <circle cx="51" cy="51" r="41" stroke="#141414" strokeWidth="13" fill="none" strokeLinecap="round" strokeDasharray="180 78" />
+        <g fill="#141414">
+          <text x="120" y="66" fontFamily="'Inter', sans-serif" fontSize="52" fontWeight="600" letterSpacing="-2">Geoscale</text>
+        </g>
+      </svg>
+    </div>
+  );
+}
+
+function GeoscaleLogoMark({ size = 32 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 102 102" fill="none">
+      <circle cx="51" cy="51" r="41" stroke="#ABABAB" strokeWidth="10" fill="none" />
+      <circle cx="51" cy="51" r="41" stroke="#141414" strokeWidth="10" fill="none" strokeLinecap="round" strokeDasharray="180 78" />
+    </svg>
+  );
+}
+
+// ── SVG Icons ──
+function IconSearch({ size = 14 }: { size?: number }) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="#A2A9B0" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" /></svg>;
+}
+function IconCheck({ size = 12 }: { size?: number }) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>;
+}
+function IconX({ size = 14 }: { size?: number }) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12" /></svg>;
+}
+function IconCart({ size = 16 }: { size?: number }) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" /><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" /></svg>;
+}
+function IconTrash({ size = 14 }: { size?: number }) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" /></svg>;
+}
+function IconChevronDown({ size = 14 }: { size?: number }) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 9l6 6 6-6" /></svg>;
+}
+function IconRefresh({ size = 14 }: { size?: number }) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M23 4v6h-6M1 20v-6h6" /><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" /></svg>;
+}
+function IconFilter({ size = 14 }: { size?: number }) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" /></svg>;
+}
+function IconExternalLink({ size = 12 }: { size?: number }) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" /></svg>;
+}
+
+// ── Types ──
+interface Publisher {
+  id: number;
+  name: string;
+  domain: string;
+  category: string;
+  dr: number;
+  traffic: number;
+  seoScore: number;
+  gioScore: number;
+  gptPresent: boolean;
+  geminiPresent: boolean;
+  googleIndex: boolean;
+  pricePerArticle: number;
+  status: "approved" | "rejected" | "pending";
+  rejectionReason?: string;
+  queries?: number;
+}
+
+// ── Mock Data ──
+const PUBLISHERS: Publisher[] = [
+  { id: 1, name: "TechIL", domain: "techil.co.il", category: "טכנולוגיה", dr: 62, traffic: 185000, seoScore: 78, gioScore: 72, gptPresent: true, geminiPresent: true, googleIndex: true, pricePerArticle: 1200, status: "approved", queries: 8 },
+  { id: 2, name: "הפורטל הרפואי", domain: "medical-portal.co.il", category: "בריאות", dr: 55, traffic: 220000, seoScore: 81, gioScore: 65, gptPresent: true, geminiPresent: true, googleIndex: true, pricePerArticle: 1500, status: "approved", queries: 11 },
+  { id: 3, name: "כלכלה+", domain: "calcala-plus.co.il", category: "פיננסים", dr: 48, traffic: 95000, seoScore: 65, gioScore: 58, gptPresent: true, geminiPresent: false, googleIndex: true, pricePerArticle: 900, status: "approved", queries: 6 },
+  { id: 4, name: "בית וסטייל", domain: "bait-style.co.il", category: "לייפסטייל", dr: 42, traffic: 78000, seoScore: 59, gioScore: 51, gptPresent: false, geminiPresent: true, googleIndex: true, pricePerArticle: 750, status: "approved", queries: 5 },
+  { id: 5, name: "EduNet", domain: "edunet.co.il", category: "חינוך", dr: 51, traffic: 130000, seoScore: 73, gioScore: 69, gptPresent: true, geminiPresent: true, googleIndex: true, pricePerArticle: 1100, status: "approved", queries: 9 },
+  { id: 6, name: "נדלן פלוס", domain: "nadlan-plus.co.il", category: 'נדל"ן', dr: 45, traffic: 67000, seoScore: 62, gioScore: 44, gptPresent: false, geminiPresent: false, googleIndex: true, pricePerArticle: 850, status: "approved", queries: 7 },
+  { id: 7, name: "FoodTaste", domain: "foodtaste.co.il", category: "אוכל", dr: 38, traffic: 210000, seoScore: 71, gioScore: 67, gptPresent: true, geminiPresent: true, googleIndex: true, pricePerArticle: 680, status: "approved", queries: 8 },
+  { id: 8, name: "BizUp", domain: "bizup.co.il", category: "עסקים", dr: 57, traffic: 145000, seoScore: 76, gioScore: 71, gptPresent: true, geminiPresent: true, googleIndex: true, pricePerArticle: 1350, status: "approved", queries: 10 },
+  { id: 9, name: "DigiTech News", domain: "digitech.co.il", category: "טכנולוגיה", dr: 34, traffic: 45000, seoScore: 42, gioScore: 28, gptPresent: false, geminiPresent: false, googleIndex: false, pricePerArticle: 400, status: "rejected", rejectionReason: "DR נמוך, אינו מופיע ב-AI engines", queries: 5 },
+  { id: 10, name: "HealthLine IL", domain: "healthline.co.il", category: "בריאות", dr: 29, traffic: 12000, seoScore: 31, gioScore: 15, gptPresent: false, geminiPresent: false, googleIndex: false, pricePerArticle: 350, status: "rejected", rejectionReason: "אתר לא מאונדקס בגוגל, תנועה אורגנית זניחה", queries: 6 },
+  { id: 11, name: "StartupNation IL", domain: "startupnation.co.il", category: "עסקים", dr: 61, traffic: 175000, seoScore: 80, gioScore: 74, gptPresent: true, geminiPresent: true, googleIndex: true, pricePerArticle: 1400, status: "approved", queries: 12 },
+  { id: 12, name: "WellBeing", domain: "wellbeing.co.il", category: "בריאות", dr: 44, traffic: 88000, seoScore: 66, gioScore: 55, gptPresent: true, geminiPresent: false, googleIndex: true, pricePerArticle: 950, status: "pending", queries: 7 },
+];
+
+const CATEGORIES = ["הכל", "טכנולוגיה", "בריאות", "עסקים", "לייפסטייל", "חינוך", "פיננסים", 'נדל"ן', "אוכל"];
+const SORT_OPTIONS = [
+  { value: "rating", label: "דירוג" },
+  { value: "price", label: "מחיר" },
+  { value: "dr", label: "DR" },
+];
+
+type TabKey = "marketplace" | "planner" | "publishers" | "rejected";
+type PlanType = "combined" | "seo" | "geo";
+
+// ── Plan data ──
+interface PlanRow {
+  month: number;
+  seoArticles: number;
+  geoArticles: number;
+  sites: number;
+  budget: number;
+}
+
+function getPlanData(speed: "fast" | "medium" | "slow", duration: 3 | 6, planType: PlanType): PlanRow[] {
+  const configs = {
+    fast:   { seo: 8, geo: 4, sites: 6, seoBudget: 8500, geoBudget: 7100 },
+    medium: { seo: 5, geo: 3, sites: 4, seoBudget: 5600, geoBudget: 4700 },
+    slow:   { seo: 3, geo: 2, sites: 3, seoBudget: 3500, geoBudget: 2900 },
+  };
+  const c = configs[speed];
+  return Array.from({ length: duration }, (_, i) => {
+    let seo = c.seo;
+    let geo = c.geo;
+    let budget: number;
+    if (planType === "seo") {
+      geo = 0;
+      budget = c.seoBudget;
+    } else if (planType === "geo") {
+      seo = 0;
+      budget = c.geoBudget;
+    } else {
+      // Combined = 15% discount vs buying separately
+      budget = Math.round((c.seoBudget + c.geoBudget) * 0.85);
+    }
+    return {
+      month: i + 1,
+      seoArticles: seo,
+      geoArticles: geo,
+      sites: c.sites,
+      budget,
+    };
+  });
+}
+
+function getDiscountInfo(speed: "fast" | "medium" | "slow", duration: 3 | 6) {
+  const configs = {
+    fast:   { seoBudget: 8500, geoBudget: 7100 },
+    medium: { seoBudget: 5600, geoBudget: 4700 },
+    slow:   { seoBudget: 3500, geoBudget: 2900 },
+  };
+  const c = configs[speed];
+  const separateMonthly = c.seoBudget + c.geoBudget;
+  const combinedMonthly = Math.round(separateMonthly * 0.85);
+  const savingsMonthly = separateMonthly - combinedMonthly;
+  return {
+    separateTotal: separateMonthly * duration,
+    combinedTotal: combinedMonthly * duration,
+    savingsTotal: savingsMonthly * duration,
+    savingsPercent: 15,
+    separateMonthly,
+    combinedMonthly,
+    savingsMonthly,
+  };
+}
+
+// ── Number formatting ──
+function fmtNum(n: number): string {
+  return n.toLocaleString("he-IL");
+}
+function fmtCurrency(n: number): string {
+  return `${fmtNum(n)} \u20AA`;
+}
+
+// ── Score color ──
+function scoreColor(score: number, isRejected = false): string {
+  if (isRejected) return "#E53E3E";
+  if (score >= 70) return "#10A37F";
+  if (score >= 50) return "#E07800";
+  return "#E53E3E";
+}
+
+// ── Publisher Portal Data ──
+interface PublisherSite {
+  domain: string;
+  category: string;
+  dr: number;
+  status: "approved" | "pending" | "rejected";
+  agenciesViewed: number;
+  articlesSold: number;
+  revenue: number | null;
+}
+
+const PUBLISHER_SITES: PublisherSite[] = [
+  { domain: "techil.co.il", category: "טכנולוגיה", dr: 62, status: "approved", agenciesViewed: 8, articlesSold: 12, revenue: 14400 },
+  { domain: "medical-portal.co.il", category: "בריאות", dr: 55, status: "approved", agenciesViewed: 12, articlesSold: 18, revenue: 27000 },
+  { domain: "foodtaste.co.il", category: "אוכל", dr: 38, status: "approved", agenciesViewed: 5, articlesSold: 9, revenue: 6120 },
+  { domain: "wellbeing.co.il", category: "בריאות", dr: 44, status: "pending", agenciesViewed: 3, articlesSold: 0, revenue: null },
+  { domain: "digitech.co.il", category: "טכנולוגיה", dr: 34, status: "rejected", agenciesViewed: 0, articlesSold: 0, revenue: null },
+];
+
+interface AgencyActivity {
+  agency: string;
+  action: string;
+  site: string;
+  time: string;
+}
+
+const AGENCY_ACTIVITIES: AgencyActivity[] = [
+  { agency: "Just In Time", action: "צפו ב-", site: "techil.co.il", time: "לפני 2 שעות" },
+  { agency: "All4Horses", action: "רכשו מאמר ב-", site: "medical-portal.co.il", time: "לפני 5 שעות" },
+  { agency: "כלכליסט", action: "הוסיפו לסל ", site: "techil.co.il", time: "היום" },
+  { agency: "לחם ארטיזן", action: "צפו ב-", site: "foodtaste.co.il", time: "אתמול" },
+];
+
+// ── Main Page Component ──
+export default function BestLinksPage() {
+  const [activeTab, setActiveTab] = useState<TabKey>("marketplace");
+  const [cart, setCart] = useState<number[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("הכל");
+  const [sortBy, setSortBy] = useState("rating");
+  const [approvedOnly, setApprovedOnly] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [flashId, setFlashId] = useState<number | null>(null);
+  const [agencyMargin, setAgencyMargin] = useState(20);
+
+  // Plan builder state
+  const [planSpeed, setPlanSpeed] = useState<"fast" | "medium" | "slow">("medium");
+  const [planDuration, setPlanDuration] = useState<3 | 6>(6);
+  const [planType, setPlanType] = useState<PlanType>("combined");
+
+  // Auto open cart when items added
+  useEffect(() => {
+    if (cart.length > 0) setCartOpen(true);
+  }, [cart.length]);
+
+  const addToCart = useCallback((id: number) => {
+    setCart(prev => {
+      if (prev.includes(id)) return prev.filter(x => x !== id);
+      return [...prev, id];
+    });
+    setFlashId(id);
+    setTimeout(() => setFlashId(null), 600);
+  }, []);
+
+  const removeFromCart = useCallback((id: number) => {
+    setCart(prev => prev.filter(x => x !== id));
+  }, []);
+
+  const cartPublishers = useMemo(() => PUBLISHERS.filter(p => cart.includes(p.id)), [cart]);
+  const cartTotal = useMemo(() => cartPublishers.reduce((s, p) => s + p.pricePerArticle, 0), [cartPublishers]);
+  const cartQueries = useMemo(() => cartPublishers.reduce((s, p) => s + (p.queries || 8), 0), [cartPublishers]);
+  const marginAmount = useMemo(() => Math.round(cartTotal * agencyMargin / 100), [cartTotal, agencyMargin]);
+  const clientTotal = useMemo(() => cartTotal + marginAmount, [cartTotal, marginAmount]);
+
+  // Filtered and sorted publishers for marketplace
+  const filteredPublishers = useMemo(() => {
+    let list = PUBLISHERS.filter(p => p.status === "approved" || (!approvedOnly && p.status === "pending"));
+    if (approvedOnly) list = list.filter(p => p.status === "approved");
+    if (selectedCategory !== "הכל") list = list.filter(p => p.category === selectedCategory);
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase();
+      list = list.filter(p => p.name.toLowerCase().includes(q) || p.domain.toLowerCase().includes(q));
+    }
+    list.sort((a, b) => {
+      if (sortBy === "price") return a.pricePerArticle - b.pricePerArticle;
+      if (sortBy === "dr") return b.dr - a.dr;
+      return (b.seoScore + b.gioScore) - (a.seoScore + a.gioScore);
+    });
+    return list;
+  }, [searchQuery, selectedCategory, sortBy, approvedOnly]);
+
+  const rejectedPublishers = PUBLISHERS.filter(p => p.status === "rejected");
+  const pendingPublishers = PUBLISHERS.filter(p => p.status === "pending");
+
+  // Plan data
+  const planData = useMemo(() => getPlanData(planSpeed, planDuration, planType), [planSpeed, planDuration, planType]);
+  const planTotals = useMemo(() => ({
+    articles: planData.reduce((s, r) => s + r.seoArticles + r.geoArticles, 0),
+    budget: planData.reduce((s, r) => s + r.budget, 0),
+  }), [planData]);
+
+  const TABS: { key: TabKey; label: string }[] = [
+    { key: "marketplace", label: "מאגר אתרים" },
+    { key: "planner", label: "בונה תוכנית" },
+    { key: "publishers", label: "פורטל Publishers" },
+    { key: "rejected", label: "אתרים פסולים" },
+  ];
+
+  return (
+    <div style={{ minHeight: "100vh", background: "#fff", fontFamily: "'Inter', 'Heebo', sans-serif" }} dir="rtl">
+      {/* ── Header ── */}
+      <header className="sticky top-0 z-50" style={{ background: "rgba(255,255,255,0.96)", borderBottom: "1px solid #BFBFBF" }}>
+        <div style={{ maxWidth: 1300, margin: "0 auto", padding: "0 24px", height: 72, display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center" }}>
+          {/* RIGHT in RTL = Actions */}
+          <div style={{ display: "flex", alignItems: "center", gap: 16, justifySelf: "start" }}>
+            <a href="/new-scan" style={{ display: "inline-flex", alignItems: "center", padding: "8px 20px", background: "#000", color: "#fff", fontSize: 13, fontWeight: 600, borderRadius: 9, border: "1px solid #000", textDecoration: "none" }}>סריקה חדשה</a>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "#727272" }}>
+              <span style={{ width: 8, height: 8, borderRadius: 4, background: "#10A37F", display: "inline-block" }} />
+              <span>מחובר</span>
+            </div>
+          </div>
+          {/* CENTER = Nav */}
+          <nav style={{ display: "flex", alignItems: "center", gap: 32 }}>
+            <a href="/" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>דשבורד</a>
+            <a href="/scan" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>סריקות</a>
+            <a href="/scale-publish" style={{ fontSize: 14, fontWeight: 600, color: "#000", textDecoration: "none" }}>ScalePublish</a>
+            <a href="/roadmap" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>Roadmap</a>
+          </nav>
+          {/* LEFT in RTL = Logo */}
+          <div style={{ justifySelf: "end" }}>
+            <GeoscaleLogo width={150} />
+          </div>
+        </div>
+      </header>
+
+      {/* ── Sub-tabs ── */}
+      <div style={{ borderBottom: "1px solid #DDDDDD", background: "#fff" }}>
+        <div style={{ maxWidth: 1300, margin: "0 auto", padding: "0 24px", display: "flex", alignItems: "center", gap: 0 }}>
+          {TABS.map(tab => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              style={{
+                padding: "14px 24px",
+                fontSize: 13,
+                fontWeight: activeTab === tab.key ? 600 : 400,
+                color: activeTab === tab.key ? "#000" : "#727272",
+                background: "none",
+                border: "none",
+                borderBottom: activeTab === tab.key ? "2px solid #000" : "2px solid transparent",
+                cursor: "pointer",
+                transition: "all 0.2s",
+              }}
+            >
+              {tab.label}
+              {tab.key === "rejected" && rejectedPublishers.length > 0 && (
+                <span style={{ marginRight: 6, background: "#E53E3E15", color: "#E53E3E", fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 20 }}>{rejectedPublishers.length}</span>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Content ── */}
+      <div style={{ maxWidth: 1300, margin: "0 auto", padding: "32px 24px 80px" }}>
+        {activeTab === "marketplace" && (
+          <MarketplaceTab
+            publishers={filteredPublishers}
+            cart={cart}
+            flashId={flashId}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+            sortBy={sortBy}
+            setSortBy={setSortBy}
+            approvedOnly={approvedOnly}
+            setApprovedOnly={setApprovedOnly}
+            onAddToCart={addToCart}
+          />
+        )}
+        {activeTab === "planner" && (
+          <PlannerTab
+            planSpeed={planSpeed}
+            setPlanSpeed={setPlanSpeed}
+            planDuration={planDuration}
+            setPlanDuration={setPlanDuration}
+            planData={planData}
+            planTotals={planTotals}
+            planType={planType}
+            setPlanType={setPlanType}
+          />
+        )}
+        {activeTab === "publishers" && <PublishersTab />}
+        {activeTab === "rejected" && <RejectedTab publishers={rejectedPublishers} pendingCount={pendingPublishers.length} />}
+      </div>
+
+      {/* ── Cart Sidebar ── */}
+      {cart.length > 0 && (
+        <>
+          {/* Cart toggle button */}
+          {!cartOpen && (
+            <button
+              onClick={() => setCartOpen(true)}
+              style={{
+                position: "fixed",
+                bottom: 24,
+                left: 24,
+                width: 56,
+                height: 56,
+                borderRadius: "50%",
+                background: "#000",
+                color: "#fff",
+                border: "none",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                zIndex: 100,
+              }}
+            >
+              <IconCart size={20} />
+              <span style={{ position: "absolute", top: -4, right: -4, width: 22, height: 22, borderRadius: 11, background: "#10A37F", color: "#fff", fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center" }}>{cart.length}</span>
+            </button>
+          )}
+
+          {/* Cart panel */}
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: 360,
+              height: "100vh",
+              background: "#fff",
+              borderRight: "1px solid #BFBFBF",
+              zIndex: 200,
+              transform: cartOpen ? "translateX(0)" : "translateX(-100%)",
+              transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <div style={{ padding: "20px 24px", borderBottom: "1px solid #DDDDDD", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <IconCart size={18} />
+                <span style={{ fontSize: 16, fontWeight: 600 }}>סל התוכנית</span>
+                <span style={{ fontSize: 12, color: "#727272" }}>({cart.length} אתרים)</span>
+              </div>
+              <button onClick={() => setCartOpen(false)} style={{ background: "none", border: "none", cursor: "pointer", color: "#727272", padding: 4 }}>
+                <IconX size={18} />
+              </button>
+            </div>
+            <div style={{ flex: 1, overflowY: "auto", padding: "12px 24px" }}>
+              {cartPublishers.map(pub => (
+                <div key={pub.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 0", borderBottom: "1px solid #F0F0F0" }}>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 600 }}>{pub.name}</div>
+                    <div style={{ fontSize: 11, color: "#727272" }}>{pub.domain}</div>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    <div style={{ textAlign: "left" }}>
+                      <span style={{ fontSize: 13, fontWeight: 600 }}>{fmtCurrency(pub.pricePerArticle)}</span>
+                      <div style={{ fontSize: 10, color: "#727272" }}>~{pub.queries || 8} שאילתות</div>
+                    </div>
+                    <button onClick={() => removeFromCart(pub.id)} style={{ background: "none", border: "none", cursor: "pointer", color: "#A2A9B0", padding: 2 }}>
+                      <IconTrash size={14} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Agency Margin Section */}
+            <div style={{ padding: "16px 24px", borderTop: "1px solid #DDDDDD", background: "#F9F9F9" }}>
+              <div style={{ fontSize: 12, fontWeight: 600, color: "#333", marginBottom: 10 }}>אחוזי רווח Agency</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <input
+                  type="range"
+                  min={0}
+                  max={50}
+                  value={agencyMargin}
+                  onChange={e => setAgencyMargin(Number(e.target.value))}
+                  style={{ flex: 1, accentColor: "#10A37F" }}
+                />
+                <span style={{
+                  fontSize: 14,
+                  fontWeight: 700,
+                  color: "#10A37F",
+                  background: "#10A37F15",
+                  padding: "4px 12px",
+                  borderRadius: 20,
+                  minWidth: 48,
+                  textAlign: "center",
+                }}>{agencyMargin}%</span>
+              </div>
+            </div>
+
+            <div style={{ padding: "20px 24px", borderTop: "1px solid #DDDDDD" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, fontSize: 13 }}>
+                <span style={{ color: "#727272" }}>סה"כ אתרים</span>
+                <span style={{ fontWeight: 600 }}>{cart.length}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, fontSize: 13 }}>
+                <span style={{ color: "#727272" }}>סה"כ שאילתות</span>
+                <span style={{ fontWeight: 600 }}>{cartQueries}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, fontSize: 13 }}>
+                <span style={{ color: "#727272" }}>מחיר בסיס</span>
+                <span style={{ fontWeight: 600 }}>{fmtCurrency(cartTotal)}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, fontSize: 13 }}>
+                <span style={{ color: "#727272" }}>רווח Agency ({agencyMargin}%)</span>
+                <span style={{ fontWeight: 600, color: "#10A37F" }}>{fmtCurrency(marginAmount)}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20, fontSize: 14, paddingTop: 8, borderTop: "1px solid #F0F0F0" }}>
+                <span style={{ fontWeight: 600 }}>סה"כ ללקוח</span>
+                <span style={{ fontWeight: 700, fontSize: 16 }}>{fmtCurrency(clientTotal)}</span>
+              </div>
+              <button style={{ width: "100%", padding: "12px 0", background: "#000", color: "#fff", fontSize: 14, fontWeight: 600, borderRadius: 9, border: "none", cursor: "pointer" }}>
+                צור הצעת מחיר
+              </button>
+            </div>
+          </div>
+          {/* Click-away area (no visual overlay, doesn't block page) */}
+        </>
+      )}
+
+      {/* ── Footer ── */}
+      <footer style={{ borderTop: "1px solid #BFBFBF" }}>
+        <div className="max-w-[1300px] mx-auto px-6 py-5 flex items-center justify-between" dir="rtl">
+          <div className="flex items-center gap-3">
+            <GeoscaleLogoMark size={28} />
+            <span className="text-sm" style={{ color: "#727272" }}>מונע על ידי AI מתקדם לניתוח הנוכחות שלך בחיפוש</span>
+          </div>
+          <div className="flex items-center gap-3">
+            {[
+              { label: "פידבק", color: "#10A37F", bg: "#10A37F15" },
+              { label: "דיווח באג", color: "#E07800", bg: "#E0780015" },
+              { label: "הצעות לשיפור", color: "#4285F4", bg: "#4285F415" },
+              { label: "שימוש API", color: "#10A37F", bg: "#10A37F15" },
+            ].map((link, i) => (
+              <span key={i} className="text-xs font-medium px-3 py-1.5 cursor-pointer transition-opacity hover:opacity-70" style={{ color: link.color, background: link.bg, borderRadius: 20 }}>
+                {link.label}
+              </span>
+            ))}
+          </div>
+          <span className="text-xs" style={{ color: "#A2A9B0" }}>GeoScale 2026 &copy;</span>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+// ============================================================
+// TAB 1: Marketplace
+// ============================================================
+function MarketplaceTab({
+  publishers, cart, flashId, searchQuery, setSearchQuery, selectedCategory, setSelectedCategory,
+  sortBy, setSortBy, approvedOnly, setApprovedOnly, onAddToCart,
+}: {
+  publishers: Publisher[];
+  cart: number[];
+  flashId: number | null;
+  searchQuery: string;
+  setSearchQuery: (v: string) => void;
+  selectedCategory: string;
+  setSelectedCategory: (v: string) => void;
+  sortBy: string;
+  setSortBy: (v: string) => void;
+  approvedOnly: boolean;
+  setApprovedOnly: (v: boolean) => void;
+  onAddToCart: (id: number) => void;
+}) {
+  return (
+    <div>
+      {/* Title */}
+      <div style={{ marginBottom: 28 }}>
+        <h1 style={{ fontSize: 26, fontWeight: 700, color: "#000", marginBottom: 6 }}>
+          ScalePublish <span style={{ fontWeight: 400, fontSize: 20 }}>— פלטפורמת תוכן לסוכנויות</span>
+        </h1>
+        <p style={{ fontSize: 14, color: "#727272", lineHeight: 1.6 }}>
+          בחרו אתרים, בנו תוכנית עבודה והפיקו הצעות מחיר — SEO ו-GEO במקום אחד
+        </p>
+      </div>
+
+      {/* Filter bar */}
+      <div style={{ background: "#F9F9F9", borderRadius: 10, border: "1px solid #DDDDDD", padding: "16px 20px", marginBottom: 24, display: "flex", flexWrap: "wrap", alignItems: "center", gap: 12 }}>
+        {/* Search */}
+        <div style={{ position: "relative", minWidth: 220 }}>
+          <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)" }}>
+            <IconSearch size={15} />
+          </span>
+          <input
+            type="text"
+            placeholder="חיפוש אתר..."
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "9px 38px 9px 14px",
+              fontSize: 13,
+              border: "1px solid #DDDDDD",
+              borderRadius: 8,
+              background: "#fff",
+              outline: "none",
+              color: "#333",
+            }}
+          />
+        </div>
+
+        {/* Divider */}
+        <div style={{ width: 1, height: 28, background: "#DDDDDD" }} />
+
+        {/* Categories */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, flex: 1 }}>
+          {CATEGORIES.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              style={{
+                padding: "6px 14px",
+                fontSize: 12,
+                fontWeight: selectedCategory === cat ? 600 : 400,
+                color: selectedCategory === cat ? "#fff" : "#333",
+                background: selectedCategory === cat ? "#000" : "#fff",
+                border: `1px solid ${selectedCategory === cat ? "#000" : "#DDDDDD"}`,
+                borderRadius: 20,
+                cursor: "pointer",
+                transition: "all 0.15s",
+              }}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
+        {/* Divider */}
+        <div style={{ width: 1, height: 28, background: "#DDDDDD" }} />
+
+        {/* Sort */}
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ fontSize: 12, color: "#727272" }}>מיון:</span>
+          <div style={{ position: "relative" }}>
+            <select
+              value={sortBy}
+              onChange={e => setSortBy(e.target.value)}
+              style={{
+                appearance: "none",
+                padding: "7px 28px 7px 10px",
+                fontSize: 12,
+                fontWeight: 500,
+                border: "1px solid #DDDDDD",
+                borderRadius: 8,
+                background: "#fff",
+                cursor: "pointer",
+                color: "#333",
+                outline: "none",
+              }}
+            >
+              {SORT_OPTIONS.map(o => (
+                <option key={o.value} value={o.value}>{o.label}</option>
+              ))}
+            </select>
+            <span style={{ position: "absolute", left: 8, top: "50%", transform: "translateY(-50%)", pointerEvents: "none", color: "#A2A9B0" }}>
+              <IconChevronDown size={12} />
+            </span>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div style={{ width: 1, height: 28, background: "#DDDDDD" }} />
+
+        {/* Approved only toggle */}
+        <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 12, color: "#333", whiteSpace: "nowrap" }}>
+          <div
+            onClick={() => setApprovedOnly(!approvedOnly)}
+            style={{
+              width: 36,
+              height: 20,
+              borderRadius: 10,
+              background: approvedOnly ? "#10A37F" : "#DDDDDD",
+              position: "relative",
+              cursor: "pointer",
+              transition: "background 0.2s",
+            }}
+          >
+            <div style={{
+              width: 16,
+              height: 16,
+              borderRadius: 8,
+              background: "#fff",
+              position: "absolute",
+              top: 2,
+              transition: "all 0.2s",
+              ...(approvedOnly ? { left: 18 } : { left: 2 }),
+            }} />
+          </div>
+          אתרים מאושרים בלבד
+        </label>
+      </div>
+
+      {/* Results count */}
+      <div style={{ fontSize: 13, color: "#727272", marginBottom: 16 }}>
+        {publishers.length} אתרים נמצאו
+      </div>
+
+      {/* Publisher Cards Grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
+        {publishers.map(pub => (
+          <PublisherCard
+            key={pub.id}
+            publisher={pub}
+            inCart={cart.includes(pub.id)}
+            isFlashing={flashId === pub.id}
+            onToggleCart={() => onAddToCart(pub.id)}
+          />
+        ))}
+      </div>
+
+      {publishers.length === 0 && (
+        <div style={{ textAlign: "center", padding: "60px 0", color: "#727272" }}>
+          <div style={{ fontSize: 40, marginBottom: 12 }}>0</div>
+          <div style={{ fontSize: 14 }}>לא נמצאו אתרים התואמים את החיפוש</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Publisher Card ──
+function PublisherCard({ publisher: pub, inCart, isFlashing, onToggleCart }: {
+  publisher: Publisher;
+  inCart: boolean;
+  isFlashing: boolean;
+  onToggleCart: () => void;
+}) {
+  return (
+    <div
+      style={{
+        border: `1px solid ${inCart ? "#10A37F" : "#DDDDDD"}`,
+        borderRadius: 10,
+        padding: 20,
+        background: isFlashing ? "#10A37F08" : "#fff",
+        transition: "all 0.3s",
+        position: "relative",
+      }}
+    >
+      {/* Status badge */}
+      {pub.status === "pending" && (
+        <span style={{ position: "absolute", top: 12, left: 12, fontSize: 10, fontWeight: 600, color: "#E07800", background: "#E0780015", padding: "3px 10px", borderRadius: 20 }}>
+          בבדיקה
+        </span>
+      )}
+
+      {/* Header */}
+      <div style={{ marginBottom: 14 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+          <span style={{ fontSize: 15, fontWeight: 700, color: "#000" }}>{pub.name}</span>
+          <a href={`https://${pub.domain}`} target="_blank" rel="noopener noreferrer" style={{ color: "#A2A9B0", display: "inline-flex" }}>
+            <IconExternalLink size={11} />
+          </a>
+        </div>
+        <div style={{ fontSize: 12, color: "#727272" }}>{pub.domain}</div>
+      </div>
+
+      {/* Category */}
+      <span style={{ display: "inline-block", fontSize: 11, fontWeight: 500, color: "#333", background: "#F9F9F9", border: "1px solid #DDDDDD", padding: "3px 12px", borderRadius: 20, marginBottom: 14 }}>
+        {pub.category}
+      </span>
+
+      {/* Metrics row */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 14 }}>
+        <MetricBox label="SEO Score" value={pub.seoScore} color={scoreColor(pub.seoScore)} />
+        <MetricBox label="GIO Score" value={pub.gioScore} color={scoreColor(pub.gioScore)} />
+      </div>
+
+      {/* Stats */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 14 }}>
+        <StatItem label="DR" value={String(pub.dr)} />
+        <StatItem label="תנועה חודשית" value={fmtNum(pub.traffic)} />
+        <StatItem
+          label="Google Index"
+          value={
+            <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <span style={{ width: 7, height: 7, borderRadius: "50%", background: pub.googleIndex ? "#10A37F" : "#E53E3E", display: "inline-block" }} />
+              <span style={{ fontSize: 11 }}>{pub.googleIndex ? "פעיל" : "לא"}</span>
+            </span>
+          }
+        />
+      </div>
+
+      {/* AI Presence */}
+      <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+        <AiBadge engine="GPT" present={pub.gptPresent} />
+        <AiBadge engine="Gemini" present={pub.geminiPresent} />
+      </div>
+
+      {/* Footer: Price + CTA */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: 14, borderTop: "1px solid #F0F0F0" }}>
+        <div>
+          <div style={{ fontSize: 11, color: "#727272" }}>מחיר למאמר</div>
+          <div style={{ fontSize: 18, fontWeight: 700, color: "#000" }}>{fmtCurrency(pub.pricePerArticle)}</div>
+        </div>
+        <button
+          onClick={onToggleCart}
+          style={{
+            padding: "9px 20px",
+            fontSize: 13,
+            fontWeight: 600,
+            borderRadius: 9,
+            border: "none",
+            cursor: "pointer",
+            transition: "all 0.2s",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            ...(inCart
+              ? { background: "#10A37F", color: "#fff" }
+              : { background: "#000", color: "#fff" }
+            ),
+          }}
+        >
+          {inCart ? (
+            <>
+              <IconCheck size={13} />
+              נוסף
+            </>
+          ) : (
+            "הוסף לתוכנית"
+          )}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function MetricBox({ label, value, color }: { label: string; value: number; color: string }) {
+  return (
+    <div style={{ background: "#F9F9F9", borderRadius: 8, padding: "10px 12px", border: "1px solid #F0F0F0" }}>
+      <div style={{ fontSize: 10, color: "#727272", marginBottom: 4 }}>{label}</div>
+      <div style={{ fontSize: 22, fontWeight: 700, color, lineHeight: 1 }}>{value}</div>
+    </div>
+  );
+}
+
+function StatItem({ label, value }: { label: string; value: React.ReactNode }) {
+  return (
+    <div>
+      <div style={{ fontSize: 10, color: "#A2A9B0", marginBottom: 2 }}>{label}</div>
+      <div style={{ fontSize: 13, fontWeight: 600, color: "#333" }}>{value}</div>
+    </div>
+  );
+}
+
+function AiBadge({ engine, present }: { engine: string; present: boolean }) {
+  return (
+    <span style={{
+      display: "inline-flex",
+      alignItems: "center",
+      gap: 4,
+      fontSize: 11,
+      fontWeight: 500,
+      padding: "4px 10px",
+      borderRadius: 20,
+      border: `1px solid ${present ? "#10A37F40" : "#E53E3E30"}`,
+      color: present ? "#10A37F" : "#E53E3E",
+      background: present ? "#10A37F08" : "#E53E3E08",
+    }}>
+      {engine} {present ? "\u2713" : "\u2717"}
+    </span>
+  );
+}
+
+// ============================================================
+// TAB 2: Plan Builder
+// ============================================================
+function PlannerTab({
+  planSpeed, setPlanSpeed, planDuration, setPlanDuration, planData, planTotals, planType, setPlanType,
+}: {
+  planSpeed: "fast" | "medium" | "slow";
+  setPlanSpeed: (v: "fast" | "medium" | "slow") => void;
+  planDuration: 3 | 6;
+  setPlanDuration: (v: 3 | 6) => void;
+  planData: PlanRow[];
+  planTotals: { articles: number; budget: number };
+  planType: PlanType;
+  setPlanType: (v: PlanType) => void;
+}) {
+  const discount = getDiscountInfo(planSpeed, planDuration);
+
+  return (
+    <div>
+      {/* Title */}
+      <div style={{ marginBottom: 32 }}>
+        <h1 style={{ fontSize: 26, fontWeight: 700, color: "#000", marginBottom: 6 }}>בונה תוכנית עבודה</h1>
+        <p style={{ fontSize: 14, color: "#727272" }}>הגדירו מותג, משך ומהירות - ותקבלו תוכנית עבודה מותאמת אישית עם הצעת מחיר</p>
+      </div>
+
+      {/* Configuration row */}
+      <div style={{ background: "#F9F9F9", borderRadius: 10, border: "1px solid #DDDDDD", padding: "20px 24px", marginBottom: 20, display: "flex", flexWrap: "wrap", alignItems: "center", gap: 24 }}>
+        {/* Brand selector */}
+        <div>
+          <div style={{ fontSize: 11, color: "#727272", marginBottom: 6 }}>מותג</div>
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            padding: "9px 16px",
+            border: "1px solid #DDDDDD",
+            borderRadius: 8,
+            background: "#fff",
+            fontSize: 13,
+            fontWeight: 600,
+            minWidth: 180,
+          }}>
+            <span style={{ width: 8, height: 8, borderRadius: 4, background: "#10A37F", display: "inline-block" }} />
+            All4Horses
+            <span style={{ marginRight: "auto", color: "#A2A9B0" }}><IconChevronDown size={12} /></span>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div style={{ width: 1, height: 48, background: "#DDDDDD" }} />
+
+        {/* Duration */}
+        <div>
+          <div style={{ fontSize: 11, color: "#727272", marginBottom: 6 }}>משך תוכנית</div>
+          <div style={{ display: "flex", gap: 0, border: "1px solid #DDDDDD", borderRadius: 8, overflow: "hidden" }}>
+            {([3, 6] as const).map(d => (
+              <button
+                key={d}
+                onClick={() => setPlanDuration(d)}
+                style={{
+                  padding: "9px 20px",
+                  fontSize: 13,
+                  fontWeight: planDuration === d ? 600 : 400,
+                  background: planDuration === d ? "#000" : "#fff",
+                  color: planDuration === d ? "#fff" : "#333",
+                  border: "none",
+                  cursor: "pointer",
+                  transition: "all 0.15s",
+                }}
+              >
+                {d} חודשים
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div style={{ width: 1, height: 48, background: "#DDDDDD" }} />
+
+        {/* Speed */}
+        <div>
+          <div style={{ fontSize: 11, color: "#727272", marginBottom: 6 }}>מהירות</div>
+          <div style={{ display: "flex", gap: 0, border: "1px solid #DDDDDD", borderRadius: 8, overflow: "hidden" }}>
+            {([
+              { key: "fast" as const, label: "אגרסיבי" },
+              { key: "medium" as const, label: "בינוני" },
+              { key: "slow" as const, label: "שמרני" },
+            ]).map(s => (
+              <button
+                key={s.key}
+                onClick={() => setPlanSpeed(s.key)}
+                style={{
+                  padding: "9px 20px",
+                  fontSize: 13,
+                  fontWeight: planSpeed === s.key ? 600 : 400,
+                  background: planSpeed === s.key ? "#000" : "#fff",
+                  color: planSpeed === s.key ? "#fff" : "#333",
+                  border: "none",
+                  cursor: "pointer",
+                  transition: "all 0.15s",
+                }}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Plan Type Cards — SEO / GEO / Combined with discount */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 28 }}>
+        {/* SEO Only */}
+        {(() => {
+          const seoPrices: Record<string, number> = { fast: 8500, medium: 5600, slow: 3500 };
+          const geoPrices: Record<string, number> = { fast: 7100, medium: 4700, slow: 2900 };
+          const seoPrice = seoPrices[planSpeed];
+          const geoPrice = geoPrices[planSpeed];
+          return (
+            <>
+              <button
+                onClick={() => setPlanType("seo")}
+                style={{
+                  padding: 20,
+                  borderRadius: 10,
+                  border: planType === "seo" ? "2px solid #000" : "1px solid #DDDDDD",
+                  background: planType === "seo" ? "#F9F9F9" : "#fff",
+                  cursor: "pointer",
+                  textAlign: "right",
+                  transition: "all 0.2s",
+                }}
+              >
+                <div style={{ fontSize: 14, fontWeight: 600, color: "#000", marginBottom: 4 }}>SEO בלבד</div>
+                <div style={{ fontSize: 12, color: "#727272", marginBottom: 10 }}>מאמרים ממוקדים לקידום אורגני</div>
+                <div style={{ fontSize: 20, fontWeight: 700, color: "#000" }}>{fmtCurrency(seoPrice)}</div>
+                <div style={{ fontSize: 11, color: "#A2A9B0" }}>{fmtCurrency(seoPrice)} / חודש</div>
+              </button>
+
+              {/* GEO Only */}
+              <button
+                onClick={() => setPlanType("geo")}
+                style={{
+                  padding: 20,
+                  borderRadius: 10,
+                  border: planType === "geo" ? "2px solid #000" : "1px solid #DDDDDD",
+                  background: planType === "geo" ? "#F9F9F9" : "#fff",
+                  cursor: "pointer",
+                  textAlign: "right",
+                  transition: "all 0.2s",
+                }}
+              >
+                <div style={{ fontSize: 14, fontWeight: 600, color: "#000", marginBottom: 4 }}>GEO בלבד</div>
+                <div style={{ fontSize: 12, color: "#727272", marginBottom: 10 }}>תוכן ממוקד למנועי AI</div>
+                <div style={{ fontSize: 20, fontWeight: 700, color: "#000" }}>{fmtCurrency(geoPrice)}</div>
+                <div style={{ fontSize: 11, color: "#A2A9B0" }}>{fmtCurrency(geoPrice)} / חודש</div>
+              </button>
+            </>
+          );
+        })()}
+
+        {/* Combined — with discount badge */}
+        <button
+          onClick={() => setPlanType("combined")}
+          style={{
+            position: "relative",
+            padding: 20,
+            borderRadius: 10,
+            border: planType === "combined" ? "2px solid #10A37F" : "1px solid #DDDDDD",
+            background: planType === "combined" ? "#10A37F08" : "#fff",
+            cursor: "pointer",
+            textAlign: "right",
+            transition: "all 0.2s",
+          }}
+        >
+          {/* Discount badge */}
+          <div style={{
+            position: "absolute",
+            top: -10,
+            left: 16,
+            padding: "3px 12px",
+            borderRadius: 20,
+            background: "#10A37F",
+            color: "#fff",
+            fontSize: 11,
+            fontWeight: 700,
+          }}>
+            חיסכון {discount.savingsPercent}%
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+            <div style={{ fontSize: 14, fontWeight: 600, color: "#000" }}>SEO + GEO</div>
+            <span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, background: "#10A37F15", color: "#10A37F", fontWeight: 600 }}>מומלץ</span>
+          </div>
+          <div style={{ fontSize: 12, color: "#727272", marginBottom: 10 }}>חבילה משולבת - קידום אורגני + נוכחות AI</div>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+            <span style={{ fontSize: 20, fontWeight: 700, color: "#10A37F" }}>{fmtCurrency(discount.combinedMonthly)}</span>
+            <span style={{ fontSize: 13, color: "#A2A9B0", textDecoration: "line-through" }}>{fmtCurrency(discount.separateMonthly)}</span>
+          </div>
+          <div style={{ fontSize: 11, color: "#10A37F", fontWeight: 500 }}>
+            חיסכון של {fmtCurrency(discount.savingsMonthly)} בחודש
+          </div>
+        </button>
+      </div>
+
+      {/* Discount banner when combined is selected */}
+      {planType === "combined" && (
+        <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 20px", borderRadius: 10, background: "#10A37F08", border: "1px solid #10A37F30", marginBottom: 20 }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10A37F" strokeWidth="2" strokeLinecap="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" /><line x1="7" y1="7" x2="7.01" y2="7" /></svg>
+          <div>
+            <span style={{ fontSize: 13, fontWeight: 600, color: "#10A37F" }}>הנחה פעילה: </span>
+            <span style={{ fontSize: 13, color: "#333" }}>חיסכון של {fmtCurrency(discount.savingsTotal)} לאורך כל התוכנית ({planDuration} חודשים) בבחירת חבילה משולבת</span>
+          </div>
+        </div>
+      )}
+
+      {/* Plan table */}
+      <div style={{ border: "1px solid #DDDDDD", borderRadius: 10, overflow: "hidden", marginBottom: 28 }}>
+        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+          <thead>
+            <tr style={{ background: "#F9F9F9" }}>
+              <th style={{ padding: "12px 16px", textAlign: "right", fontWeight: 600, color: "#333", borderBottom: "1px solid #DDDDDD" }}>חודש</th>
+              <th style={{ padding: "12px 16px", textAlign: "center", fontWeight: 600, color: "#333", borderBottom: "1px solid #DDDDDD" }}>מאמרי SEO</th>
+              <th style={{ padding: "12px 16px", textAlign: "center", fontWeight: 600, color: "#333", borderBottom: "1px solid #DDDDDD" }}>מאמרי GEO</th>
+              <th style={{ padding: "12px 16px", textAlign: "center", fontWeight: 600, color: "#333", borderBottom: "1px solid #DDDDDD" }}>אתרים</th>
+              <th style={{ padding: "12px 16px", textAlign: "left", fontWeight: 600, color: "#333", borderBottom: "1px solid #DDDDDD" }}>תקציב חודשי</th>
+            </tr>
+          </thead>
+          <tbody>
+            {planData.map(row => (
+              <tr key={row.month} style={{ borderBottom: "1px solid #F0F0F0" }}>
+                <td style={{ padding: "14px 16px", fontWeight: 600 }}>חודש {row.month}</td>
+                <td style={{ padding: "14px 16px", textAlign: "center", color: planType === "geo" ? "#A2A9B0" : undefined }}>{planType === "geo" ? "—" : row.seoArticles}</td>
+                <td style={{ padding: "14px 16px", textAlign: "center", color: planType === "seo" ? "#A2A9B0" : undefined }}>{planType === "seo" ? "—" : row.geoArticles}</td>
+                <td style={{ padding: "14px 16px", textAlign: "center" }}>{row.sites}</td>
+                <td style={{ padding: "14px 16px", textAlign: "left", fontWeight: 600 }}>{fmtCurrency(row.budget)}</td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr style={{ background: "#F9F9F9", fontWeight: 700 }}>
+              <td style={{ padding: "14px 16px", borderTop: "1px solid #DDDDDD" }}>סה&quot;כ</td>
+              <td style={{ padding: "14px 16px", textAlign: "center", borderTop: "1px solid #DDDDDD", color: planType === "geo" ? "#A2A9B0" : undefined }}>{planType === "geo" ? "—" : planData.reduce((s, r) => s + r.seoArticles, 0)}</td>
+              <td style={{ padding: "14px 16px", textAlign: "center", borderTop: "1px solid #DDDDDD", color: planType === "seo" ? "#A2A9B0" : undefined }}>{planType === "seo" ? "—" : planData.reduce((s, r) => s + r.geoArticles, 0)}</td>
+              <td style={{ padding: "14px 16px", textAlign: "center", borderTop: "1px solid #DDDDDD" }}>{planData.reduce((s, r) => s + r.sites, 0)}</td>
+              <td style={{ padding: "14px 16px", textAlign: "left", borderTop: "1px solid #DDDDDD" }}>
+                <span>{fmtCurrency(planTotals.budget)}</span>
+                {planType === "combined" && (
+                  <span style={{ fontSize: 11, color: "#A2A9B0", textDecoration: "line-through", marginRight: 8 }}>{fmtCurrency(discount.separateTotal)}</span>
+                )}
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      {/* Summary cards */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
+        <SummaryCard label={'סה"כ מאמרים'} value={String(planTotals.articles)} accent={false} />
+        <SummaryCard label="תקציב כולל" value={fmtCurrency(planTotals.budget)} accent={false} />
+        {planType === "combined" ? (
+          <div style={{ border: "1px solid #10A37F30", borderRadius: 10, padding: 20, background: "#10A37F08" }}>
+            <div style={{ fontSize: 12, color: "#10A37F", marginBottom: 8, fontWeight: 500 }}>חיסכון כולל</div>
+            <div style={{ fontSize: 24, fontWeight: 700, color: "#10A37F" }}>{fmtCurrency(discount.savingsTotal)}</div>
+          </div>
+        ) : (
+          <SummaryCard label="עלייה צפויה בתנועה" value={planSpeed === "fast" ? "+180%" : planSpeed === "medium" ? "+120%" : "+65%"} accent={true} />
+        )}
+        <div style={{ border: "1px solid #DDDDDD", borderRadius: 10, padding: 20, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <button style={{ padding: "12px 32px", background: "#000", color: "#fff", fontSize: 14, fontWeight: 600, borderRadius: 9, border: "none", cursor: "pointer", transition: "opacity 0.2s" }} onMouseEnter={e => (e.currentTarget.style.opacity = "0.8")} onMouseLeave={e => (e.currentTarget.style.opacity = "1")}>
+            צור הצעת מחיר
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SummaryCard({ label, value, accent }: { label: string; value: string; accent: boolean }) {
+  return (
+    <div style={{ border: "1px solid #DDDDDD", borderRadius: 10, padding: 20 }}>
+      <div style={{ fontSize: 12, color: "#727272", marginBottom: 8 }}>{label}</div>
+      <div style={{ fontSize: 24, fontWeight: 700, color: accent ? "#10A37F" : "#000" }}>{value}</div>
+    </div>
+  );
+}
+
+// ============================================================
+// TAB 3: Publishers Portal
+// ============================================================
+function PublishersTab() {
+  const [newDomain, setNewDomain] = useState("");
+  const [newCategory, setNewCategory] = useState("טכנולוגיה");
+  const [newPrice, setNewPrice] = useState("");
+
+  const stats = [
+    { label: "אתרים פעילים", value: "9", color: "#10A37F" },
+    { label: "agencies שצפו", value: "24", color: "#333" },
+    { label: "מאמרים שנמכרו", value: "47", color: "#333" },
+    { label: "הכנסות החודש", value: "32,400 \u20AA", color: "#10A37F" },
+  ];
+
+  const statusDot = (status: "approved" | "pending" | "rejected") => {
+    const colors = { approved: "#10A37F", pending: "#E07800", rejected: "#E53E3E" };
+    const labels = { approved: "מאושר", pending: "בבדיקה", rejected: "נפסל" };
+    return (
+      <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+        <span style={{ width: 8, height: 8, borderRadius: "50%", background: colors[status], display: "inline-block" }} />
+        <span style={{ fontSize: 12, color: colors[status], fontWeight: 500 }}>{labels[status]}</span>
+      </span>
+    );
+  };
+
+  return (
+    <div>
+      {/* Title */}
+      <div style={{ marginBottom: 28 }}>
+        <h1 style={{ fontSize: 26, fontWeight: 700, color: "#000", marginBottom: 6 }}>פורטל Publishers</h1>
+        <p style={{ fontSize: 14, color: "#727272" }}>נהלו את האתרים שלכם, עקבו אחרי מכירות וצפו בפעילות agencies</p>
+      </div>
+
+      {/* Stats bar */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 28 }}>
+        {stats.map((stat, i) => (
+          <div key={i} style={{ border: "1px solid #DDDDDD", borderRadius: 10, padding: "16px 20px" }}>
+            <div style={{ fontSize: 11, color: "#727272", marginBottom: 6 }}>{stat.label}</div>
+            <div style={{ fontSize: 28, fontWeight: 700, color: stat.color }}>{stat.value}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Add new site */}
+      <div style={{ border: "1px solid #DDDDDD", borderRadius: 10, padding: "20px 24px", marginBottom: 28, background: "#F9F9F9" }}>
+        <div style={{ fontSize: 14, fontWeight: 600, color: "#000", marginBottom: 16 }}>הוסף אתר חדש</div>
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-end", gap: 16 }}>
+          <div style={{ flex: "1 1 200px" }}>
+            <div style={{ fontSize: 11, color: "#727272", marginBottom: 6 }}>דומיין</div>
+            <input
+              type="text"
+              placeholder="example.co.il"
+              value={newDomain}
+              onChange={e => setNewDomain(e.target.value)}
+              style={{
+                width: "100%",
+                padding: "9px 14px",
+                fontSize: 13,
+                border: "1px solid #DDDDDD",
+                borderRadius: 8,
+                background: "#fff",
+                outline: "none",
+                color: "#333",
+              }}
+            />
+          </div>
+          <div style={{ flex: "0 1 160px" }}>
+            <div style={{ fontSize: 11, color: "#727272", marginBottom: 6 }}>קטגוריה</div>
+            <div style={{ position: "relative" }}>
+              <select
+                value={newCategory}
+                onChange={e => setNewCategory(e.target.value)}
+                style={{
+                  width: "100%",
+                  appearance: "none",
+                  padding: "9px 28px 9px 14px",
+                  fontSize: 13,
+                  border: "1px solid #DDDDDD",
+                  borderRadius: 8,
+                  background: "#fff",
+                  cursor: "pointer",
+                  color: "#333",
+                  outline: "none",
+                }}
+              >
+                {CATEGORIES.filter(c => c !== "הכל").map(cat => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+              <span style={{ position: "absolute", left: 8, top: "50%", transform: "translateY(-50%)", pointerEvents: "none", color: "#A2A9B0" }}>
+                <IconChevronDown size={12} />
+              </span>
+            </div>
+          </div>
+          <div style={{ flex: "0 1 140px" }}>
+            <div style={{ fontSize: 11, color: "#727272", marginBottom: 6 }}>מחיר למאמר &#8362;</div>
+            <input
+              type="number"
+              placeholder="1,200"
+              value={newPrice}
+              onChange={e => setNewPrice(e.target.value)}
+              style={{
+                width: "100%",
+                padding: "9px 14px",
+                fontSize: 13,
+                border: "1px solid #DDDDDD",
+                borderRadius: 8,
+                background: "#fff",
+                outline: "none",
+                color: "#333",
+              }}
+            />
+          </div>
+          <button style={{
+            padding: "9px 24px",
+            background: "#000",
+            color: "#fff",
+            fontSize: 13,
+            fontWeight: 600,
+            borderRadius: 9,
+            border: "none",
+            cursor: "pointer",
+          }}>
+            הוסף אתר
+          </button>
+        </div>
+        <div style={{ marginTop: 10 }}>
+          <span style={{ fontSize: 12, color: "#10A37F", cursor: "pointer", fontWeight: 500 }}>העלה אקסל</span>
+        </div>
+      </div>
+
+      {/* Publisher sites table */}
+      <div style={{ border: "1px solid #DDDDDD", borderRadius: 10, overflow: "hidden", marginBottom: 28 }}>
+        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+          <thead>
+            <tr style={{ background: "#F9F9F9" }}>
+              <th style={{ padding: "12px 16px", textAlign: "right", fontWeight: 600, color: "#333", borderBottom: "1px solid #DDDDDD" }}>אתר</th>
+              <th style={{ padding: "12px 16px", textAlign: "center", fontWeight: 600, color: "#333", borderBottom: "1px solid #DDDDDD" }}>קטגוריה</th>
+              <th style={{ padding: "12px 16px", textAlign: "center", fontWeight: 600, color: "#333", borderBottom: "1px solid #DDDDDD" }}>DR</th>
+              <th style={{ padding: "12px 16px", textAlign: "center", fontWeight: 600, color: "#333", borderBottom: "1px solid #DDDDDD" }}>סטטוס</th>
+              <th style={{ padding: "12px 16px", textAlign: "center", fontWeight: 600, color: "#333", borderBottom: "1px solid #DDDDDD" }}>agencies שצפו</th>
+              <th style={{ padding: "12px 16px", textAlign: "center", fontWeight: 600, color: "#333", borderBottom: "1px solid #DDDDDD" }}>מאמרים שנמכרו</th>
+              <th style={{ padding: "12px 16px", textAlign: "left", fontWeight: 600, color: "#333", borderBottom: "1px solid #DDDDDD" }}>הכנסות</th>
+            </tr>
+          </thead>
+          <tbody>
+            {PUBLISHER_SITES.map((site, i) => (
+              <tr key={i} style={{ borderBottom: "1px solid #F0F0F0" }}>
+                <td style={{ padding: "14px 16px", fontWeight: 600 }}>{site.domain}</td>
+                <td style={{ padding: "14px 16px", textAlign: "center" }}>
+                  <span style={{ fontSize: 11, background: "#F9F9F9", border: "1px solid #DDDDDD", padding: "3px 10px", borderRadius: 20 }}>{site.category}</span>
+                </td>
+                <td style={{ padding: "14px 16px", textAlign: "center", fontWeight: 600 }}>{site.dr}</td>
+                <td style={{ padding: "14px 16px", textAlign: "center" }}>{statusDot(site.status)}</td>
+                <td style={{ padding: "14px 16px", textAlign: "center" }}>{site.agenciesViewed}</td>
+                <td style={{ padding: "14px 16px", textAlign: "center" }}>{site.articlesSold}</td>
+                <td style={{ padding: "14px 16px", textAlign: "left", fontWeight: 600 }}>{site.revenue !== null ? fmtCurrency(site.revenue) : "—"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Agency Interest */}
+      <div style={{ border: "1px solid #DDDDDD", borderRadius: 10, padding: "20px 24px", marginBottom: 28 }}>
+        <div style={{ fontSize: 14, fontWeight: 600, color: "#000", marginBottom: 16 }}>agencies שהתעניינו לאחרונה</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+          {AGENCY_ACTIVITIES.map((activity, i) => (
+            <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 0", borderBottom: i < AGENCY_ACTIVITIES.length - 1 ? "1px solid #F0F0F0" : "none" }}>
+              <div style={{ fontSize: 13 }}>
+                <span style={{ fontWeight: 600 }}>{activity.agency}</span>
+                <span style={{ color: "#727272" }}> — {activity.action}</span>
+                <span style={{ fontWeight: 500, color: "#10A37F" }}>{activity.site}</span>
+              </div>
+              <span style={{ fontSize: 12, color: "#A2A9B0", whiteSpace: "nowrap" }}>{activity.time}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Contract / Terms */}
+      <div style={{ border: "1px solid #DDDDDD", borderRadius: 10, padding: "20px 24px" }}>
+        <div style={{ fontSize: 14, fontWeight: 600, color: "#000", marginBottom: 16 }}>תקנון ותנאי שימוש</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 20 }}>
+          {[
+            "מחירים קבועים — אין אפשרות לשנות מחירים ללא עדכון במערכת",
+            "בלעדיות מחירים — אסור למכור במחירים שונים מחוץ לפלטפורמה",
+            "איכות תוכן — מחויבות לפרסום תוכן איכותי בלוח זמנים שנקבע",
+            "דיווח שקוף — שיתוף אנליטיקס עם agencies לפי דרישה",
+          ].map((item, i) => (
+            <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10, fontSize: 13, color: "#333" }}>
+              <span style={{ color: "#10A37F", fontWeight: 600, marginTop: 1 }}>
+                <IconCheck size={14} />
+              </span>
+              <span>{item}</span>
+            </div>
+          ))}
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <button style={{
+            padding: "10px 24px",
+            background: "#000",
+            color: "#fff",
+            fontSize: 13,
+            fontWeight: 600,
+            borderRadius: 9,
+            border: "none",
+            cursor: "pointer",
+          }}>
+            חתימה דיגיטלית
+          </button>
+          <span style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            fontSize: 12,
+            fontWeight: 600,
+            color: "#10A37F",
+            background: "#10A37F15",
+            padding: "6px 14px",
+            borderRadius: 20,
+          }}>
+            <IconCheck size={12} />
+            חתום
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// TAB 4: Rejected Sites
+// ============================================================
+function RejectedTab({ publishers, pendingCount }: { publishers: Publisher[]; pendingCount: number }) {
+  const totalPublishers = PUBLISHERS.length;
+  const approvedCount = PUBLISHERS.filter(p => p.status === "approved").length;
+  const rejectedCount = publishers.length;
+
+  const stats = [
+    { label: 'סה"כ במערכת', value: totalPublishers, color: "#333" },
+    { label: "מאושרים", value: approvedCount, color: "#10A37F" },
+    { label: "נפסלו", value: rejectedCount, color: "#E53E3E" },
+    { label: "ממתינים לבדיקה", value: pendingCount, color: "#E07800" },
+  ];
+
+  return (
+    <div>
+      {/* Title */}
+      <div style={{ marginBottom: 28 }}>
+        <h1 style={{ fontSize: 26, fontWeight: 700, color: "#000", marginBottom: 6 }}>אתרים פסולים</h1>
+        <p style={{ fontSize: 14, color: "#727272" }}>אתרים שנבדקו ולא עמדו בקריטריונים לאיכות</p>
+      </div>
+
+      {/* Stats bar */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 28 }}>
+        {stats.map((stat, i) => (
+          <div key={i} style={{ border: "1px solid #DDDDDD", borderRadius: 10, padding: "16px 20px" }}>
+            <div style={{ fontSize: 11, color: "#727272", marginBottom: 6 }}>{stat.label}</div>
+            <div style={{ fontSize: 28, fontWeight: 700, color: stat.color }}>{stat.value}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Rejected cards */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        {publishers.map(pub => (
+          <div key={pub.id} style={{ border: "1px solid #DDDDDD", borderRadius: 10, padding: "18px 24px", display: "flex", alignItems: "center", gap: 24, background: "#fff" }}>
+            {/* Info */}
+            <div style={{ flex: "0 0 180px" }}>
+              <div style={{ fontSize: 14, fontWeight: 700, color: "#000", marginBottom: 2 }}>{pub.name}</div>
+              <div style={{ fontSize: 12, color: "#727272" }}>{pub.domain}</div>
+            </div>
+
+            {/* Rejection reason */}
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 11, color: "#A2A9B0", marginBottom: 2 }}>סיבת פסילה</div>
+              <div style={{ fontSize: 13, color: "#E53E3E", fontWeight: 500 }}>{pub.rejectionReason}</div>
+            </div>
+
+            {/* Scores */}
+            <div style={{ display: "flex", gap: 12 }}>
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontSize: 10, color: "#A2A9B0", marginBottom: 2 }}>SEO</div>
+                <div style={{ fontSize: 18, fontWeight: 700, color: "#E53E3E" }}>{pub.seoScore}</div>
+              </div>
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontSize: 10, color: "#A2A9B0", marginBottom: 2 }}>GIO</div>
+                <div style={{ fontSize: 18, fontWeight: 700, color: "#E53E3E" }}>{pub.gioScore}</div>
+              </div>
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontSize: 10, color: "#A2A9B0", marginBottom: 2 }}>DR</div>
+                <div style={{ fontSize: 18, fontWeight: 700, color: "#E53E3E" }}>{pub.dr}</div>
+              </div>
+            </div>
+
+            {/* Date */}
+            <div style={{ flex: "0 0 100px", textAlign: "center" }}>
+              <div style={{ fontSize: 10, color: "#A2A9B0", marginBottom: 2 }}>תאריך פסילה</div>
+              <div style={{ fontSize: 12, color: "#727272", fontWeight: 500 }}>12.03.2026</div>
+            </div>
+
+            {/* Action */}
+            <button style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              padding: "8px 18px",
+              fontSize: 12,
+              fontWeight: 600,
+              border: "1px solid #DDDDDD",
+              borderRadius: 9,
+              background: "#fff",
+              color: "#333",
+              cursor: "pointer",
+              transition: "all 0.15s",
+              whiteSpace: "nowrap",
+            }}>
+              <IconRefresh size={13} />
+              בדוק שוב
+            </button>
+          </div>
+        ))}
+      </div>
+
+      {publishers.length === 0 && (
+        <div style={{ textAlign: "center", padding: "60px 0", color: "#727272" }}>
+          <div style={{ fontSize: 14 }}>אין אתרים פסולים כרגע</div>
+        </div>
+      )}
+    </div>
+  );
+}

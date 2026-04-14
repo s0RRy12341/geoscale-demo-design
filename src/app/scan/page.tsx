@@ -153,9 +153,60 @@ const NEGATIVE_SIGNALS = [
 
 const TOP_5_QUERIES = QUERIES.slice(0, 5);
 
+// ── CHART MOCK DATA ──
+const CHART_DATA = {
+  labels: ["08/01", "08/07", "08/14", "08/21", "08/28", "09/04"],
+  gpt: [62, 65, 68, 71, 74, 76],
+  gemini: [58, 62, 67, 70, 72, 73],
+};
+
+// ── TOOLTIP DESCRIPTIONS ──
+const METRIC_TOOLTIPS: Record<string, string> = {
+  "שיעור אזכור": "אחוז השאילתות בהן המותג שלך מוזכר בתשובות מנועי AI",
+  "מיקום ממוצע": "המיקום הממוצע שבו המותג מוזכר בתשובות (נמוך יותר = טוב יותר)",
+  "איכות ציטוט": "עד כמה הציטוט של המותג מדויק, רלוונטי ומלא בתשובות AI",
+  "סיכון מוניטין": "אחוז התשובות שבהן המותג מוצג באור חיובי או ניטרלי (ללא מידע שלילי)",
+};
+
 // ════════════════════════════════════════════════════════════
 // COMPONENTS
 // ════════════════════════════════════════════════════════════
+
+function Tooltip({ text }: { text: string }) {
+  const [show, setShow] = useState(false);
+  return (
+    <span
+      style={{ position: "relative", display: "inline-flex", alignItems: "center", cursor: "help" }}
+      onMouseEnter={() => setShow(true)}
+      onMouseLeave={() => setShow(false)}
+    >
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A2A9B0" strokeWidth="2" style={{ display: "block" }}>
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 16v-4M12 8h.01" />
+      </svg>
+      {show && (
+        <div style={{
+          position: "absolute",
+          bottom: "calc(100% + 8px)",
+          right: "50%",
+          transform: "translateX(50%)",
+          background: "#333333",
+          color: "#FFFFFF",
+          fontSize: 12,
+          lineHeight: 1.5,
+          padding: "8px 12px",
+          borderRadius: 8,
+          whiteSpace: "nowrap",
+          maxWidth: 260,
+          zIndex: 100,
+          pointerEvents: "none",
+        }}>
+          <span style={{ whiteSpace: "normal" }}>{text}</span>
+        </div>
+      )}
+    </span>
+  );
+}
 
 function ProgressRing({ percent, size = 88, strokeWidth = 6 }: { percent: number; size?: number; strokeWidth?: number }) {
   const radius = (size - strokeWidth) / 2;
@@ -168,7 +219,7 @@ function ProgressRing({ percent, size = 88, strokeWidth = 6 }: { percent: number
         <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="#10A37F" strokeWidth={strokeWidth} strokeDasharray={circumference} strokeDashoffset={offset} strokeLinecap="round" style={{ transition: "all 1s ease" }} />
       </svg>
       <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <span style={{ fontSize: 18, fontWeight: 600, color: "#000000" }}>{percent}%</span>
+        <span style={{ fontSize: Math.round(size * 0.26), fontWeight: 600, color: "#000000" }}>{percent}%</span>
       </div>
     </div>
   );
@@ -192,6 +243,82 @@ function DonutChart({ data, size = 140, strokeWidth = 20 }: { data: { label: str
         })}
       </svg>
     </div>
+  );
+}
+
+function ChangeIndicator({ value, unit, invertColor }: { value: number; unit: string; invertColor?: boolean }) {
+  const isPositive = value > 0;
+  // invertColor: for metrics where lower is better (like position), down arrow should be green
+  const isGood = invertColor ? !isPositive : isPositive;
+  const color = isGood ? "#10A37F" : "#DC2626";
+  const arrow = isPositive ? "\u2191" : "\u2193";
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 2, fontSize: 12, fontWeight: 600, color }}>
+      {arrow}{Math.abs(value)}{unit}
+    </span>
+  );
+}
+
+function TimeSeriesChart({ period }: { period: "7" | "30" | "90" }) {
+  const chartW = 1000;
+  const chartH = 240;
+  const padTop = 20;
+  const padBottom = 30;
+  const padLeft = 40;
+  const padRight = 20;
+  const innerW = chartW - padLeft - padRight;
+  const innerH = chartH - padTop - padBottom;
+
+  const data = CHART_DATA;
+  const allValues = [...data.gpt, ...data.gemini];
+  const maxVal = Math.max(...allValues);
+  const minVal = Math.min(...allValues) - 5;
+  const range = maxVal - minVal;
+
+  const getX = (i: number) => padLeft + (i / (data.labels.length - 1)) * innerW;
+  const getY = (v: number) => padTop + innerH - ((v - minVal) / range) * innerH;
+
+  const gptPoints = data.gpt.map((v, i) => `${getX(i)},${getY(v)}`).join(" ");
+  const geminiPoints = data.gemini.map((v, i) => `${getX(i)},${getY(v)}`).join(" ");
+
+  const gptAreaPoints = `${getX(0)},${getY(data.gpt[0])} ${gptPoints} ${getX(data.gpt.length - 1)},${padTop + innerH} ${getX(0)},${padTop + innerH}`;
+  const geminiAreaPoints = `${getX(0)},${getY(data.gemini[0])} ${geminiPoints} ${getX(data.gemini.length - 1)},${padTop + innerH} ${getX(0)},${padTop + innerH}`;
+
+  // Horizontal grid lines
+  const gridLines = 5;
+  const gridValues = Array.from({ length: gridLines }, (_, i) => minVal + (range / (gridLines - 1)) * i);
+
+  return (
+    <svg width="100%" height={chartH} viewBox={`0 0 ${chartW} ${chartH}`} preserveAspectRatio="xMidYMid meet">
+      {/* Grid lines */}
+      {gridValues.map((v, i) => (
+        <g key={i}>
+          <line x1={padLeft} y1={getY(v)} x2={chartW - padRight} y2={getY(v)} stroke="#F9F9F9" strokeWidth="1" />
+          <text x={padLeft - 8} y={getY(v) + 4} textAnchor="end" fill="#A2A9B0" fontSize="11" fontFamily="Inter, sans-serif">{Math.round(v)}%</text>
+        </g>
+      ))}
+
+      {/* Areas */}
+      <polygon points={geminiAreaPoints} fill="#4285F4" opacity="0.08" />
+      <polygon points={gptAreaPoints} fill="#10A37F" opacity="0.1" />
+
+      {/* Lines */}
+      <polyline points={geminiPoints} fill="none" stroke="#4285F4" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+      <polyline points={gptPoints} fill="none" stroke="#10A37F" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+
+      {/* Dots */}
+      {data.gpt.map((v, i) => (
+        <circle key={`gpt-${i}`} cx={getX(i)} cy={getY(v)} r="4" fill="#10A37F" />
+      ))}
+      {data.gemini.map((v, i) => (
+        <circle key={`gem-${i}`} cx={getX(i)} cy={getY(v)} r="4" fill="#4285F4" />
+      ))}
+
+      {/* X-axis labels */}
+      {data.labels.map((label, i) => (
+        <text key={i} x={getX(i)} y={chartH - 5} textAnchor="middle" fill="#A2A9B0" fontSize="11" fontFamily="Inter, sans-serif">{label}</text>
+      ))}
+    </svg>
   );
 }
 
@@ -224,6 +351,37 @@ function MentionBadge({ mentioned }: { mentioned: boolean }) {
   );
 }
 
+function HoverButton({ children, style, filled, onClick, href }: { children: React.ReactNode; style: React.CSSProperties; filled?: boolean; onClick?: (e: React.MouseEvent) => void; href?: string }) {
+  const [hovered, setHovered] = useState(false);
+  const hoverStyle: React.CSSProperties = filled
+    ? { opacity: hovered ? 0.85 : 1 }
+    : { background: hovered ? "#F9F9F9" : style.background || "#FFFFFF" };
+
+  if (href) {
+    return (
+      <a
+        href={href}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        style={{ ...style, ...hoverStyle, transition: "all 150ms", textDecoration: "none" }}
+      >
+        {children}
+      </a>
+    );
+  }
+
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{ ...style, ...hoverStyle, transition: "all 150ms" }}
+    >
+      {children}
+    </button>
+  );
+}
+
 // ════════════════════════════════════════════════════════════
 // MAIN PAGE
 // ════════════════════════════════════════════════════════════
@@ -237,6 +395,7 @@ export default function ScanPage() {
   const [seoToggle, setSeoToggle] = useState(true);
   const [geoToggle, setGeoToggle] = useState(true);
   const [showPersonaForm, setShowPersonaForm] = useState(false);
+  const [chartPeriod, setChartPeriod] = useState<"7" | "30" | "90">("30");
 
   const gptMentioned = QUERIES.filter((q) => q.gpt).length;
   const geminiMentioned = QUERIES.filter((q) => q.gemini).length;
@@ -262,15 +421,21 @@ export default function ScanPage() {
   const bodyText: React.CSSProperties = { fontSize: 14, color: "#333333" };
   const thinBorder = "1px solid #DDDDDD";
 
+  // Reputation risk value
+  const reputationValue = 100;
+  const reputationColor = reputationValue < 80 ? "#DC2626" : "#000000";
+
   return (
     <div style={{ minHeight: "100vh", background: "#FFFFFF", fontFamily: "'Inter', 'Heebo', sans-serif", display: "flex", flexDirection: "column" }} dir="rtl">
 
-      {/* ── Sticky Header — 3-column grid: actions | nav | logo ── */}
+      {/* -- Sticky Header -- 3-column grid: actions | nav | logo -- */}
       <header style={{ position: "sticky", top: 0, zIndex: 50, background: "rgba(255,255,255,0.96)", borderBottom: "1px solid #BFBFBF" }}>
         <div style={{ maxWidth: 1300, margin: "0 auto", padding: "0 24px", height: 72, display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center" }}>
           {/* RIGHT in RTL (grid col 1) = Actions */}
           <div style={{ display: "flex", alignItems: "center", gap: 16, justifySelf: "start" }}>
-            <a href="/new-scan" style={{ display: "inline-flex", alignItems: "center", padding: "8px 20px", background: "#000", color: "#fff", fontSize: 13, fontWeight: 600, borderRadius: 9, border: "1px solid #000", textDecoration: "none" }}>סריקה חדשה</a>
+            <HoverButton filled href="/new-scan" style={{ display: "inline-flex", alignItems: "center", padding: "8px 20px", background: "#000", color: "#fff", fontSize: 13, fontWeight: 600, borderRadius: 9, border: "1px solid #000" }}>
+              סריקה חדשה
+            </HoverButton>
             <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "#727272" }}>
               <span style={{ width: 8, height: 8, borderRadius: 4, background: "#10A37F", display: "inline-block" }} />
               <span>מחובר</span>
@@ -279,8 +444,10 @@ export default function ScanPage() {
 
           {/* CENTER (grid col 2) = Nav */}
           <nav style={{ display: "flex", alignItems: "center", gap: 32 }}>
-            <a href="/" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>דשבורד</a>
+            <a href="/" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none", transition: "all 150ms" }} onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#000"; }} onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#727272"; }}>דשבורד</a>
             <a href="/scan" style={{ fontSize: 14, fontWeight: 600, color: "#000", textDecoration: "none" }}>סריקות</a>
+            <a href="/scale-publish" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none", transition: "all 150ms" }} onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#000"; }} onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#727272"; }}>ScalePublish</a>
+            <a href="/roadmap" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none", transition: "all 150ms" }} onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#000"; }} onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#727272"; }}>Roadmap</a>
           </nav>
 
           {/* LEFT in RTL (grid col 3) = Logo */}
@@ -294,35 +461,35 @@ export default function ScanPage() {
         </div>
       </header>
 
-      {/* ── Brand Header ── */}
+      {/* -- Brand Header (compact) -- */}
       <div style={{ background: "#FFFFFF", borderBottom: "1px solid #BFBFBF" }}>
-        <div style={{ maxWidth: 1300, margin: "0 auto", padding: "20px 24px" }}>
+        <div style={{ maxWidth: 1300, margin: "0 auto", padding: "16px 24px" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-              <ProgressRing percent={76} size={72} strokeWidth={5} />
+              <ProgressRing percent={76} size={60} strokeWidth={5} />
               <div>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-                  <h1 style={{ fontSize: 22, fontWeight: 600, color: "#000000", margin: 0 }}>All4Horses</h1>
+                  <h1 style={{ fontSize: 26, fontWeight: 600, color: "#000000", margin: 0 }}>All4Horses</h1>
                   <span style={{ fontSize: 12, fontWeight: 500, padding: "3px 10px", borderRadius: 10, border: "1px solid #10A37F", color: "#10A37F", background: "#FFFFFF" }}>נוכחות חזקה</span>
                 </div>
                 <p style={{ fontSize: 13, color: "#727272", margin: "2px 0 0", direction: "ltr", textAlign: "right" }}>all4horses.co.il</p>
               </div>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <button style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 18px", background: "#FFFFFF", color: "#333333", fontSize: 13, fontWeight: 500, border: "1px solid #BFBFBF", borderRadius: 9, cursor: "pointer" }}>
+              <HoverButton href="/" style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 18px", background: "#FFFFFF", color: "#333333", fontSize: 13, fontWeight: 500, border: "1px solid #BFBFBF", borderRadius: 9, cursor: "pointer" }}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /></svg>
                 לוח בקרה
-              </button>
-              <button style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 18px", background: "#000000", color: "#FFFFFF", fontSize: 13, fontWeight: 600, border: "1px solid #000000", borderRadius: 9, cursor: "pointer" }}>
+              </HoverButton>
+              <HoverButton filled href="/new-scan" style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 18px", background: "#000000", color: "#FFFFFF", fontSize: 13, fontWeight: 600, border: "1px solid #000000", borderRadius: 9, cursor: "pointer" }}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>
                 סריקה חדשה
-              </button>
+              </HoverButton>
             </div>
           </div>
         </div>
       </div>
 
-      {/* ── Tab Bar ── */}
+      {/* -- Tab Bar -- */}
       <div style={{ background: "#FFFFFF", borderBottom: "1px solid #BFBFBF" }}>
         <div style={{ maxWidth: 1300, margin: "0 auto", padding: "0 24px" }}>
           <div style={{ display: "flex", gap: 0 }}>
@@ -342,6 +509,7 @@ export default function ScanPage() {
                   background: "transparent", border: "none",
                   borderBottom: activeTab === tab.key ? "2px solid #000000" : "2px solid transparent",
                   marginBottom: -1, cursor: "pointer",
+                  transition: "all 150ms",
                 }}
               >
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">{tab.iconPath}</svg>
@@ -355,33 +523,89 @@ export default function ScanPage() {
         </div>
       </div>
 
-      {/* ── Main Content ── */}
+      {/* -- Main Content -- */}
       <div style={{ maxWidth: 1300, margin: "0 auto", padding: "24px 24px" }}>
 
         {/* TAB 1: OVERVIEW */}
         {activeTab === "overview" && (
           <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-            {/* 4 Stat Cards */}
+
+            {/* BIG TIME-SERIES CHART */}
+            <div style={{ ...card, padding: 24 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <h3 style={{ ...sectionTitle }}>שיעור אזכור לאורך זמן</h3>
+                  <Tooltip text="מעקב אחר אחוז האזכורים של המותג במנועי AI לאורך זמן" />
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 0 }}>
+                  {(["7", "30", "90"] as const).map((p) => (
+                    <HoverButton
+                      key={p}
+                      onClick={() => setChartPeriod(p)}
+                      style={{
+                        padding: "6px 14px",
+                        fontSize: 12,
+                        fontWeight: chartPeriod === p ? 600 : 400,
+                        background: chartPeriod === p ? "#000000" : "#FFFFFF",
+                        color: chartPeriod === p ? "#FFFFFF" : "#333333",
+                        border: chartPeriod === p ? "1px solid #000000" : "1px solid #BFBFBF",
+                        borderRadius: p === "7" ? "0 9px 9px 0" : p === "90" ? "9px 0 0 9px" : "0",
+                        cursor: "pointer",
+                        marginRight: p !== "7" ? -1 : 0,
+                      }}
+                      filled={chartPeriod === p}
+                    >
+                      {p} ימים
+                    </HoverButton>
+                  ))}
+                </div>
+              </div>
+              {/* Legend */}
+              <div style={{ display: "flex", alignItems: "center", gap: 24, marginBottom: 16 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <div style={{ width: 12, height: 3, borderRadius: 2, background: "#10A37F" }} />
+                  <span style={{ fontSize: 12, color: "#333333" }}>ChatGPT</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <div style={{ width: 12, height: 3, borderRadius: 2, background: "#4285F4" }} />
+                  <span style={{ fontSize: 12, color: "#333333" }}>Gemini</span>
+                </div>
+              </div>
+              <div style={{ height: 240 }}>
+                <TimeSeriesChart period={chartPeriod} />
+              </div>
+            </div>
+
+            {/* 4 Stat Cards with change indicators + tooltips */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
               {[
-                { label: "שיעור אזכור", value: "76%", iconPath: <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" /> },
-                { label: "מיקום ממוצע", value: "#9.7", iconPath: <path d="M12 20V10M18 20V4M6 20v-4" /> },
-                { label: "איכות ציטוט", value: "70%", iconPath: <path d="M10 11V6l-6 6 6 6v-5c5.523 0 10 4.477 10 10 0-8.284-4.477-15-10-15z" /> },
-                { label: "סיכון מוניטין", value: "100%", iconPath: <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /> },
+                { label: "שיעור אזכור", value: "76%", iconPath: <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />, change: 4.2, unit: "%", invertColor: false },
+                { label: "מיקום ממוצע", value: "#9.7", iconPath: <path d="M12 20V10M18 20V4M6 20v-4" />, change: -1.3, unit: "", invertColor: true },
+                { label: "איכות ציטוט", value: "70%", iconPath: <path d="M10 11V6l-6 6 6 6v-5c5.523 0 10 4.477 10 10 0-8.284-4.477-15-10-15z" />, change: 2.1, unit: "%", invertColor: false },
+                { label: "סיכון מוניטין", value: `${reputationValue}%`, iconPath: <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />, change: 0, unit: "%", invertColor: false },
               ].map((stat, i) => (
                 <div key={i} style={{ ...card, padding: 20 }}>
-                  <div style={{ marginBottom: 12 }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10A37F" strokeWidth="2">{stat.iconPath}</svg>
                   </div>
-                  <div style={{ fontSize: 24, fontWeight: 600, color: "#000000", marginBottom: 2 }}>{stat.value}</div>
-                  <div style={{ fontSize: 13, color: "#727272" }}>{stat.label}</div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
+                    <span style={{ fontSize: 24, fontWeight: 600, color: stat.label === "סיכון מוניטין" ? reputationColor : "#000000" }}>{stat.value}</span>
+                    {stat.change !== 0 && <ChangeIndicator value={stat.change} unit={stat.unit} invertColor={stat.invertColor} />}
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <span style={{ fontSize: 13, color: "#727272" }}>{stat.label}</span>
+                    <Tooltip text={METRIC_TOOLTIPS[stat.label] || ""} />
+                  </div>
                 </div>
               ))}
             </div>
 
             {/* GPT vs Gemini */}
             <div style={{ ...card, padding: 24 }}>
-              <h3 style={{ ...sectionTitle, marginBottom: 20 }}>השוואת מנועי AI</h3>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
+                <h3 style={{ ...sectionTitle }}>השוואת מנועי AI</h3>
+                <Tooltip text="השוואת אחוזי האזכור של המותג בין ChatGPT ל-Google Gemini" />
+              </div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 20 }}>
                 <div style={{ border: thinBorder, borderRadius: 10, padding: 16 }}>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
@@ -412,21 +636,36 @@ export default function ScanPage() {
               </div>
             </div>
 
-            {/* Customer Journey — compact cards */}
+            {/* Customer Journey -- compact cards */}
             <div style={{ display: "grid", gridTemplateColumns: `repeat(${JOURNEY_STAGES.length}, 1fr)`, gap: 12 }}>
-              {JOURNEY_STAGES.map((stage, i) => (
-                <div key={i} style={{ ...card, padding: 16, textAlign: "center" }}>
-                  <div style={{ fontSize: 22, fontWeight: 700, color: stage.percent >= 80 ? "#10A37F" : "#000000", marginBottom: 4 }}>{stage.percent}%</div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: "#000000", marginBottom: 2 }}>{stage.name}</div>
-                  <div style={{ fontSize: 12, color: "#727272" }}>{stage.count} שאילתות</div>
-                </div>
-              ))}
+              {JOURNEY_STAGES.map((stage, i) => {
+                const journeyTooltips: Record<string, string> = {
+                  "חשיפה": "אחוז הנוכחות בשאילתות גילוי ראשוני של המותג",
+                  "מחקר": "אחוז הנוכחות בשאילתות מחקר והשוואה",
+                  "החלטה": "אחוז הנוכחות בשאילתות שלב קבלת ההחלטה",
+                  "תמיכה": "אחוז הנוכחות בשאילתות שירות ותמיכה",
+                  "מוניטין": "אחוז הנוכחות בשאילתות חוות דעת וביקורות",
+                };
+                return (
+                  <div key={i} style={{ ...card, padding: 16, textAlign: "center" }}>
+                    <div style={{ fontSize: 22, fontWeight: 700, color: stage.percent >= 80 ? "#10A37F" : "#000000", marginBottom: 4 }}>{stage.percent}%</div>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 4, fontSize: 13, fontWeight: 600, color: "#000000", marginBottom: 2 }}>
+                      {stage.name}
+                      <Tooltip text={journeyTooltips[stage.name] || "שלב במסע הלקוח"} />
+                    </div>
+                    <div style={{ fontSize: 12, color: "#727272" }}>{stage.count} שאילתות</div>
+                  </div>
+                );
+              })}
             </div>
 
             {/* Persona + Competitors */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
               <div style={{ ...card, padding: 24 }}>
-                <h3 style={{ ...sectionTitle, marginBottom: 16 }}>פרסונה שזוהתה</h3>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+                  <h3 style={{ ...sectionTitle }}>פרסונה שזוהתה</h3>
+                  <Tooltip text="פרופיל קהל היעד שזוהה מתוך ניתוח השאילתות ותשובות מנועי AI" />
+                </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   {[
                     { label: "קהל יעד:", value: "הורים לילדים עם צרכים מיוחדים, מטפלים, מורים לחינוך מיוחד ובני נוער" },
@@ -442,7 +681,10 @@ export default function ScanPage() {
                 </div>
               </div>
               <div style={{ ...card, padding: 24 }}>
-                <h3 style={{ ...sectionTitle, marginBottom: 16 }}>מתחרים</h3>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+                  <h3 style={{ ...sectionTitle }}>מתחרים</h3>
+                  <Tooltip text="ציון הנוכחות של מתחרים מובילים לעומת המותג שלך" />
+                </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                   {COMPETITORS.map((comp, i) => (
                     <div key={i} style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -461,7 +703,10 @@ export default function ScanPage() {
             {/* Sentiment + Citation Quality */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
               <div style={{ ...card, padding: 24 }}>
-                <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000000", margin: "0 0 4px" }}>סנטימנט</h3>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                  <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000000", margin: 0 }}>סנטימנט</h3>
+                  <Tooltip text="הטון הכללי שבו מנועי AI מציגים את המותג שלך - חיובי, ניטרלי או שלילי" />
+                </div>
                 <p style={{ fontSize: 12, color: "#727272", margin: "0 0 16px" }}>איך ה-AI מדבר עליכם</p>
                 <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
                   <DonutChart size={110} strokeWidth={16} data={[{ label: "חיובי", value: 80, color: "#10A37F" }, { label: "ניטרלי", value: 20, color: "#BFBFBF" }]} />
@@ -472,7 +717,10 @@ export default function ScanPage() {
                 </div>
               </div>
               <div style={{ ...card, padding: 24 }}>
-                <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000000", margin: "0 0 4px" }}>איכות ציטוט</h3>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                  <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000000", margin: 0 }}>איכות ציטוט</h3>
+                  <Tooltip text="עד כמה מנועי AI מצטטים את המותג בצורה מדויקת ומלאה" />
+                </div>
                 <p style={{ fontSize: 12, color: "#727272", margin: "0 0 16px" }}>כמה טוב ה-AI מקשר אליכם</p>
                 <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
                   <DonutChart size={110} strokeWidth={16} data={[{ label: "גבוה", value: 35, color: "#10A37F" }, { label: "בינוני", value: 30, color: "#BFBFBF" }, { label: "נמוך", value: 35, color: "#000000" }]} />
@@ -491,6 +739,7 @@ export default function ScanPage() {
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10A37F" strokeWidth="2.5"><path d="M20 6L9 17l-5-5" /></svg>
                   <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000000", margin: 0 }}>מה עבד</h3>
+                  <Tooltip text="נקודות חוזק - תחומים שבהם המותג מקבל אזכור חיובי במנועי AI" />
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   {POSITIVE_SIGNALS.map((signal, i) => (
@@ -501,15 +750,17 @@ export default function ScanPage() {
                   ))}
                 </div>
               </div>
-              <div style={{ ...card, padding: 24 }}>
+              {/* "מה חסר" styled as RED ALERTS */}
+              <div style={{ ...card, padding: 24, background: "#DC262608", borderColor: "#BFBFBF" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12" /></svg>
-                  <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000000", margin: 0 }}>מה חסר</h3>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12" /></svg>
+                  <h3 style={{ fontSize: 15, fontWeight: 600, color: "#DC2626", margin: 0 }}>מה חסר</h3>
+                  <Tooltip text="התראות סיכון - תחומים שבהם חסר אזכור ויש סיכון מוניטיני" />
                 </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   {NEGATIVE_SIGNALS.map((signal, i) => (
-                    <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
-                      <div style={{ width: 5, height: 5, borderRadius: 3, marginTop: 7, flexShrink: 0, background: "#000000" }} />
+                    <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "8px 12px", background: "#DC262608", borderRight: "3px solid #DC2626", borderRadius: 8 }}>
+                      <div style={{ width: 6, height: 6, borderRadius: 3, marginTop: 6, flexShrink: 0, background: "#DC2626" }} />
                       <span style={{ ...bodyText }}>{signal}</span>
                     </div>
                   ))}
@@ -520,7 +771,10 @@ export default function ScanPage() {
             {/* SEO + GEO */}
             <div style={{ ...card, padding: 24 }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-                <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000000", margin: 0 }}>קשר בין SEO ל-GEO</h3>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000000", margin: 0 }}>קשר בין SEO ל-GEO</h3>
+                  <Tooltip text="הקשר בין ביצועי SEO אורגני לנוכחות במנועי AI (GEO)" />
+                </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                     <span style={{ fontSize: 12, fontWeight: 500, color: "#333333" }}>SEO</span>
@@ -573,17 +827,22 @@ export default function ScanPage() {
             {/* Top 5 Queries */}
             <div style={{ ...card, padding: 24 }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-                <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000000", margin: 0 }}>5 שאילתות מובילות</h3>
-                <button onClick={() => setActiveTab("queries")} style={{ fontSize: 13, fontWeight: 500, color: "#10A37F", background: "transparent", border: "none", cursor: "pointer", textDecoration: "underline" }}>הצג את כל {totalQueries} השאילתות</button>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000000", margin: 0 }}>5 שאילתות מובילות</h3>
+                  <Tooltip text="השאילתות עם הנוכחות הגבוהה ביותר של המותג במנועי AI" />
+                </div>
+                <HoverButton onClick={() => setActiveTab("queries")} style={{ fontSize: 13, fontWeight: 500, color: "#10A37F", background: "transparent", border: "none", cursor: "pointer", textDecoration: "underline" }}>
+                  הצג את כל {totalQueries} השאילתות
+                </HoverButton>
               </div>
               <table style={{ width: "100%", fontSize: 14, borderCollapse: "collapse" }}>
                 <thead>
                   <tr style={{ borderBottom: "1px solid #BFBFBF" }}>
-                    <th style={{ textAlign: "right", padding: "8px 10px", fontWeight: 600, color: "#727272", fontSize: 13 }}>שאילתה</th>
-                    <th style={{ textAlign: "right", padding: "8px 10px", fontWeight: 600, color: "#727272", fontSize: 13 }}>פרסונה</th>
-                    <th style={{ textAlign: "right", padding: "8px 10px", fontWeight: 600, color: "#727272", fontSize: 13 }}>שלב</th>
-                    <th style={{ textAlign: "center", padding: "8px 10px", fontWeight: 600, color: "#727272", fontSize: 13 }}>GPT</th>
-                    <th style={{ textAlign: "center", padding: "8px 10px", fontWeight: 600, color: "#727272", fontSize: 13 }}>Gemini</th>
+                    <th style={{ textAlign: "right", padding: "8px 10px", fontWeight: 600, color: "#727272", fontSize: 13 }}><span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>שאילתה <Tooltip text="השאילתה שנבדקה מול מנועי AI" /></span></th>
+                    <th style={{ textAlign: "right", padding: "8px 10px", fontWeight: 600, color: "#727272", fontSize: 13 }}><span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>פרסונה <Tooltip text="פרופיל קהל היעד שהשאילתה שייכת אליו" /></span></th>
+                    <th style={{ textAlign: "right", padding: "8px 10px", fontWeight: 600, color: "#727272", fontSize: 13 }}><span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>שלב <Tooltip text="שלב מסע הלקוח: חשיפה, מחקר, החלטה, תמיכה" /></span></th>
+                    <th style={{ textAlign: "center", padding: "8px 10px", fontWeight: 600, color: "#727272", fontSize: 13 }}><span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>GPT <Tooltip text="האם המותג מוזכר בתשובת ChatGPT" /></span></th>
+                    <th style={{ textAlign: "center", padding: "8px 10px", fontWeight: 600, color: "#727272", fontSize: 13 }}><span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>Gemini <Tooltip text="האם המותג מוזכר בתשובת Google Gemini" /></span></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -609,16 +868,55 @@ export default function ScanPage() {
               <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                   {([{ key: "all" as const, label: "הכל" }, { key: "mentioned" as const, label: "מוזכר" }, { key: "missing" as const, label: "חסר" }, { key: "negative" as const, label: "שלילי" }]).map((f) => (
-                    <button key={f.key} onClick={() => setQueryFilter(f.key)} style={{ display: "flex", alignItems: "center", gap: 4, padding: "5px 12px", borderRadius: 9, fontSize: 12, fontWeight: queryFilter === f.key ? 600 : 400, background: queryFilter === f.key ? "#000000" : "#FFFFFF", color: queryFilter === f.key ? "#FFFFFF" : "#333333", border: queryFilter === f.key ? "1px solid #000000" : "1px solid #BFBFBF", cursor: "pointer" }}>
+                    <HoverButton
+                      key={f.key}
+                      onClick={() => setQueryFilter(f.key)}
+                      filled={queryFilter === f.key}
+                      style={{
+                        display: "flex", alignItems: "center", gap: 4, padding: "5px 12px", borderRadius: 9, fontSize: 12,
+                        fontWeight: queryFilter === f.key ? 600 : 400,
+                        background: queryFilter === f.key ? "#000000" : "#FFFFFF",
+                        color: queryFilter === f.key ? "#FFFFFF" : "#333333",
+                        border: queryFilter === f.key ? "1px solid #000000" : "1px solid #BFBFBF",
+                        cursor: "pointer",
+                      }}
+                    >
                       {f.label} <span style={{ opacity: 0.7 }}>({filterCounts[f.key]})</span>
-                    </button>
+                    </HoverButton>
                   ))}
                 </div>
                 <div style={{ width: 1, height: 24, background: "#BFBFBF" }} />
                 <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-                  <button onClick={() => setPersonaFilter("all")} style={{ padding: "5px 12px", borderRadius: 9, fontSize: 12, fontWeight: personaFilter === "all" ? 600 : 400, background: personaFilter === "all" ? "#000000" : "#FFFFFF", color: personaFilter === "all" ? "#FFFFFF" : "#333333", border: personaFilter === "all" ? "1px solid #000000" : "1px solid #BFBFBF", cursor: "pointer" }}>כל הפרסונות</button>
+                  <HoverButton
+                    onClick={() => setPersonaFilter("all")}
+                    filled={personaFilter === "all"}
+                    style={{
+                      padding: "5px 12px", borderRadius: 9, fontSize: 12,
+                      fontWeight: personaFilter === "all" ? 600 : 400,
+                      background: personaFilter === "all" ? "#000000" : "#FFFFFF",
+                      color: personaFilter === "all" ? "#FFFFFF" : "#333333",
+                      border: personaFilter === "all" ? "1px solid #000000" : "1px solid #BFBFBF",
+                      cursor: "pointer",
+                    }}
+                  >
+                    כל הפרסונות
+                  </HoverButton>
                   {PERSONAS.map((p) => (
-                    <button key={p.id} onClick={() => setPersonaFilter(p.id)} style={{ padding: "5px 12px", borderRadius: 9, fontSize: 12, fontWeight: personaFilter === p.id ? 600 : 400, background: personaFilter === p.id ? "#000000" : "#FFFFFF", color: personaFilter === p.id ? "#FFFFFF" : "#333333", border: personaFilter === p.id ? "1px solid #000000" : "1px solid #BFBFBF", cursor: "pointer" }}>{p.name} - {p.role}</button>
+                    <HoverButton
+                      key={p.id}
+                      onClick={() => setPersonaFilter(p.id)}
+                      filled={personaFilter === p.id}
+                      style={{
+                        padding: "5px 12px", borderRadius: 9, fontSize: 12,
+                        fontWeight: personaFilter === p.id ? 600 : 400,
+                        background: personaFilter === p.id ? "#000000" : "#FFFFFF",
+                        color: personaFilter === p.id ? "#FFFFFF" : "#333333",
+                        border: personaFilter === p.id ? "1px solid #000000" : "1px solid #BFBFBF",
+                        cursor: "pointer",
+                      }}
+                    >
+                      {p.name} - {p.role}
+                    </HoverButton>
                   ))}
                 </div>
               </div>
@@ -640,7 +938,7 @@ export default function ScanPage() {
                 <tbody>
                   {filteredQueries.map((q) => (
                     <React.Fragment key={q.id}>
-                      <tr onClick={() => setExpandedQuery(expandedQuery === q.id ? null : q.id)} style={{ borderBottom: expandedQuery === q.id ? "none" : thinBorder, cursor: "pointer" }} onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "#F9F9F9"; }} onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "#FFFFFF"; }}>
+                      <tr onClick={() => setExpandedQuery(expandedQuery === q.id ? null : q.id)} style={{ borderBottom: expandedQuery === q.id ? "none" : thinBorder, cursor: "pointer", transition: "all 150ms" }} onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "#F9F9F9"; }} onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "#FFFFFF"; }}>
                         <td style={{ padding: "10px 14px", fontWeight: 500, color: "#A2A9B0" }}>{q.id}</td>
                         <td style={{ padding: "10px 14px", fontWeight: 500, color: "#333333", maxWidth: 320 }}>{q.text}</td>
                         <td style={{ padding: "10px 14px" }}><PersonaBadge personaId={q.persona} /></td>
@@ -665,13 +963,17 @@ export default function ScanPage() {
                                 {fullAnswerView?.queryId === q.id && fullAnswerView?.engine === "gpt" ? (
                                   <div>
                                     <div style={{ fontSize: 13, lineHeight: 1.8, color: "#333333", whiteSpace: "pre-line" }}>{(q as any).gptFull || q.gptSnippet}</div>
-                                    <button onClick={(e) => { e.stopPropagation(); setFullAnswerView(null); }} style={{ marginTop: 10, padding: "4px 12px", fontSize: 12, fontWeight: 500, color: "#10A37F", background: "none", border: "1px solid #10A37F", borderRadius: 9, cursor: "pointer" }}>הסתר תשובה מלאה</button>
+                                    <HoverButton onClick={(e) => { e.stopPropagation(); setFullAnswerView(null); }} style={{ marginTop: 10, padding: "4px 12px", fontSize: 12, fontWeight: 500, color: "#10A37F", background: "none", border: "1px solid #10A37F", borderRadius: 9, cursor: "pointer" }}>
+                                      הסתר תשובה מלאה
+                                    </HoverButton>
                                   </div>
                                 ) : (
                                   <div>
                                     <p style={{ fontSize: 13, lineHeight: 1.6, color: "#333333", margin: 0 }}>{q.gptSnippet}</p>
                                     {(q as any).gptFull && (
-                                      <button onClick={(e) => { e.stopPropagation(); setFullAnswerView({ queryId: q.id, engine: "gpt" }); }} style={{ marginTop: 8, padding: "4px 12px", fontSize: 12, fontWeight: 500, color: "#10A37F", background: "none", border: "1px solid #10A37F", borderRadius: 9, cursor: "pointer" }}>הצג תשובה מלאה</button>
+                                      <HoverButton onClick={(e) => { e.stopPropagation(); setFullAnswerView({ queryId: q.id, engine: "gpt" }); }} style={{ marginTop: 8, padding: "4px 12px", fontSize: 12, fontWeight: 500, color: "#10A37F", background: "none", border: "1px solid #10A37F", borderRadius: 9, cursor: "pointer" }}>
+                                        הצג תשובה מלאה
+                                      </HoverButton>
                                     )}
                                   </div>
                                 )}
@@ -686,13 +988,17 @@ export default function ScanPage() {
                                 {fullAnswerView?.queryId === q.id && fullAnswerView?.engine === "gemini" ? (
                                   <div>
                                     <div style={{ fontSize: 13, lineHeight: 1.8, color: "#333333", whiteSpace: "pre-line" }}>{(q as any).geminiFull || q.geminiSnippet}</div>
-                                    <button onClick={(e) => { e.stopPropagation(); setFullAnswerView(null); }} style={{ marginTop: 10, padding: "4px 12px", fontSize: 12, fontWeight: 500, color: "#4285F4", background: "none", border: "1px solid #4285F4", borderRadius: 9, cursor: "pointer" }}>הסתר תשובה מלאה</button>
+                                    <HoverButton onClick={(e) => { e.stopPropagation(); setFullAnswerView(null); }} style={{ marginTop: 10, padding: "4px 12px", fontSize: 12, fontWeight: 500, color: "#4285F4", background: "none", border: "1px solid #4285F4", borderRadius: 9, cursor: "pointer" }}>
+                                      הסתר תשובה מלאה
+                                    </HoverButton>
                                   </div>
                                 ) : (
                                   <div>
                                     <p style={{ fontSize: 13, lineHeight: 1.6, color: "#333333", margin: 0 }}>{q.geminiSnippet}</p>
                                     {(q as any).geminiFull && (
-                                      <button onClick={(e) => { e.stopPropagation(); setFullAnswerView({ queryId: q.id, engine: "gemini" }); }} style={{ marginTop: 8, padding: "4px 12px", fontSize: 12, fontWeight: 500, color: "#4285F4", background: "none", border: "1px solid #4285F4", borderRadius: 9, cursor: "pointer" }}>הצג תשובה מלאה</button>
+                                      <HoverButton onClick={(e) => { e.stopPropagation(); setFullAnswerView({ queryId: q.id, engine: "gemini" }); }} style={{ marginTop: 8, padding: "4px 12px", fontSize: 12, fontWeight: 500, color: "#4285F4", background: "none", border: "1px solid #4285F4", borderRadius: 9, cursor: "pointer" }}>
+                                        הצג תשובה מלאה
+                                      </HoverButton>
                                     )}
                                   </div>
                                 )}
@@ -725,10 +1031,10 @@ export default function ScanPage() {
                 <h2 style={{ fontSize: 18, fontWeight: 600, color: "#000000", margin: "0 0 4px" }}>קהלי יעד שזוהו</h2>
                 <p style={{ fontSize: 13, color: "#727272", margin: 0 }}>{PERSONAS.length} פרסונות זוהו בסריקה האחרונה</p>
               </div>
-              <button onClick={() => setShowPersonaForm(!showPersonaForm)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 18px", background: "#000000", color: "#FFFFFF", fontSize: 13, fontWeight: 600, border: "1px solid #000000", borderRadius: 9, cursor: "pointer" }}>
+              <HoverButton filled onClick={() => setShowPersonaForm(!showPersonaForm)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 18px", background: "#000000", color: "#FFFFFF", fontSize: 13, fontWeight: 600, border: "1px solid #000000", borderRadius: 9, cursor: "pointer" }}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2"><path d="M12 5v14M5 12h14" /></svg>
                 הצע פרסונה
-              </button>
+              </HoverButton>
             </div>
 
             {showPersonaForm && (
@@ -755,10 +1061,10 @@ export default function ScanPage() {
                     <input type="text" placeholder="גיל, מיקום, תחום - מופרדים בפסיקים" style={{ width: "100%", padding: "8px 12px", borderRadius: 10, fontSize: 14, border: "1px solid #BFBFBF", color: "#000000", outline: "none", background: "#FFFFFF", boxSizing: "border-box" }} />
                   </div>
                   <div style={{ display: "flex", alignItems: "flex-end" }}>
-                    <button style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 20px", background: "#000000", color: "#FFFFFF", fontSize: 13, fontWeight: 600, border: "1px solid #000000", borderRadius: 9, cursor: "pointer" }}>
+                    <HoverButton filled onClick={() => setShowPersonaForm(false)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 20px", background: "#000000", color: "#FFFFFF", fontSize: 13, fontWeight: 600, border: "1px solid #000000", borderRadius: 9, cursor: "pointer" }}>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" /></svg>
                       שלח הצעה
-                    </button>
+                    </HoverButton>
                   </div>
                 </div>
               </div>
@@ -794,7 +1100,9 @@ export default function ScanPage() {
                         <span style={{ fontSize: 12, color: "#727272" }}>{p.mentions} אזכורים</span>
                       </div>
                       <div style={{ flex: 1 }} />
-                      <button onClick={() => { setPersonaFilter(p.id); setActiveTab("queries"); }} style={{ fontSize: 12, fontWeight: 500, color: "#10A37F", background: "transparent", border: "none", cursor: "pointer", textDecoration: "underline" }}>הצג שאילתות</button>
+                      <HoverButton onClick={() => { setPersonaFilter(p.id); setActiveTab("queries"); }} style={{ fontSize: 12, fontWeight: 500, color: "#10A37F", background: "transparent", border: "none", cursor: "pointer", textDecoration: "underline" }}>
+                        הצג שאילתות
+                      </HoverButton>
                     </div>
                   </div>
                 </div>
@@ -806,55 +1114,39 @@ export default function ScanPage() {
         {/* TAB 4: PRODUCTS / SERVICES */}
         {activeTab === "products" && (
           <div>
-            {/* Banner for Inna */}
-            <div style={{ ...card, padding: 24, marginBottom: 24, borderRight: "4px solid #10A37F" }}>
-              <div style={{ display: "flex", alignItems: "flex-start", gap: 16 }}>
-                <div style={{ width: 40, height: 40, borderRadius: 10, background: "#10A37F15", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10A37F" strokeWidth="2"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4M12 8h.01" /></svg>
-                </div>
-                <div>
-                  <h2 style={{ fontSize: 16, fontWeight: 600, color: "#000000", margin: "0 0 8px" }}>מוצרים / שירותים — מה זה ולמה?</h2>
-                  <p style={{ fontSize: 14, lineHeight: 1.7, color: "#333333", margin: "0 0 12px" }}>
-                    בנוסף לפרסונות (קהלי יעד), Geoscale מאפשר לסרוק את נוכחות המותג לפי <strong>מוצרים ושירותים</strong> ספציפיים. כל מוצר או שירות מייצר סט שאילתות ייעודי — בדיוק כמו שפרסונה מייצרת שאילתות לפי פרופיל קהל היעד.
-                  </p>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                    <span style={{ fontSize: 12, padding: "4px 12px", borderRadius: 20, background: "#10A37F15", color: "#10A37F", fontWeight: 500 }}>מחקר שאילתות פר מוצר</span>
-                    <span style={{ fontSize: 12, padding: "4px 12px", borderRadius: 20, background: "#10A37F15", color: "#10A37F", fontWeight: 500 }}>בדיקת חולשות מול מתחרים</span>
-                    <span style={{ fontSize: 12, padding: "4px 12px", borderRadius: 20, background: "#10A37F15", color: "#10A37F", fontWeight: 500 }}>דומה לסינון פרסונות</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Link to full products page */}
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+            {/* Header */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
               <div>
                 <h2 style={{ fontSize: 18, fontWeight: 600, color: "#000000", margin: "0 0 4px" }}>מוצרים ושירותים של All4Horses</h2>
-                <p style={{ fontSize: 13, color: "#727272", margin: 0 }}>שאילתות ממוקדות לפי כל מוצר ושירות של המותג</p>
+                <p style={{ fontSize: 13, color: "#727272", margin: 0 }}>נוכחות המותג לפי כל מוצר ושירות - {(() => { const allP = [
+                  { type: "שירות" }, { type: "שירות" }, { type: "שירות" }, { type: "שירות" }, { type: "שירות" }, { type: "מוצר" }
+                ]; return `${allP.filter(p => p.type === "שירות").length} שירותים, ${allP.filter(p => p.type === "מוצר").length} מוצרים`; })()}</p>
               </div>
-              <a href="/products" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 20px", background: "#000000", color: "#FFFFFF", fontSize: 13, fontWeight: 600, borderRadius: 9, border: "1px solid #000000", textDecoration: "none" }}>
-                צפה בדף המלא
-              </a>
             </div>
 
-            {/* Products grid preview */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
-              {[
-                { name: "רכיבה טיפולית", type: "שירות", score: 82, queries: 15, mentioned: 12, topQuery: "רכיבה טיפולית לילדים עם ADHD" },
-                { name: "קייטנת סוסים", type: "שירות", score: 68, queries: 8, mentioned: 5, topQuery: "קייטנת סוסים קיץ 2026 מרכז" },
-                { name: "שיעורי רכיבה", type: "שירות", score: 75, queries: 11, mentioned: 9, topQuery: "שיעורי רכיבה למתחילים מחיר" },
-                { name: "אביזרי רכיבה", type: "מוצר", score: 45, queries: 6, mentioned: 2, topQuery: "ציוד רכיבה לילדים — מה צריך" },
-                { name: "טיולי סוסים", type: "שירות", score: 71, queries: 9, mentioned: 7, topQuery: "טיולי סוסים לגיבוש צוותים" },
-                { name: "אירועים בחווה", type: "שירות", score: 58, queries: 7, mentioned: 4, topQuery: "יום הולדת בחוות סוסים" },
-              ].map((p, i) => (
+            {/* Products grouped: שירותים then מוצרים */}
+            {(() => {
+              const allProducts = [
+                { name: "רכיבה טיפולית", type: "שירות", audience: "B2C", score: 82, queries: 15, mentioned: 12, topQuery: "רכיבה טיפולית לילדים עם ADHD" },
+                { name: "קייטנת סוסים", type: "שירות", audience: "B2C", score: 68, queries: 8, mentioned: 5, topQuery: "קייטנת סוסים קיץ 2026 מרכז" },
+                { name: "שיעורי רכיבה", type: "שירות", audience: "B2C", score: 75, queries: 11, mentioned: 9, topQuery: "שיעורי רכיבה למתחילים מחיר" },
+                { name: "אביזרי רכיבה", type: "מוצר", audience: "B2C", score: 45, queries: 6, mentioned: 2, topQuery: "ציוד רכיבה לילדים -- מה צריך" },
+                { name: "טיולי סוסים", type: "שירות", audience: "B2B+B2C", score: 71, queries: 9, mentioned: 7, topQuery: "טיולי סוסים לגיבוש צוותים" },
+                { name: "אירועים בחווה", type: "שירות", audience: "B2B+B2C", score: 58, queries: 7, mentioned: 4, topQuery: "יום הולדת בחוות סוסים" },
+              ];
+              const services = allProducts.filter((p) => p.type === "שירות");
+              const products = allProducts.filter((p) => p.type === "מוצר");
+
+              const renderProductCard = (p: typeof allProducts[0], i: number) => (
                 <div key={i} style={{ ...card, overflow: "hidden" }}>
                   <div style={{ height: 3, background: p.type === "מוצר" ? "#10A37F" : "#4285F4" }} />
                   <div style={{ padding: 20 }}>
                     <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 10 }}>
                       <div>
-                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4, flexWrap: "wrap" }}>
                           <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000000", margin: 0 }}>{p.name}</h3>
                           <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 10, background: p.type === "מוצר" ? "#10A37F15" : "#4285F415", color: p.type === "מוצר" ? "#10A37F" : "#4285F4", fontWeight: 500 }}>{p.type}</span>
+                          <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 10, background: p.audience.includes("B2B") ? "#E0780015" : "#F9F9F9", color: p.audience.includes("B2B") ? "#E07800" : "#727272", fontWeight: 500, border: `1px solid ${p.audience.includes("B2B") ? "#E0780030" : "#DDDDDD"}` }}>{p.audience}</span>
                         </div>
                       </div>
                       <div style={{ width: 44, height: 44, borderRadius: 10, background: p.score >= 70 ? "#10A37F12" : "#F9F9F9", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
@@ -881,13 +1173,39 @@ export default function ScanPage() {
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
+              );
+
+              return (
+                <>
+                  {/* Services section */}
+                  <div style={{ marginBottom: 24 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+                      <h3 style={{ fontSize: 16, fontWeight: 600, color: "#000000", margin: 0 }}>שירותים</h3>
+                      <span style={{ fontSize: 12, padding: "2px 8px", borderRadius: 10, background: "#F9F9F9", color: "#727272", border: thinBorder }}>{services.length}</span>
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
+                      {services.map((p, i) => renderProductCard(p, i))}
+                    </div>
+                  </div>
+
+                  {/* Products section */}
+                  <div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+                      <h3 style={{ fontSize: 16, fontWeight: 600, color: "#000000", margin: 0 }}>מוצרים</h3>
+                      <span style={{ fontSize: 12, padding: "2px 8px", borderRadius: 10, background: "#F9F9F9", color: "#727272", border: thinBorder }}>{products.length}</span>
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
+                      {products.map((p, i) => renderProductCard(p, i))}
+                    </div>
+                  </div>
+                </>
+              );
+            })()}
           </div>
         )}
       </div>
 
-      {/* ── Footer ── */}
+      {/* -- Footer -- */}
       <footer style={{ borderTop: "1px solid #BFBFBF", marginTop: "auto" }}>
         <div dir="rtl" style={{ maxWidth: 1300, margin: "0 auto", padding: "16px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -904,7 +1222,7 @@ export default function ScanPage() {
               { label: "הצעות לשיפור", color: "#4285F4", bg: "#4285F415" },
               { label: "שימוש API", color: "#10A37F", bg: "#10A37F15" },
             ].map((link, i) => (
-              <span key={i} style={{ fontSize: 12, fontWeight: 500, padding: "4px 12px", borderRadius: 20, color: link.color, background: link.bg, cursor: "pointer" }}>{link.label}</span>
+              <span key={i} style={{ fontSize: 12, fontWeight: 500, padding: "4px 12px", borderRadius: 20, color: link.color, background: link.bg, cursor: "pointer", transition: "all 150ms" }}>{link.label}</span>
             ))}
           </div>
           <span style={{ fontSize: 12, color: "#A2A9B0" }}>GeoScale 2026 &copy;</span>
