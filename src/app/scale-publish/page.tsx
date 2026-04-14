@@ -61,6 +61,20 @@ function IconExternalLink({ size = 12 }: { size?: number }) {
   return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" /></svg>;
 }
 
+// ── Favicon helper ──
+function Favicon({ domain, size = 24 }: { domain: string; size?: number }) {
+  return (
+    <img
+      src={`https://www.google.com/s2/favicons?domain=${domain}&sz=64`}
+      alt=""
+      width={size}
+      height={size}
+      style={{ width: size, height: size, borderRadius: 4, flexShrink: 0, objectFit: "contain", background: "#fff", border: "1px solid #F0F0F0" }}
+      onError={(e) => { (e.currentTarget as HTMLImageElement).style.visibility = "hidden"; }}
+    />
+  );
+}
+
 // ── Types ──
 interface Publisher {
   id: number;
@@ -82,21 +96,22 @@ interface Publisher {
 
 // ── Mock Data ──
 const PUBLISHERS: Publisher[] = [
-  { id: 1, name: "TechIL", domain: "techil.co.il", category: "טכנולוגיה", dr: 62, traffic: 185000, seoScore: 78, gioScore: 72, gptPresent: true, geminiPresent: true, googleIndex: true, pricePerArticle: 1200, status: "approved", queries: 8 },
-  { id: 2, name: "הפורטל הרפואי", domain: "medical-portal.co.il", category: "בריאות", dr: 55, traffic: 220000, seoScore: 81, gioScore: 65, gptPresent: true, geminiPresent: true, googleIndex: true, pricePerArticle: 1500, status: "approved", queries: 11 },
-  { id: 3, name: "כלכלה+", domain: "calcala-plus.co.il", category: "פיננסים", dr: 48, traffic: 95000, seoScore: 65, gioScore: 58, gptPresent: true, geminiPresent: false, googleIndex: true, pricePerArticle: 900, status: "approved", queries: 6 },
-  { id: 4, name: "בית וסטייל", domain: "bait-style.co.il", category: "לייפסטייל", dr: 42, traffic: 78000, seoScore: 59, gioScore: 51, gptPresent: false, geminiPresent: true, googleIndex: true, pricePerArticle: 750, status: "approved", queries: 5 },
-  { id: 5, name: "EduNet", domain: "edunet.co.il", category: "חינוך", dr: 51, traffic: 130000, seoScore: 73, gioScore: 69, gptPresent: true, geminiPresent: true, googleIndex: true, pricePerArticle: 1100, status: "approved", queries: 9 },
-  { id: 6, name: "נדלן פלוס", domain: "nadlan-plus.co.il", category: 'נדל"ן', dr: 45, traffic: 67000, seoScore: 62, gioScore: 44, gptPresent: false, geminiPresent: false, googleIndex: true, pricePerArticle: 850, status: "approved", queries: 7 },
-  { id: 7, name: "FoodTaste", domain: "foodtaste.co.il", category: "אוכל", dr: 38, traffic: 210000, seoScore: 71, gioScore: 67, gptPresent: true, geminiPresent: true, googleIndex: true, pricePerArticle: 680, status: "approved", queries: 8 },
-  { id: 8, name: "BizUp", domain: "bizup.co.il", category: "עסקים", dr: 57, traffic: 145000, seoScore: 76, gioScore: 71, gptPresent: true, geminiPresent: true, googleIndex: true, pricePerArticle: 1350, status: "approved", queries: 10 },
-  { id: 9, name: "DigiTech News", domain: "digitech.co.il", category: "טכנולוגיה", dr: 34, traffic: 45000, seoScore: 42, gioScore: 28, gptPresent: false, geminiPresent: false, googleIndex: false, pricePerArticle: 400, status: "rejected", rejectionReason: "DR נמוך, אינו מופיע ב-AI engines", queries: 5 },
-  { id: 10, name: "HealthLine IL", domain: "healthline.co.il", category: "בריאות", dr: 29, traffic: 12000, seoScore: 31, gioScore: 15, gptPresent: false, geminiPresent: false, googleIndex: false, pricePerArticle: 350, status: "rejected", rejectionReason: "אתר לא מאונדקס בגוגל, תנועה אורגנית זניחה", queries: 6 },
-  { id: 11, name: "StartupNation IL", domain: "startupnation.co.il", category: "עסקים", dr: 61, traffic: 175000, seoScore: 80, gioScore: 74, gptPresent: true, geminiPresent: true, googleIndex: true, pricePerArticle: 1400, status: "approved", queries: 12 },
-  { id: 12, name: "WellBeing", domain: "wellbeing.co.il", category: "בריאות", dr: 44, traffic: 88000, seoScore: 66, gioScore: 55, gptPresent: true, geminiPresent: false, googleIndex: true, pricePerArticle: 950, status: "pending", queries: 7 },
+  { id: 1, name: "Ynet", domain: "ynet.co.il", category: "חדשות", dr: 91, traffic: 14200000, seoScore: 94, gioScore: 88, gptPresent: true, geminiPresent: true, googleIndex: true, pricePerArticle: 4800, status: "approved", queries: 18 },
+  { id: 2, name: "כלכליסט", domain: "calcalist.co.il", category: "פיננסים", dr: 85, traffic: 6800000, seoScore: 89, gioScore: 81, gptPresent: true, geminiPresent: true, googleIndex: true, pricePerArticle: 3600, status: "approved", queries: 14 },
+  { id: 3, name: "GeekTime", domain: "geektime.co.il", category: "טכנולוגיה", dr: 72, traffic: 820000, seoScore: 82, gioScore: 78, gptPresent: true, geminiPresent: true, googleIndex: true, pricePerArticle: 2400, status: "approved", queries: 11 },
+  { id: 4, name: "mako", domain: "mako.co.il", category: "לייפסטייל", dr: 88, traffic: 9500000, seoScore: 91, gioScore: 76, gptPresent: true, geminiPresent: true, googleIndex: true, pricePerArticle: 4200, status: "approved", queries: 16 },
+  { id: 5, name: "TheMarker", domain: "themarker.com", category: "עסקים", dr: 84, traffic: 4300000, seoScore: 87, gioScore: 82, gptPresent: true, geminiPresent: true, googleIndex: true, pricePerArticle: 3900, status: "approved", queries: 15 },
+  { id: 6, name: "מדלן", domain: "madlan.co.il", category: 'נדל"ן', dr: 68, traffic: 1900000, seoScore: 79, gioScore: 62, gptPresent: false, geminiPresent: true, googleIndex: true, pricePerArticle: 2100, status: "approved", queries: 9 },
+  { id: 7, name: "פורטל דוקטורס", domain: "doctors.co.il", category: "בריאות", dr: 66, traffic: 720000, seoScore: 78, gioScore: 71, gptPresent: true, geminiPresent: true, googleIndex: true, pricePerArticle: 1800, status: "approved", queries: 10 },
+  { id: 8, name: "גלובס", domain: "globes.co.il", category: "עסקים", dr: 82, traffic: 3700000, seoScore: 86, gioScore: 79, gptPresent: true, geminiPresent: true, googleIndex: true, pricePerArticle: 3500, status: "approved", queries: 13 },
+  { id: 9, name: "Zap", domain: "zap.co.il", category: "אוכל", dr: 74, traffic: 2100000, seoScore: 81, gioScore: 70, gptPresent: true, geminiPresent: true, googleIndex: true, pricePerArticle: 2200, status: "approved", queries: 11 },
+  { id: 10, name: "BizPortal", domain: "bizportal.co.il", category: "פיננסים", dr: 70, traffic: 950000, seoScore: 77, gioScore: 68, gptPresent: true, geminiPresent: false, googleIndex: true, pricePerArticle: 1950, status: "approved", queries: 9 },
+  { id: 11, name: "Walla", domain: "walla.co.il", category: "לייפסטייל", dr: 89, traffic: 8100000, seoScore: 92, gioScore: 80, gptPresent: true, geminiPresent: true, googleIndex: true, pricePerArticle: 4100, status: "pending", queries: 15 },
+  { id: 12, name: "PC.co.il", domain: "pc.co.il", category: "טכנולוגיה", dr: 38, traffic: 52000, seoScore: 48, gioScore: 31, gptPresent: false, geminiPresent: false, googleIndex: false, pricePerArticle: 450, status: "rejected", rejectionReason: "DR נמוך, אינו מופיע ב-AI engines", queries: 5 },
+  { id: 13, name: "HealthLine IL", domain: "healthline.co.il", category: "בריאות", dr: 29, traffic: 12000, seoScore: 31, gioScore: 15, gptPresent: false, geminiPresent: false, googleIndex: false, pricePerArticle: 350, status: "rejected", rejectionReason: "אתר לא מאונדקס בגוגל, תנועה אורגנית זניחה", queries: 6 },
 ];
 
-const CATEGORIES = ["הכל", "טכנולוגיה", "בריאות", "עסקים", "לייפסטייל", "חינוך", "פיננסים", 'נדל"ן', "אוכל"];
+const CATEGORIES = ["הכל", "חדשות", "טכנולוגיה", "בריאות", "עסקים", "לייפסטייל", "פיננסים", 'נדל"ן', "אוכל"];
 const SORT_OPTIONS = [
   { value: "rating", label: "דירוג" },
   { value: "price", label: "מחיר" },
@@ -374,6 +389,10 @@ export default function BestLinksPage() {
             planTotals={planTotals}
             planType={planType}
             setPlanType={setPlanType}
+            cartSiteCount={cart.length}
+            cartQueries={cartQueries}
+            cartTotal={cartTotal}
+            goToMarketplace={() => setActiveTab("marketplace")}
           />
         )}
         {activeTab === "publishers" && <PublishersTab />}
@@ -436,12 +455,18 @@ export default function BestLinksPage() {
                 <IconX size={18} />
               </button>
             </div>
+            <div style={{ padding: "10px 24px", background: "#10A37F08", borderBottom: "1px solid #10A37F20", fontSize: 11, color: "#10A37F", lineHeight: 1.5 }}>
+              האתרים בסל מתווספים אוטומטית ל-<strong>הצעת המחיר</strong> שנבנית בבונה התוכנית
+            </div>
             <div style={{ flex: 1, overflowY: "auto", padding: "12px 24px" }}>
               {cartPublishers.map(pub => (
                 <div key={pub.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 0", borderBottom: "1px solid #F0F0F0" }}>
-                  <div>
-                    <div style={{ fontSize: 13, fontWeight: 600 }}>{pub.name}</div>
-                    <div style={{ fontSize: 11, color: "#727272" }}>{pub.domain}</div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
+                    <Favicon domain={pub.domain} size={28} />
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ fontSize: 13, fontWeight: 600 }}>{pub.name}</div>
+                      <div style={{ fontSize: 11, color: "#727272" }}>{pub.domain}</div>
+                    </div>
                   </div>
                   <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                     <div style={{ textAlign: "left" }}>
@@ -739,14 +764,17 @@ function PublisherCard({ publisher: pub, inCart, isFlashing, onToggleCart }: {
       )}
 
       {/* Header */}
-      <div style={{ marginBottom: 14 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-          <span style={{ fontSize: 15, fontWeight: 700, color: "#000" }}>{pub.name}</span>
-          <a href={`https://${pub.domain}`} target="_blank" rel="noopener noreferrer" style={{ color: "#A2A9B0", display: "inline-flex" }}>
-            <IconExternalLink size={11} />
-          </a>
+      <div style={{ marginBottom: 14, display: "flex", alignItems: "center", gap: 12 }}>
+        <Favicon domain={pub.domain} size={36} />
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
+            <span style={{ fontSize: 15, fontWeight: 700, color: "#000" }}>{pub.name}</span>
+            <a href={`https://${pub.domain}`} target="_blank" rel="noopener noreferrer" style={{ color: "#A2A9B0", display: "inline-flex" }}>
+              <IconExternalLink size={11} />
+            </a>
+          </div>
+          <div style={{ fontSize: 12, color: "#727272" }}>{pub.domain}</div>
         </div>
-        <div style={{ fontSize: 12, color: "#727272" }}>{pub.domain}</div>
       </div>
 
       {/* Category */}
@@ -857,11 +885,138 @@ function AiBadge({ engine, present }: { engine: string; present: boolean }) {
   );
 }
 
+// ── Projection Panel: shows forecasted query appearances + exposure growth ──
+function ProjectionPanel({
+  speed, duration, planType, cartSiteCount, cartQueries,
+}: {
+  speed: "fast" | "medium" | "slow";
+  duration: 3 | 6;
+  planType: PlanType;
+  cartSiteCount: number;
+  cartQueries: number;
+}) {
+  const speedBase = { fast: 42, medium: 26, slow: 14 };
+  const typeFactor: Record<PlanType, number> = { combined: 1, seo: 0.7, geo: 0.65 };
+  const baseStart = Math.round(speedBase[speed] * typeFactor[planType]);
+  const cartBoost = Math.round(cartQueries * 0.6);
+  const startQ = baseStart + Math.round(cartBoost * 0.25);
+  const endMultiplier = duration === 6 ? 4.1 : 2.3;
+  const endQ = Math.round((baseStart * endMultiplier) + cartBoost);
+  const exposureGrowthMap = {
+    fast: { 3: 140, 6: 245 }, medium: { 3: 95, 6: 160 }, slow: { 3: 45, 6: 80 },
+  } as const;
+  const baseGrowth = exposureGrowthMap[speed][duration];
+  const totalGrowth = Math.round(baseGrowth + cartSiteCount * 12);
+
+  const points: number[] = Array.from({ length: duration }, (_, i) => {
+    const progress = i / (duration - 1);
+    const eased = Math.pow(progress, 1.35);
+    return Math.round(startQ + (endQ - startQ) * eased);
+  });
+
+  const W = 620, H = 170, PAD_L = 36, PAD_R = 20, PAD_T = 20, PAD_B = 30;
+  const maxY = Math.max(...points, 10) * 1.1;
+  const pointCoords = points.map((v, i) => {
+    const x = PAD_L + ((W - PAD_L - PAD_R) * i) / Math.max(1, points.length - 1);
+    const y = H - PAD_B - ((H - PAD_T - PAD_B) * v) / maxY;
+    return { x, y, v, i };
+  });
+  const pathD = "M " + pointCoords.map(p => `${p.x},${p.y}`).join(" L ");
+  const areaD = pathD + ` L ${pointCoords[pointCoords.length - 1].x},${H - PAD_B} L ${pointCoords[0].x},${H - PAD_B} Z`;
+
+  return (
+    <div style={{ border: "1px solid #DDDDDD", borderRadius: 10, padding: 24, marginBottom: 28, background: "#fff" }}>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 24, marginBottom: 20, flexWrap: "wrap" }}>
+        <div>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "3px 10px", borderRadius: 20, background: "#10A37F15", color: "#10A37F", fontSize: 11, fontWeight: 600, marginBottom: 8 }}>
+            <span style={{ width: 6, height: 6, borderRadius: 3, background: "#10A37F" }} />
+            תחזית חזון
+          </div>
+          <h3 style={{ fontSize: 18, fontWeight: 700, color: "#000", margin: "0 0 4px" }}>מה התוכנית הזו תביא לכם</h3>
+          <p style={{ fontSize: 12, color: "#727272", margin: 0 }}>הופעה צפויה בשאילתות AI וצמיחה לאורך {duration} חודשים</p>
+        </div>
+        {/* KPIs */}
+        <div style={{ display: "flex", gap: 12 }}>
+          <div style={{ padding: "12px 18px", borderRadius: 10, background: "#F9F9F9", border: "1px solid #F0F0F0", minWidth: 140 }}>
+            <div style={{ fontSize: 10, color: "#727272", marginBottom: 4, fontWeight: 500 }}>הופעות בשאילתות - בסוף תקופה</div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
+              <span style={{ fontSize: 26, fontWeight: 700, color: "#000" }}>~{endQ}</span>
+              <span style={{ fontSize: 12, color: "#727272" }}>שאילתות/חודש</span>
+            </div>
+            <div style={{ fontSize: 11, color: "#10A37F", fontWeight: 600, marginTop: 2 }}>מ-{startQ} ← {endQ}</div>
+          </div>
+          <div style={{ padding: "12px 18px", borderRadius: 10, background: "#10A37F08", border: "1px solid #10A37F30", minWidth: 140 }}>
+            <div style={{ fontSize: 10, color: "#10A37F", marginBottom: 4, fontWeight: 500 }}>גידול חשיפה צפוי</div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
+              <span style={{ fontSize: 26, fontWeight: 700, color: "#10A37F" }}>+{totalGrowth}%</span>
+            </div>
+            <div style={{ fontSize: 11, color: "#727272", marginTop: 2 }}>בנוכחות במנועי AI</div>
+          </div>
+        </div>
+      </div>
+
+      {/* SVG Chart */}
+      <div style={{ position: "relative" }}>
+        <svg viewBox={`0 0 ${W} ${H}`} width="100%" height={H} style={{ display: "block" }}>
+          <defs>
+            <linearGradient id="projFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#10A37F" stopOpacity="0.22" />
+              <stop offset="100%" stopColor="#10A37F" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+          {/* Gridlines */}
+          {[0.25, 0.5, 0.75, 1].map((f, i) => {
+            const y = H - PAD_B - (H - PAD_T - PAD_B) * f;
+            return <line key={i} x1={PAD_L} x2={W - PAD_R} y1={y} y2={y} stroke="#F0F0F0" strokeWidth="1" />;
+          })}
+          {/* Y axis labels */}
+          {[0, 0.5, 1].map((f, i) => {
+            const y = H - PAD_B - (H - PAD_T - PAD_B) * f;
+            const val = Math.round(maxY * f);
+            return <text key={i} x={PAD_L - 8} y={y + 3} fontSize="10" fill="#A2A9B0" textAnchor="end">{val}</text>;
+          })}
+          {/* Area + line */}
+          <path d={areaD} fill="url(#projFill)" />
+          <path d={pathD} fill="none" stroke="#10A37F" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+          {/* Points */}
+          {pointCoords.map((p) => (
+            <g key={p.i}>
+              <circle cx={p.x} cy={p.y} r="4" fill="#fff" stroke="#10A37F" strokeWidth="2" />
+              <text x={p.x} y={p.y - 10} fontSize="11" fill="#000" fontWeight="600" textAnchor="middle">{p.v}</text>
+            </g>
+          ))}
+          {/* X axis labels */}
+          {pointCoords.map((p) => (
+            <text key={`x-${p.i}`} x={p.x} y={H - 10} fontSize="10" fill="#727272" textAnchor="middle">חודש {p.i + 1}</text>
+          ))}
+        </svg>
+      </div>
+
+      {/* Bottom: explanation + marketplace CTA */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, marginTop: 16, padding: "14px 16px", borderRadius: 10, background: "#F9F9F9", border: "1px dashed #DDDDDD", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10A37F" strokeWidth="2" strokeLinecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>
+          <div style={{ fontSize: 13, color: "#333" }}>
+            {cartSiteCount > 0 ? (
+              <span><strong style={{ color: "#10A37F" }}>{cartSiteCount} אתרים בסל</strong> - מוסיפים ~{cartQueries} שאילתות לתחזית. הגרף עודכן.</span>
+            ) : (
+              <span>הוסיפו אתרי פרסום מה-Marketplace כדי להגדיל את התחזית</span>
+            )}
+          </div>
+        </div>
+        <div style={{ fontSize: 11, color: "#A2A9B0" }}>כל אתר נוסף מעלה את התקרה ב-~10-15%</div>
+      </div>
+    </div>
+  );
+}
+
 // ============================================================
 // TAB 2: Plan Builder
 // ============================================================
 function PlannerTab({
   planSpeed, setPlanSpeed, planDuration, setPlanDuration, planData, planTotals, planType, setPlanType,
+  cartSiteCount, cartQueries, cartTotal, goToMarketplace,
 }: {
   planSpeed: "fast" | "medium" | "slow";
   setPlanSpeed: (v: "fast" | "medium" | "slow") => void;
@@ -871,6 +1026,10 @@ function PlannerTab({
   planTotals: { articles: number; budget: number };
   planType: PlanType;
   setPlanType: (v: PlanType) => void;
+  cartSiteCount: number;
+  cartQueries: number;
+  cartTotal: number;
+  goToMarketplace: () => void;
 }) {
   const discount = getDiscountInfo(planSpeed, planDuration);
 
@@ -1070,6 +1229,15 @@ function PlannerTab({
         </div>
       )}
 
+      {/* Projection / Vision Panel */}
+      <ProjectionPanel
+        speed={planSpeed}
+        duration={planDuration}
+        planType={planType}
+        cartSiteCount={cartSiteCount}
+        cartQueries={cartQueries}
+      />
+
       {/* Plan table */}
       <div style={{ border: "1px solid #DDDDDD", borderRadius: 10, overflow: "hidden", marginBottom: 28 }}>
         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
@@ -1111,7 +1279,7 @@ function PlannerTab({
       </div>
 
       {/* Summary cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 28 }}>
         <SummaryCard label={'סה"כ מאמרים'} value={String(planTotals.articles)} accent={false} />
         <SummaryCard label="תקציב כולל" value={fmtCurrency(planTotals.budget)} accent={false} />
         {planType === "combined" ? (
@@ -1122,9 +1290,81 @@ function PlannerTab({
         ) : (
           <SummaryCard label="עלייה צפויה בתנועה" value={planSpeed === "fast" ? "+180%" : planSpeed === "medium" ? "+120%" : "+65%"} accent={true} />
         )}
-        <div style={{ border: "1px solid #DDDDDD", borderRadius: 10, padding: 20, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <button style={{ padding: "12px 32px", background: "#000", color: "#fff", fontSize: 14, fontWeight: 600, borderRadius: 9, border: "none", cursor: "pointer", transition: "opacity 0.2s" }} onMouseEnter={e => (e.currentTarget.style.opacity = "0.8")} onMouseLeave={e => (e.currentTarget.style.opacity = "1")}>
-            צור הצעת מחיר
+        <SummaryCard label="אתרי פרסום בסל" value={String(cartSiteCount)} accent={cartSiteCount > 0} />
+      </div>
+
+      {/* Proposal Builder — connects SEO plan + Marketplace cart */}
+      <div style={{ border: "1px solid #DDDDDD", borderRadius: 10, padding: 24, background: "#FFFFFF", marginBottom: 28 }}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 20, marginBottom: 18, flexWrap: "wrap" }}>
+          <div>
+            <div style={{ fontSize: 11, color: "#727272", fontWeight: 600, marginBottom: 4, letterSpacing: 0.3 }}>הצעת מחיר כוללת</div>
+            <h3 style={{ fontSize: 18, fontWeight: 700, color: "#000", margin: 0 }}>מה כלול בהצעת המחיר</h3>
+            <p style={{ fontSize: 12, color: "#727272", margin: "4px 0 0" }}>התוכנית מחלקת את ההצעה לשני רכיבים שמתחברים אוטומטית</p>
+          </div>
+        </div>
+
+        {/* Two columns: SEO/GEO plan + External publisher cart */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 16 }}>
+          {/* Left: content plan */}
+          <div style={{ padding: 18, borderRadius: 10, border: "1px solid #F0F0F0", background: "#F9F9F9" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+              <span style={{ width: 28, height: 28, borderRadius: 6, background: "#000", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700 }}>1</span>
+              <div style={{ fontSize: 14, fontWeight: 600, color: "#000" }}>
+                תוכנית תוכן {planType === "seo" ? "SEO" : planType === "geo" ? "GEO" : "SEO + GEO"}
+              </div>
+            </div>
+            <div style={{ fontSize: 12, color: "#727272", marginBottom: 12, lineHeight: 1.6 }}>
+              {planTotals.articles} מאמרים לאורך {planDuration} חודשים במהירות {planSpeed === "fast" ? "אגרסיבית" : planSpeed === "medium" ? "בינונית" : "שמרנית"}
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", paddingTop: 10, borderTop: "1px solid #E5E5E5", fontSize: 13 }}>
+              <span style={{ color: "#333" }}>סה&quot;כ</span>
+              <span style={{ fontWeight: 700, color: "#000" }}>{fmtCurrency(planTotals.budget)}</span>
+            </div>
+          </div>
+
+          {/* Right: external publishers from cart */}
+          <div style={{ padding: 18, borderRadius: 10, border: cartSiteCount > 0 ? "1px solid #10A37F30" : "1px dashed #DDDDDD", background: cartSiteCount > 0 ? "#10A37F08" : "#FAFAFA" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+              <span style={{ width: 28, height: 28, borderRadius: 6, background: cartSiteCount > 0 ? "#10A37F" : "#A2A9B0", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700 }}>2</span>
+              <div style={{ fontSize: 14, fontWeight: 600, color: "#000" }}>הגברה חיצונית - פרסום באתרי Publishers</div>
+            </div>
+            {cartSiteCount > 0 ? (
+              <>
+                <div style={{ fontSize: 12, color: "#727272", marginBottom: 12, lineHeight: 1.6 }}>
+                  {cartSiteCount} אתרים מה-Marketplace · כיסוי ~{cartQueries} שאילתות AI נוספות
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", paddingTop: 10, borderTop: "1px solid #10A37F30", fontSize: 13 }}>
+                  <span style={{ color: "#333" }}>סה&quot;כ</span>
+                  <span style={{ fontWeight: 700, color: "#10A37F" }}>{fmtCurrency(cartTotal)}</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <div style={{ fontSize: 12, color: "#727272", marginBottom: 12, lineHeight: 1.6 }}>
+                  עוד לא נבחרו אתרים. הוסיפו אתרים מה-Marketplace כדי לכלול פרסום חיצוני בהצעה.
+                </div>
+                <button
+                  onClick={goToMarketplace}
+                  style={{ padding: "8px 16px", fontSize: 12, fontWeight: 600, borderRadius: 8, border: "1px solid #000", background: "#fff", color: "#000", cursor: "pointer" }}
+                >
+                  + הוסף אתרים מה-Marketplace
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Grand total + CTA */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 20px", borderRadius: 10, background: "#000", color: "#fff", flexWrap: "wrap", gap: 16 }}>
+          <div>
+            <div style={{ fontSize: 11, color: "#A2A9B0", marginBottom: 2, fontWeight: 500 }}>סה&quot;כ הצעת מחיר ללקוח</div>
+            <div style={{ fontSize: 26, fontWeight: 700 }}>{fmtCurrency(planTotals.budget + cartTotal)}</div>
+            <div style={{ fontSize: 11, color: "#A2A9B0", marginTop: 2 }}>
+              תוכן {fmtCurrency(planTotals.budget)} + פרסום חיצוני {fmtCurrency(cartTotal)}
+            </div>
+          </div>
+          <button style={{ padding: "14px 36px", background: "#10A37F", color: "#fff", fontSize: 14, fontWeight: 600, borderRadius: 9, border: "none", cursor: "pointer", transition: "opacity 0.2s" }} onMouseEnter={e => (e.currentTarget.style.opacity = "0.9")} onMouseLeave={e => (e.currentTarget.style.opacity = "1")}>
+            צור הצעת מחיר מלאה
           </button>
         </div>
       </div>
