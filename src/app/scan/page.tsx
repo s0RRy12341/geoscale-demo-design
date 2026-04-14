@@ -111,10 +111,10 @@ const QUERIES = [
 
 // ── COMPETITORS ──
 const COMPETITORS = [
-  { name: "חוות הזהב", score: 68 },
-  { name: "רכיבה טיפולית ישראל", score: 54 },
-  { name: "סוסים ולב", score: 42 },
-  { name: "חוות הגליל", score: 37 },
+  { name: "חוות הזהב", domain: "havat-hazahav.co.il", score: 68 },
+  { name: "רכיבה טיפולית ישראל", domain: "riding-therapy.co.il", score: 54 },
+  { name: "סוסים ולב", domain: "susim-valev.co.il", score: 42 },
+  { name: "חוות הגליל", domain: "galil-horses.co.il", score: 37 },
 ];
 
 // ── SEO-GEO CONNECTION DATA ──
@@ -688,8 +688,18 @@ export default function ScanPage() {
                 <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                   {COMPETITORS.map((comp, i) => (
                     <div key={i} style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                      <div style={{ width: 28, height: 28, borderRadius: 7, border: "1px solid #DDDDDD", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 600, color: "#333333" }}>{i + 1}</div>
-                      <span style={{ flex: 1, fontSize: 14, fontWeight: 500, color: "#333333" }}>{comp.name}</span>
+                      <div style={{ width: 22, height: 22, borderRadius: 6, border: "1px solid #DDDDDD", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 600, color: "#333333", flexShrink: 0 }}>{i + 1}</div>
+                      <img
+                        src={`https://www.google.com/s2/favicons?domain=${comp.domain}&sz=64`}
+                        alt=""
+                        width={24}
+                        height={24}
+                        style={{ borderRadius: 5, flexShrink: 0, border: "1px solid #F0F0F0", background: "#fff" }}
+                      />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 14, fontWeight: 500, color: "#333333" }}>{comp.name}</div>
+                        <div style={{ fontSize: 11, color: "#A2A9B0" }}>{comp.domain}</div>
+                      </div>
                       <div style={{ width: 80, height: 6, borderRadius: 3, overflow: "hidden", background: "#F9F9F9" }}>
                         <div style={{ width: `${comp.score}%`, height: "100%", borderRadius: 3, background: "#10A37F" }} />
                       </div>

@@ -406,6 +406,110 @@ export default function Dashboard() {
             ))}
           </div>
 
+          {/* ── AI Traffic & Bot Activity Row (Alexei reference cards) ── */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+            {/* AI vs SEO Traffic */}
+            <div className="p-6" style={{ border: "1px solid #BFBFBF", borderRadius: 10 }}>
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="text-sm font-semibold" style={{ color: "#000" }}>AI vs Traditional SEO</h3>
+              </div>
+              <p className="text-xs mb-4" style={{ color: "#727272" }}>חלוקת תנועה - ציטוטי AI מול תוצאות אורגניות</p>
+              <div className="flex items-baseline gap-2 mb-2">
+                <span className="text-3xl font-bold" style={{ color: "#10A37F" }}>13.3%</span>
+                <span className="text-xs font-semibold" style={{ color: "#10A37F" }}>+28.4%</span>
+              </div>
+              <div className="text-xs mb-3" style={{ color: "#727272" }}>23,847 תנועה מ-AI Engines</div>
+              {/* Stacked bar */}
+              <div className="flex h-2.5 overflow-hidden mb-3" style={{ borderRadius: 20 }}>
+                <div style={{ width: "13.3%", background: "#10A37F" }} />
+                <div style={{ width: "86.7%", background: "#E5E5E5" }} />
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="flex items-center gap-1.5" style={{ color: "#333" }}>
+                  <span style={{ width: 8, height: 8, borderRadius: 4, background: "#10A37F", display: "inline-block" }} />
+                  AI Engines · 23,847
+                </span>
+                <span className="flex items-center gap-1.5" style={{ color: "#333" }}>
+                  <span style={{ width: 8, height: 8, borderRadius: 4, background: "#BFBFBF", display: "inline-block" }} />
+                  SEO מסורתי · 156,234
+                </span>
+              </div>
+            </div>
+
+            {/* AI Bot Crawl Activity */}
+            <div className="p-6" style={{ border: "1px solid #BFBFBF", borderRadius: 10 }}>
+              <div className="flex items-center justify-between mb-1">
+                <h3 className="text-sm font-semibold" style={{ color: "#000" }}>AI Bot Crawl Activity</h3>
+                <span className="text-[10px] font-semibold px-2 py-0.5" style={{ background: "#10A37F15", color: "#10A37F", borderRadius: 20 }}>live</span>
+              </div>
+              <p className="text-xs mb-4" style={{ color: "#727272" }}>בוטים של AI שסורקים את האתר שלך</p>
+              <div className="flex flex-col gap-2.5">
+                {[
+                  { bot: "GPTBot", domain: "openai.com", pages: "1,247", ago: "לפני 2 שעות", active: true },
+                  { bot: "PerplexityBot", domain: "perplexity.ai", pages: "892", ago: "לפני 15 דקות", active: true },
+                  { bot: "Claude-Web", domain: "anthropic.com", pages: "456", ago: "לפני 4 שעות", active: true },
+                  { bot: "BingBot", domain: "bing.com", pages: "2,134", ago: "לפני שעה", active: true },
+                ].map((b, i) => (
+                  <div key={i} className="flex items-center gap-2.5">
+                    <img
+                      src={`https://www.google.com/s2/favicons?domain=${b.domain}&sz=64`}
+                      alt=""
+                      width={20}
+                      height={20}
+                      style={{ borderRadius: 4, flexShrink: 0, border: "1px solid #F0F0F0" }}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs font-semibold" style={{ color: "#000" }}>{b.bot}</span>
+                        <span className="text-[10px] font-semibold px-1.5 py-0.5" style={{ background: "#10A37F15", color: "#10A37F", borderRadius: 20 }}>active</span>
+                      </div>
+                      <div className="text-[11px]" style={{ color: "#727272" }}>{b.pages} דפים · {b.ago}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Engine Coverage Summary */}
+            <div className="p-6" style={{ border: "1px solid #BFBFBF", borderRadius: 10 }}>
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="text-sm font-semibold" style={{ color: "#000" }}>Engine Coverage Summary</h3>
+              </div>
+              <p className="text-xs mb-4" style={{ color: "#727272" }}>אחוז כיסוי בכל מנוע AI</p>
+              <div className="flex flex-col gap-3">
+                {[
+                  { engine: "Google AIO", domain: "google.com", score: 78 },
+                  { engine: "Bing Copilot", domain: "bing.com", score: 82 },
+                  { engine: "ChatGPT Search", domain: "openai.com", score: 71 },
+                  { engine: "Gemini", domain: "gemini.google.com", score: 69 },
+                  { engine: "Perplexity", domain: "perplexity.ai", score: 85 },
+                ].map((e, i) => {
+                  const color = e.score >= 80 ? "#10A37F" : e.score >= 70 ? "#E07800" : "#DC2626";
+                  return (
+                    <div key={i}>
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <img
+                            src={`https://www.google.com/s2/favicons?domain=${e.domain}&sz=64`}
+                            alt=""
+                            width={14}
+                            height={14}
+                            style={{ borderRadius: 3, flexShrink: 0 }}
+                          />
+                          <span className="text-xs font-medium" style={{ color: "#333" }}>{e.engine}</span>
+                        </div>
+                        <span className="text-xs font-bold" style={{ color }}>{e.score}%</span>
+                      </div>
+                      <div style={{ height: 5, borderRadius: 3, background: "#F0F0F0", overflow: "hidden" }}>
+                        <div style={{ height: "100%", width: `${e.score}%`, background: color, borderRadius: 3 }} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
           {/* ── Brands Section ── */}
           <div className="mb-10">
             <div className="flex items-center justify-between mb-5">
