@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 // ============================================================
 // GEOSCALE SCAN ANALYSIS — Full Brand Scan Results Page
@@ -174,49 +174,55 @@ const METRIC_TOOLTIPS: Record<string, string> = {
 
 function Tooltip({ text }: { text: string }) {
   const [show, setShow] = useState(false);
+  const ref = useRef<HTMLSpanElement>(null);
+  const [pos, setPos] = useState({ top: 0, left: 0 });
+  const handleEnter = () => {
+    if (ref.current) {
+      const r = ref.current.getBoundingClientRect();
+      setPos({ top: r.top - 10, left: r.left + r.width / 2 });
+    }
+    setShow(true);
+  };
   return (
-    <span
-      style={{ position: "relative", display: "inline-flex", alignItems: "center", cursor: "help" }}
-      onMouseEnter={() => setShow(true)}
+    <span ref={ref}
+      style={{ display: "inline-flex", alignItems: "center", cursor: "help" }}
+      onMouseEnter={handleEnter}
       onMouseLeave={() => setShow(false)}
     >
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B0B7BF" strokeWidth="2" style={{ display: "block", transition: "stroke 150ms" }} onMouseEnter={(e) => { (e.currentTarget as SVGElement).style.stroke = "#666"; }} onMouseLeave={(e) => { (e.currentTarget as SVGElement).style.stroke = "#B0B7BF"; }}>
         <circle cx="12" cy="12" r="10" />
         <path d="M12 16v-4M12 8h.01" />
       </svg>
-      <div style={{
-        position: "absolute",
-        bottom: "calc(100% + 10px)",
-        right: "50%",
-        transform: "translateX(50%)",
-        background: "#1B1F23",
-        color: "#FFFFFF",
-        fontSize: 12,
-        lineHeight: 1.55,
-        padding: "8px 12px",
-        borderRadius: 6,
-        whiteSpace: "nowrap",
-        maxWidth: 280,
-        zIndex: 100,
-        pointerEvents: "none",
-        opacity: show ? 1 : 0,
-        transition: "opacity 150ms ease",
-        boxShadow: "0 4px 14px rgba(0,0,0,0.15)",
-        letterSpacing: "-0.01em",
-      }}>
-        <span style={{ whiteSpace: "normal" }}>{text}</span>
+      {show && (
         <div style={{
-          position: "absolute",
-          bottom: -5,
-          right: "50%",
-          transform: "translateX(50%)",
-          width: 10,
-          height: 10,
+          position: "fixed",
+          top: pos.top,
+          left: pos.left,
+          transform: "translate(-50%, -100%)",
           background: "#1B1F23",
-          borderRadius: 1,
-          rotate: "45deg",
-        }} />
-      </div>
+          color: "#FFFFFF",
+          fontSize: 12,
+          lineHeight: 1.55,
+          padding: "8px 12px",
+          borderRadius: 6,
+          whiteSpace: "normal",
+          maxWidth: 280,
+          zIndex: 99999,
+          pointerEvents: "none",
+          boxShadow: "0 4px 14px rgba(0,0,0,0.25)",
+        }}>
+          {text}
+          <div style={{
+            position: "absolute",
+            bottom: -4,
+            left: "50%",
+            transform: "translateX(-50%) rotate(45deg)",
+            width: 8,
+            height: 8,
+            background: "#1B1F23",
+          }} />
+        </div>
+      )}
     </span>
   );
 }

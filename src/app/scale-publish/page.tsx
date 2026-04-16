@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 
 // ============================================================
 // SCALEPUBLISH — Publisher Marketplace
@@ -64,43 +64,33 @@ function IconExternalLink({ size = 12 }: { size?: number }) {
 // ── Tooltip (Ahrefs-style) ──
 function Tooltip({ text }: { text: string }) {
   const [show, setShow] = useState(false);
+  const ref = useRef<HTMLSpanElement>(null);
+  const [pos, setPos] = useState({ top: 0, left: 0 });
+  const handleEnter = () => {
+    if (ref.current) {
+      const r = ref.current.getBoundingClientRect();
+      setPos({ top: r.top - 10, left: r.left + r.width / 2 });
+    }
+    setShow(true);
+  };
   return (
-    <span
-      style={{ position: "relative", display: "inline-flex", alignItems: "center", cursor: "help" }}
-      onMouseEnter={() => setShow(true)}
+    <span ref={ref}
+      style={{ display: "inline-flex", alignItems: "center", cursor: "help" }}
+      onMouseEnter={handleEnter}
       onMouseLeave={() => setShow(false)}
     >
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#A2A9B0" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4M12 8h.01" /></svg>
       {show && (
-        <span style={{
-          position: "absolute",
-          bottom: "calc(100% + 8px)",
-          left: "50%",
-          transform: "translateX(-50%)",
-          background: "#1B1F23",
-          color: "#fff",
-          fontSize: 11,
-          fontWeight: 400,
-          lineHeight: 1.5,
-          padding: "8px 12px",
-          borderRadius: 6,
-          whiteSpace: "nowrap",
-          zIndex: 999,
-          boxShadow: "0 4px 14px rgba(0,0,0,0.25)",
-          animation: "fadeIn 120ms ease",
-          pointerEvents: "none",
+        <div style={{
+          position: "fixed", top: pos.top, left: pos.left,
+          transform: "translate(-50%, -100%)",
+          background: "#1B1F23", color: "#fff", fontSize: 11, fontWeight: 400, lineHeight: 1.5,
+          padding: "8px 12px", borderRadius: 6, whiteSpace: "normal", maxWidth: 280,
+          zIndex: 99999, pointerEvents: "none", boxShadow: "0 4px 14px rgba(0,0,0,0.25)",
         }}>
           {text}
-          <span style={{
-            position: "absolute",
-            bottom: -4,
-            left: "50%",
-            transform: "translateX(-50%) rotate(45deg)",
-            width: 8,
-            height: 8,
-            background: "#1B1F23",
-          }} />
-        </span>
+          <div style={{ position: "absolute", bottom: -4, left: "50%", transform: "translateX(-50%) rotate(45deg)", width: 8, height: 8, background: "#1B1F23" }} />
+        </div>
       )}
     </span>
   );
