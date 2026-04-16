@@ -666,7 +666,7 @@ export default function ScanPage() {
               {[
                 { label: "שיעור אזכור", value: "76%", change: 4.2, unit: "%", invertColor: false },
                 { label: "מיקום ממוצע", value: "9.7", change: -1.3, unit: "", invertColor: true },
-                { label: "איכות ציטוט", value: "70%", change: 2.1, unit: "%", invertColor: false },
+                { label: "איכות ציטוט", value: "70%", change: -3.8, unit: "%", invertColor: false },
                 { label: "סיכון מוניטין", value: `${reputationValue}%`, change: 0, unit: "%", invertColor: false },
               ].map((stat, i) => (
                 <div key={i} style={{ ...card, padding: "14px 16px" }}>
@@ -911,6 +911,59 @@ export default function ScanPage() {
                   </p>
                 </div>
               </div>
+            </div>
+
+            {/* ── COMPETITORS ── */}
+            <div style={{ ...card, padding: 18 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <h3 style={{ ...sectionTitle }}>מתחרים</h3>
+                  <Tooltip text="מתחרים עיקריים שזוהו לפי חפיפה בשאילתות ונוכחות במנועי AI" />
+                </div>
+              </div>
+              <table style={{ width: "100%", fontSize: 14, borderCollapse: "collapse" }}>
+                <thead>
+                  <tr style={{ borderBottom: "1px solid #BFBFBF" }}>
+                    <th style={{ textAlign: "right", padding: "8px 12px", fontWeight: 600, color: "#727272", fontSize: 13 }}>מתחרה</th>
+                    <th style={{ textAlign: "right", padding: "8px 12px", fontWeight: 600, color: "#727272", fontSize: 13 }}>ציון GEO</th>
+                    <th style={{ textAlign: "right", padding: "8px 12px", fontWeight: 600, color: "#727272", fontSize: 13 }}>חפיפת שאילתות</th>
+                    <th style={{ textAlign: "center", padding: "8px 12px", fontWeight: 600, color: "#727272", fontSize: 13 }}><span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><AIEngineLogo engine="gpt" size={14} /> <AIEngineLogo engine="gemini" size={14} /></span></th>
+                    <th style={{ textAlign: "right", padding: "8px 12px", fontWeight: 600, color: "#727272", fontSize: 13 }}>מגמה</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { name: "סוסים בגליל", domain: "susim-galil.co.il", geo: 68, overlap: 14, gpt: true, gemini: true, trend: 3.2 },
+                    { name: "חוות רכיבה ישראל", domain: "ride-il.co.il", geo: 61, overlap: 11, gpt: true, gemini: false, trend: -2.1 },
+                    { name: "טיפול בסוסים מרכז", domain: "horse-therapy.co.il", geo: 55, overlap: 9, gpt: false, gemini: true, trend: 1.8 },
+                    { name: "רכיבה ספורטיבית IL", domain: "sport-ride.co.il", geo: 42, overlap: 7, gpt: false, gemini: false, trend: -4.5 },
+                  ].map((c, i) => (
+                    <tr key={i} style={{ borderBottom: thinBorder }} onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "#F9F9F9"; }} onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "#FFFFFF"; }}>
+                      <td style={{ padding: "10px 12px" }}>
+                        <div>
+                          <span style={{ fontWeight: 500, color: "#000" }}>{c.name}</span>
+                          <span style={{ display: "block", fontSize: 11, color: "#999", direction: "ltr" as const }}>{c.domain}</span>
+                        </div>
+                      </td>
+                      <td style={{ padding: "10px 12px" }}>
+                        <span style={{ fontSize: 14, fontWeight: 600, color: c.geo >= 60 ? "#10A37F" : "#000" }}>{c.geo}%</span>
+                      </td>
+                      <td style={{ padding: "10px 12px" }}>
+                        <span style={{ fontSize: 13, color: "#333" }}>{c.overlap} שאילתות</span>
+                      </td>
+                      <td style={{ padding: "10px 12px", textAlign: "center" }}>
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                          <MentionIcon mentioned={c.gpt} engine="gpt" />
+                          <MentionIcon mentioned={c.gemini} engine="gemini" />
+                        </span>
+                      </td>
+                      <td style={{ padding: "10px 12px" }}>
+                        <ChangeIndicator value={c.trend} unit="%" invertColor={false} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
 
             {/* SEO + GEO */}

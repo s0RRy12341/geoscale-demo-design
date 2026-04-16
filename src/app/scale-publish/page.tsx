@@ -287,6 +287,7 @@ export default function BestLinksPage() {
   const [cartOpen, setCartOpen] = useState(false);
   const [flashId, setFlashId] = useState<number | null>(null);
   const [agencyMargin, setAgencyMargin] = useState(20);
+  const [priceOverrides, setPriceOverrides] = useState<Record<number, number>>({});
 
   // Plan builder state
   const [planSpeed, setPlanSpeed] = useState<"fast" | "medium" | "slow">("medium");
@@ -312,7 +313,8 @@ export default function BestLinksPage() {
   }, []);
 
   const cartPublishers = useMemo(() => PUBLISHERS.filter(p => cart.includes(p.id)), [cart]);
-  const cartTotal = useMemo(() => cartPublishers.reduce((s, p) => s + p.pricePerArticle, 0), [cartPublishers]);
+  const getPrice = useCallback((pub: Publisher) => priceOverrides[pub.id] ?? pub.pricePerArticle, [priceOverrides]);
+  const cartTotal = useMemo(() => cartPublishers.reduce((s, p) => s + (priceOverrides[p.id] ?? p.pricePerArticle), 0), [cartPublishers, priceOverrides]);
   const cartQueries = useMemo(() => cartPublishers.reduce((s, p) => s + (p.queries || 8), 0), [cartPublishers]);
   const marginAmount = useMemo(() => Math.round(cartTotal * agencyMargin / 100), [cartTotal, agencyMargin]);
   const clientTotal = useMemo(() => cartTotal + marginAmount, [cartTotal, marginAmount]);
@@ -422,6 +424,8 @@ export default function BestLinksPage() {
             approvedOnly={approvedOnly}
             setApprovedOnly={setApprovedOnly}
             onAddToCart={addToCart}
+            getPrice={getPrice}
+            setPriceOverrides={setPriceOverrides}
           />
         )}
         {activeTab === "planner" && (
@@ -515,7 +519,7 @@ export default function BestLinksPage() {
                   </div>
                   <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                     <div style={{ textAlign: "left" }}>
-                      <span style={{ fontSize: 13, fontWeight: 600 }}>{fmtCurrency(pub.pricePerArticle)}</span>
+                      <span style={{ fontSize: 13, fontWeight: 600 }}>{fmtCurrency(priceOverrides[pub.id] ?? pub.pricePerArticle)}</span>
                       <div style={{ fontSize: 10, color: "#727272" }}>~{pub.queries || 8} שאילתות</div>
                     </div>
                     <button onClick={() => removeFromCart(pub.id)} style={{ background: "none", border: "none", cursor: "pointer", color: "#A2A9B0", padding: 2 }}>
@@ -612,7 +616,7 @@ export default function BestLinksPage() {
 // ============================================================
 function MarketplaceTab({
   publishers, cart, flashId, searchQuery, setSearchQuery, selectedCategory, setSelectedCategory,
-  sortBy, setSortBy, approvedOnly, setApprovedOnly, onAddToCart,
+  sortBy, setSortBy, approvedOnly, setApprovedOnly, onAddToCart, getPrice, setPriceOverrides,
 }: {
   publishers: Publisher[];
   cart: number[];
@@ -625,6 +629,8 @@ function MarketplaceTab({
   setSortBy: (v: string) => void;
   approvedOnly: boolean;
   setApprovedOnly: (v: boolean) => void;
+  getPrice: (pub: Publisher) => number;
+  setPriceOverrides: React.Dispatch<React.SetStateAction<Record<number, number>>>;
   onAddToCart: (id: number) => void;
 }) {
   return (
@@ -769,6 +775,8 @@ function MarketplaceTab({
             inCart={cart.includes(pub.id)}
             isFlashing={flashId === pub.id}
             onToggleCart={() => onAddToCart(pub.id)}
+            price={getPrice(pub)}
+            onPriceChange={(p) => setPriceOverrides(prev => ({ ...prev, [pub.id]: p }))}
           />
         ))}
       </div>
@@ -784,11 +792,13 @@ function MarketplaceTab({
 }
 
 // ── Publisher Card ──
-function PublisherCard({ publisher: pub, inCart, isFlashing, onToggleCart }: {
+function PublisherCard({ publisher: pub, inCart, isFlashing, onToggleCart, price, onPriceChange }: {
   publisher: Publisher;
   inCart: boolean;
   isFlashing: boolean;
   onToggleCart: () => void;
+  price: number;
+  onPriceChange: (newPrice: number) => void;
 }) {
   return (
     <div
@@ -827,11 +837,19 @@ function PublisherCard({ publisher: pub, inCart, isFlashing, onToggleCart }: {
         {pub.category}
       </span>
 
-      {/* Recommended badge */}
+      {/* Recommended badge + persuasion */}
       {pub.seoScore + pub.gioScore >= 170 && pub.gptPresent && pub.geminiPresent && (
-        <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 10, padding: "6px 10px", background: "#10A37F08", border: "1px solid #10A37F30", borderRadius: 8 }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10A37F" strokeWidth="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14" /><path d="M22 4L12 14.01l-3-3" /></svg>
-          <span style={{ fontSize: 11, fontWeight: 600, color: "#10A37F" }}>מומלץ — כיסוי מלא SEO + AI</span>
+        <div style={{ marginBottom: 10, padding: "8px 10px", background: "#10A37F08", border: "1px solid #10A37F30", borderRadius: 8 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10A37F" strokeWidth="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14" /><path d="M22 4L12 14.01l-3-3" /></svg>
+            <span style={{ fontSize: 11, fontWeight: 600, color: "#10A37F" }}>מומלץ עבור All4Horses</span>
+          </div>
+          <p style={{ fontSize: 11, color: "#555", margin: 0, lineHeight: 1.5 }}>
+            {pub.category === "בריאות" ? "מתאים לתחום הטיפולי — קהל יעד רלוונטי לרכיבה טיפולית ובריאות ילדים"
+            : pub.category === "חדשות" ? "חשיפה מקסימלית — אתר חדשות מוביל עם נוכחות גבוהה במנועי AI"
+            : pub.category === "לייפסטייל" ? "מתאים לתחום הפנאי והטבע — קהל המחפש פעילויות חוץ ופנאי"
+            : `התאמה גבוהה — ציון SEO ${pub.seoScore} וציון GEO ${pub.gioScore}, נוכחות מלאה ב-ChatGPT ו-Gemini`}
+          </p>
         </div>
       )}
 
@@ -866,8 +884,17 @@ function PublisherCard({ publisher: pub, inCart, isFlashing, onToggleCart }: {
       {/* Footer: Price + CTA */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: 14, borderTop: "1px solid #F0F0F0" }}>
         <div>
-          <div style={{ fontSize: 11, color: "#727272" }}>מחיר למאמר</div>
-          <div style={{ fontSize: 18, fontWeight: 700, color: "#000" }}>{fmtCurrency(pub.pricePerArticle)}</div>
+          <div style={{ fontSize: 11, color: "#727272", marginBottom: 2 }}>מחיר למאמר</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <span style={{ fontSize: 14, color: "#727272" }}>₪</span>
+            <input
+              type="number"
+              value={price}
+              onChange={(e) => onPriceChange(Number(e.target.value))}
+              onClick={(e) => e.stopPropagation()}
+              style={{ width: 80, fontSize: 18, fontWeight: 700, color: "#000", border: "none", borderBottom: "1px dashed #BFBFBF", background: "transparent", outline: "none", padding: "0 0 2px", textAlign: "right" }}
+            />
+          </div>
         </div>
         <button
           onClick={onToggleCart}
