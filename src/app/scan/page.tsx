@@ -478,6 +478,9 @@ export default function ScanPage() {
   const [geoToggle, setGeoToggle] = useState(true);
   const [showPersonaForm, setShowPersonaForm] = useState(false);
   const [chartPeriod, setChartPeriod] = useState<"7" | "30" | "90">("30");
+  const [productFilter, setProductFilter] = useState<"all" | "service" | "product">("all");
+  const [contentQueue, setContentQueue] = useState<number[]>([]);
+  const [editingContent, setEditingContent] = useState<number | null>(null);
 
   const gptMentioned = QUERIES.filter((q) => q.gpt).length;
   const geminiMentioned = QUERIES.filter((q) => q.gemini).length;
@@ -529,7 +532,6 @@ export default function ScanPage() {
             <a href="/" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none", transition: "all 150ms" }} onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#000"; }} onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#727272"; }}>דשבורד</a>
             <a href="/scan" style={{ fontSize: 14, fontWeight: 600, color: "#000", textDecoration: "none" }}>סריקות</a>
             <a href="/scale-publish" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none", transition: "all 150ms" }} onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#000"; }} onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#727272"; }}>ScalePublish</a>
-            <a href="/editor" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none", transition: "all 150ms" }} onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#000"; }} onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#727272"; }}>עורך תוכן</a>
             <a href="/roadmap" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none", transition: "all 150ms" }} onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#000"; }} onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#727272"; }}>Roadmap</a>
           </nav>
 
@@ -1154,6 +1156,36 @@ export default function ScanPage() {
                                   </div>
                                 )}
                               </div>
+
+                              {/* ── Generate Content Action ── */}
+                              <div style={{ borderRadius: 10, padding: 14, background: "#FFFFFF", border: "1px solid #10A37F40" }}>
+                                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10A37F" strokeWidth="2"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" /></svg>
+                                    <div>
+                                      <span style={{ fontSize: 13, fontWeight: 600, color: "#000" }}>יצירת תוכן GEO עבור שאילתה זו</span>
+                                      <p style={{ fontSize: 11, color: "#727272", margin: "2px 0 0" }}>צור מאמר אופטימיזלי עם פורמט GEO כדי להופיע בתשובות AI</p>
+                                    </div>
+                                  </div>
+                                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                    {contentQueue.includes(q.id) ? (
+                                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                        <span style={{ fontSize: 11, fontWeight: 600, color: "#10A37F", padding: "4px 12px", background: "#10A37F15", borderRadius: 20 }}>✓ נוסף לתור יצירת תוכן</span>
+                                        <HoverButton onClick={(e) => { e.stopPropagation(); setEditingContent(q.id); setActiveTab("content"); }} style={{ padding: "6px 14px", fontSize: 12, fontWeight: 600, color: "#fff", background: "#000", border: "1px solid #000", borderRadius: 8, cursor: "pointer" }}>
+                                          עריכה
+                                        </HoverButton>
+                                      </div>
+                                    ) : (
+                                      <HoverButton filled onClick={(e) => { e.stopPropagation(); setContentQueue([...contentQueue, q.id]); }} style={{ padding: "6px 14px", fontSize: 12, fontWeight: 600, color: "#fff", background: "#10A37F", border: "1px solid #10A37F", borderRadius: 8, cursor: "pointer" }}>
+                                        <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><path d="M12 5v14M5 12h14" /></svg>
+                                          צור תוכן
+                                        </span>
+                                      </HoverButton>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
                             </div>
                           </td>
                         </tr>
@@ -1290,9 +1322,6 @@ export default function ScanPage() {
             </div>
 
             {/* Filter tabs */}
-            {(() => {
-              const [productFilter, setProductFilter] = React.useState<"all" | "service" | "product">("all");
-              return (<>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
               {([{ key: "all" as const, label: "הכל", count: 6 }, { key: "service" as const, label: "שירותים", count: 5 }, { key: "product" as const, label: "מוצרים", count: 1 }]).map((f) => (
                 <HoverButton key={f.key} onClick={() => setProductFilter(f.key)} filled={productFilter === f.key} style={{
@@ -1392,84 +1421,141 @@ export default function ScanPage() {
                 </>
               );
             })()}
-              </>);
-            })()}
           </div>
         )}
 
         {/* ═══ CONTENT CREATION TAB ═══ */}
         {activeTab === "content" && (
-          <div style={{ padding: "24px 0" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
+          <div>
+            {/* Header */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <h2 style={{ fontSize: 20, fontWeight: 700, color: "#000", margin: 0 }}>יצירת תוכן</h2>
-                <span style={{ fontSize: 10, fontWeight: 600, padding: "3px 10px", background: "#FFF7ED", color: "#D97706", borderRadius: 20 }}>● בעבודה</span>
+                <h2 style={{ fontSize: 18, fontWeight: 700, color: "#000", margin: 0 }}>יצירת תוכן</h2>
+                <span style={{ fontSize: 11, padding: "2px 10px", borderRadius: 10, background: "#F9F9F9", color: "#727272", border: thinBorder }}>{contentQueue.length} פריטים</span>
               </div>
-              <a href="/roadmap" style={{ fontSize: 12, fontWeight: 500, color: "#000", textDecoration: "underline" }}>Roadmap →</a>
+              <HoverButton filled onClick={() => setActiveTab("queries")} style={{ padding: "6px 14px", fontSize: 12, fontWeight: 600, color: "#fff", background: "#000", border: "1px solid #000", borderRadius: 8, cursor: "pointer" }}>
+                <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><path d="M12 5v14M5 12h14" /></svg>
+                  הוסף שאילתה
+                </span>
+              </HoverButton>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginBottom: 24 }}>
-              <a href="/editor" style={{ padding: 20, border: "1px solid #E5E5E5", borderRadius: 10, textDecoration: "none", background: "#fff", display: "block" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                  <span style={{ width: 24, height: 24, borderRadius: 12, background: "#000", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700 }}>✎</span>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: "#000" }}>עורך WYSIWYG</span>
+            {/* GEO Format Banner */}
+            <div style={{ ...card, padding: "14px 20px", marginBottom: 20, background: "#F0FDF4", border: "1px solid #10A37F30" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <AIEngineLogo engine="gpt" size={16} />
+                  <AIEngineLogo engine="gemini" size={16} />
+                  <AIEngineLogo engine="perplexity" size={16} />
                 </div>
-                <p style={{ fontSize: 11, color: "#727272", lineHeight: 1.5, margin: "0 0 8px" }}>עריכה חיה, סרגל כלים מלא, שמירה אוטומטית והעלאת תמונות.</p>
-                <span style={{ fontSize: 11, fontWeight: 600, color: "#000" }}>פתיחת העורך →</span>
-              </a>
-              <div style={{ padding: 20, border: "1px solid #E5E5E5", borderRadius: 10, background: "#fff" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                  <span style={{ width: 24, height: 24, borderRadius: 12, background: "linear-gradient(135deg,#D97706,#F59E0B)", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700 }}>✦</span>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: "#000" }}>Claude Opus 4.6</span>
-                </div>
-                <p style={{ fontSize: 11, color: "#727272", lineHeight: 1.5, margin: 0 }}>מודל כתיבה מתקדם עם התאמה לפרומפט ניר.</p>
-              </div>
-              <div style={{ padding: 20, border: "1px solid #E5E5E5", borderRadius: 10, background: "#fff" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                  <span style={{ width: 24, height: 24, borderRadius: 12, background: "#7C3AED", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700 }}>◉</span>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: "#000" }}>AI שלומד מעריכות</span>
-                </div>
-                <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-                  <span style={{ fontSize: 18, fontWeight: 700, color: "#000" }}>37</span>
-                  <span style={{ fontSize: 11, color: "#727272" }}>עריכות · 72% הלימה</span>
-                </div>
+                <p style={{ fontSize: 12, color: "#333", margin: 0 }}>
+                  <span style={{ fontWeight: 600 }}>פורמט GEO-Optimized</span> — התוכן נבנה כדי להופיע בתשובות מנועי AI. כל מאמר מותאם לשאילתה ספציפית.
+                </p>
               </div>
             </div>
 
-            {/* Content pipeline status */}
-            <div style={{ border: "1px solid #E5E5E5", borderRadius: 12, background: "#fff", padding: 24 }}>
-              <h3 style={{ fontSize: 14, fontWeight: 600, color: "#000", margin: "0 0 16px" }}>תוכנית תוכן — 6 חודשים</h3>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 20 }}>
-                {[
-                  { label: "סה״כ מאמרים", value: "24", color: "#000" },
-                  { label: "הושלמו", value: "8", color: "#10A37F" },
-                  { label: "בעריכה", value: "3", color: "#D97706" },
-                  { label: "ממתינים", value: "13", color: "#727272" },
-                ].map((kpi, i) => (
-                  <div key={i} style={{ textAlign: "center", padding: "12px 0", background: "#F9F9F9", borderRadius: 8 }}>
-                    <div style={{ fontSize: 11, color: "#727272", marginBottom: 4 }}>{kpi.label}</div>
-                    <div style={{ fontSize: 22, fontWeight: 700, color: kpi.color }}>{kpi.value}</div>
-                  </div>
-                ))}
+            {contentQueue.length === 0 ? (
+              <div style={{ ...card, padding: 48, textAlign: "center" }}>
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#BFBFBF" strokeWidth="1.5" style={{ margin: "0 auto 16px" }}><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" /></svg>
+                <p style={{ fontSize: 15, fontWeight: 600, color: "#333", margin: "0 0 6px" }}>אין תכנים בתור</p>
+                <p style={{ fontSize: 13, color: "#727272", margin: "0 0 16px" }}>עבור ללשונית <strong>שאילתות</strong>, פתח שאילתה ולחץ <strong>"צור תוכן"</strong> כדי להתחיל.</p>
+                <HoverButton onClick={() => setActiveTab("queries")} style={{ padding: "8px 20px", fontSize: 13, fontWeight: 600, color: "#10A37F", background: "#10A37F10", border: "1px solid #10A37F30", borderRadius: 8, cursor: "pointer" }}>
+                  עבור לשאילתות
+                </HoverButton>
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                {[
-                  { title: "רכיבה טיפולית לילדים עם ADHD", status: "הושלם", statusColor: "#10A37F", statusBg: "#10A37F15" },
-                  { title: "סוסים כבעלי חיים טיפוליים", status: "הושלם", statusColor: "#10A37F", statusBg: "#10A37F15" },
-                  { title: "טיפול באמצעות סוסים — מדריך מקיף", status: "בעריכה", statusColor: "#D97706", statusBg: "#FFF7ED" },
-                  { title: "חוות סוסים במרכז הארץ", status: "ממתין", statusColor: "#727272", statusBg: "#F5F5F5" },
-                  { title: "רכיבה ספורטיבית למתחילים", status: "ממתין", statusColor: "#727272", statusBg: "#F5F5F5" },
-                ].map((article, i) => (
-                  <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", border: "1px solid #EEEEEE", borderRadius: 8 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                      <span style={{ fontSize: 12, color: "#BBBBBB", fontWeight: 500, width: 20 }}>{i + 1}</span>
-                      <span style={{ fontSize: 13, color: "#000", fontWeight: 500 }}>{article.title}</span>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                {contentQueue.map((qId) => {
+                  const q = QUERIES.find((x) => x.id === qId);
+                  if (!q) return null;
+                  const isEditing = editingContent === qId;
+                  return (
+                    <div key={qId} style={{ ...card, overflow: "hidden" }}>
+                      <div style={{ height: 3, background: "linear-gradient(90deg, #10A37F, #4285F4)" }} />
+                      <div style={{ padding: 20 }}>
+                        {/* Content header */}
+                        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 14 }}>
+                          <div>
+                            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                              <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000", margin: 0 }}>{q.text}</h3>
+                              <PersonaBadge personaId={q.persona} />
+                              <StageBadge stage={q.stage} />
+                            </div>
+                            <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 6 }}>
+                              <MentionIcon mentioned={q.gpt} engine="gpt" />
+                              <MentionIcon mentioned={q.gemini} engine="gemini" />
+                              <MentionIcon mentioned={false} engine="perplexity" />
+                            </div>
+                          </div>
+                          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                            <HoverButton onClick={() => setEditingContent(isEditing ? null : qId)} style={{ padding: "6px 14px", fontSize: 12, fontWeight: 500, color: isEditing ? "#fff" : "#333", background: isEditing ? "#000" : "#fff", border: "1px solid #BFBFBF", borderRadius: 8, cursor: "pointer" }}>
+                              {isEditing ? "סגור עורך" : "ערוך תוכן"}
+                            </HoverButton>
+                            <HoverButton onClick={() => setContentQueue(contentQueue.filter((id) => id !== qId))} style={{ padding: "6px 10px", fontSize: 12, color: "#DC2626", background: "#fff", border: "1px solid #BFBFBF", borderRadius: 8, cursor: "pointer" }}>
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
+                            </HoverButton>
+                          </div>
+                        </div>
+
+                        {/* Content generation settings */}
+                        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10, marginBottom: 14 }}>
+                          {[
+                            { label: "אורך מילים", value: "1,500" },
+                            { label: "פורמט", value: "GEO-Optimized" },
+                            { label: "שפה", value: "עברית" },
+                            { label: "סטטוס", value: "ממתין ליצירה" },
+                          ].map((s, i) => (
+                            <div key={i} style={{ textAlign: "center", padding: "8px 0", background: "#F9F9F9", borderRadius: 8 }}>
+                              <div style={{ fontSize: 11, color: "#727272", marginBottom: 2 }}>{s.label}</div>
+                              <div style={{ fontSize: 13, fontWeight: 600, color: "#000" }}>{s.value}</div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Inline editor */}
+                        {isEditing && (
+                          <div style={{ border: thinBorder, borderRadius: 10, overflow: "hidden" }}>
+                            {/* Editor toolbar */}
+                            <div style={{ display: "flex", alignItems: "center", gap: 2, padding: "8px 12px", background: "#F9F9F9", borderBottom: thinBorder }}>
+                              {["B", "I", "U", "H1", "H2", "H3", "🔗", "📷", "—"].map((btn, i) => (
+                                <button key={i} style={{ width: 28, height: 28, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: btn === "B" ? 700 : btn === "I" ? 400 : 500, fontStyle: btn === "I" ? "italic" : "normal", textDecoration: btn === "U" ? "underline" : "none", background: "#fff", border: "1px solid #DDDDDD", borderRadius: 4, cursor: "pointer", color: "#333" }}>
+                                  {btn}
+                                </button>
+                              ))}
+                              <div style={{ flex: 1 }} />
+                              <span style={{ fontSize: 11, color: "#727272" }}>0 / 1,500 מילים</span>
+                            </div>
+                            {/* Editor area */}
+                            <div style={{ padding: 20, minHeight: 200, background: "#fff" }}>
+                              <div style={{ padding: 16, background: "#F0FDF4", border: "1px solid #10A37F30", borderRadius: 8, textAlign: "center" }}>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10A37F" strokeWidth="1.5" style={{ margin: "0 auto 8px" }}><path d="M12 5v14M5 12h14" /></svg>
+                                <p style={{ fontSize: 13, fontWeight: 600, color: "#10A37F", margin: "0 0 4px" }}>צור תוכן AI</p>
+                                <p style={{ fontSize: 12, color: "#727272", margin: "0 0 12px" }}>לחץ כדי ליצור תוכן אוטומטי מותאם לשאילתה &quot;{q.text}&quot;</p>
+                                <HoverButton filled style={{ padding: "8px 20px", fontSize: 13, fontWeight: 600, color: "#fff", background: "#10A37F", border: "1px solid #10A37F", borderRadius: 8, cursor: "pointer" }}>
+                                  <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>
+                                    צור תוכן עכשיו
+                                  </span>
+                                </HoverButton>
+                              </div>
+                            </div>
+                            {/* AI Answer Preview sidebar */}
+                            <div style={{ padding: "14px 20px", background: "#F9F9F9", borderTop: thinBorder }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                                <AIEngineLogo engine="gpt" size={14} />
+                                <span style={{ fontSize: 12, fontWeight: 600, color: "#333" }}>תצוגה מקדימה — תשובת AI</span>
+                              </div>
+                              <p style={{ fontSize: 12, lineHeight: 1.6, color: "#555", margin: 0 }}>{q.gptSnippet}</p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 10px", borderRadius: 20, color: article.statusColor, background: article.statusBg }}>{article.status}</span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
-            </div>
+            )}
           </div>
         )}
       </div>
