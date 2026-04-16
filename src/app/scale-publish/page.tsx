@@ -61,6 +61,51 @@ function IconExternalLink({ size = 12 }: { size?: number }) {
   return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" /></svg>;
 }
 
+// ── Tooltip (Ahrefs-style) ──
+function Tooltip({ text }: { text: string }) {
+  const [show, setShow] = useState(false);
+  return (
+    <span
+      style={{ position: "relative", display: "inline-flex", alignItems: "center", cursor: "help" }}
+      onMouseEnter={() => setShow(true)}
+      onMouseLeave={() => setShow(false)}
+    >
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#A2A9B0" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4M12 8h.01" /></svg>
+      {show && (
+        <span style={{
+          position: "absolute",
+          bottom: "calc(100% + 8px)",
+          left: "50%",
+          transform: "translateX(-50%)",
+          background: "#1B1F23",
+          color: "#fff",
+          fontSize: 11,
+          fontWeight: 400,
+          lineHeight: 1.5,
+          padding: "8px 12px",
+          borderRadius: 6,
+          whiteSpace: "nowrap",
+          zIndex: 999,
+          boxShadow: "0 4px 14px rgba(0,0,0,0.25)",
+          animation: "fadeIn 120ms ease",
+          pointerEvents: "none",
+        }}>
+          {text}
+          <span style={{
+            position: "absolute",
+            bottom: -4,
+            left: "50%",
+            transform: "translateX(-50%) rotate(45deg)",
+            width: 8,
+            height: 8,
+            background: "#1B1F23",
+          }} />
+        </span>
+      )}
+    </span>
+  );
+}
+
 // ── Favicon helper ──
 function Favicon({ domain, size = 24 }: { domain: string; size?: number }) {
   return (
@@ -783,16 +828,24 @@ function PublisherCard({ publisher: pub, inCart, isFlashing, onToggleCart }: {
         {pub.category}
       </span>
 
+      {/* Recommended badge */}
+      {pub.seoScore + pub.gioScore >= 170 && pub.gptPresent && pub.geminiPresent && (
+        <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 10, padding: "6px 10px", background: "#10A37F08", border: "1px solid #10A37F30", borderRadius: 8 }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10A37F" strokeWidth="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14" /><path d="M22 4L12 14.01l-3-3" /></svg>
+          <span style={{ fontSize: 11, fontWeight: 600, color: "#10A37F" }}>מומלץ — כיסוי מלא SEO + AI</span>
+        </div>
+      )}
+
       {/* Metrics row */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 14 }}>
-        <MetricBox label="SEO Score" value={pub.seoScore} color={scoreColor(pub.seoScore)} />
-        <MetricBox label="GIO Score" value={pub.gioScore} color={scoreColor(pub.gioScore)} />
+        <MetricBox label="SEO Score" value={pub.seoScore} color={scoreColor(pub.seoScore)} tooltip="ציון איכות SEO מבוסס DR, תנועה ואינדוקס" />
+        <MetricBox label="GIO Score" value={pub.gioScore} color={scoreColor(pub.gioScore)} tooltip="ציון נוכחות במנועי AI - GPT, Gemini" />
       </div>
 
       {/* Stats */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 14 }}>
-        <StatItem label="DR" value={String(pub.dr)} />
-        <StatItem label="תנועה חודשית" value={fmtNum(pub.traffic)} />
+        <StatItem label="DR" value={String(pub.dr)} tooltip="Domain Rating - ציון סמכות הדומיין" />
+        <StatItem label="תנועה חודשית" value={fmtNum(pub.traffic)} tooltip="תנועה אורגנית חודשית משוערת" />
         <StatItem
           label="Google Index"
           value={
@@ -801,6 +854,7 @@ function PublisherCard({ publisher: pub, inCart, isFlashing, onToggleCart }: {
               <span style={{ fontSize: 11 }}>{pub.googleIndex ? "פעיל" : "לא"}</span>
             </span>
           }
+          tooltip="האם האתר מאונדקס בגוגל"
         />
       </div>
 
@@ -849,19 +903,19 @@ function PublisherCard({ publisher: pub, inCart, isFlashing, onToggleCart }: {
   );
 }
 
-function MetricBox({ label, value, color }: { label: string; value: number; color: string }) {
+function MetricBox({ label, value, color, tooltip }: { label: string; value: number; color: string; tooltip?: string }) {
   return (
     <div style={{ background: "#F9F9F9", borderRadius: 8, padding: "10px 12px", border: "1px solid #F0F0F0" }}>
-      <div style={{ fontSize: 10, color: "#727272", marginBottom: 4 }}>{label}</div>
+      <div style={{ fontSize: 10, color: "#727272", marginBottom: 4, display: "flex", alignItems: "center", gap: 4 }}>{label} {tooltip && <Tooltip text={tooltip} />}</div>
       <div style={{ fontSize: 22, fontWeight: 700, color, lineHeight: 1 }}>{value}</div>
     </div>
   );
 }
 
-function StatItem({ label, value }: { label: string; value: React.ReactNode }) {
+function StatItem({ label, value, tooltip }: { label: string; value: React.ReactNode; tooltip?: string }) {
   return (
     <div>
-      <div style={{ fontSize: 10, color: "#A2A9B0", marginBottom: 2 }}>{label}</div>
+      <div style={{ fontSize: 10, color: "#A2A9B0", marginBottom: 2, display: "flex", alignItems: "center", gap: 4 }}>{label} {tooltip && <Tooltip text={tooltip} />}</div>
       <div style={{ fontSize: 13, fontWeight: 600, color: "#333" }}>{value}</div>
     </div>
   );
@@ -1046,7 +1100,7 @@ function PlannerTab({
       <div style={{ background: "#F9F9F9", borderRadius: 10, border: "1px solid #DDDDDD", padding: "20px 24px", marginBottom: 20, display: "flex", flexWrap: "wrap", alignItems: "center", gap: 24 }}>
         {/* Brand selector */}
         <div>
-          <div style={{ fontSize: 11, color: "#727272", marginBottom: 6 }}>מותג</div>
+          <div style={{ fontSize: 11, color: "#727272", marginBottom: 6, display: "flex", alignItems: "center", gap: 4 }}>מותג <Tooltip text="בחרו את המותג שעבורו נבנית התוכנית" /></div>
           <div style={{
             display: "flex",
             alignItems: "center",
@@ -1070,7 +1124,7 @@ function PlannerTab({
 
         {/* Duration */}
         <div>
-          <div style={{ fontSize: 11, color: "#727272", marginBottom: 6 }}>משך תוכנית</div>
+          <div style={{ fontSize: 11, color: "#727272", marginBottom: 6, display: "flex", alignItems: "center", gap: 4 }}>משך תוכנית <Tooltip text="3 חודשים לתוצאות מהירות, 6 חודשים לעומק ושליטה" /></div>
           <div style={{ display: "flex", gap: 0, border: "1px solid #DDDDDD", borderRadius: 8, overflow: "hidden" }}>
             {([3, 6] as const).map(d => (
               <button
@@ -1098,7 +1152,7 @@ function PlannerTab({
 
         {/* Speed */}
         <div>
-          <div style={{ fontSize: 11, color: "#727272", marginBottom: 6 }}>מהירות</div>
+          <div style={{ fontSize: 11, color: "#727272", marginBottom: 6, display: "flex", alignItems: "center", gap: 4 }}>מהירות <Tooltip text="אגרסיבי = 8 מאמרים/חודש, בינוני = 5, שמרני = 3" /></div>
           <div style={{ display: "flex", gap: 0, border: "1px solid #DDDDDD", borderRadius: 8, overflow: "hidden" }}>
             {([
               { key: "fast" as const, label: "אגרסיבי" },
@@ -1383,6 +1437,20 @@ function PlannerTab({
           </div>
         </div>
 
+        {/* Validation warnings */}
+        {cartSiteCount === 0 && (
+          <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 18px", borderRadius: 8, background: "#FFF7ED", border: "1px solid #F59E0B40", marginBottom: 14 }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D97706" strokeWidth="2" strokeLinecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
+            <span style={{ fontSize: 12, color: "#92400E" }}>טרם נבחרו אתרי פרסום — הוסיפו אתרים מה-Marketplace להצעה מלאה</span>
+          </div>
+        )}
+        {cartSiteCount > 0 && cartSiteCount < 3 && (
+          <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 18px", borderRadius: 8, background: "#EFF6FF", border: "1px solid #3B82F640", marginBottom: 14 }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4M12 8h.01" /></svg>
+            <span style={{ fontSize: 12, color: "#1E40AF" }}>מומלץ לבחור לפחות 3 אתרים לכיסוי אופטימלי של שאילתות AI</span>
+          </div>
+        )}
+
         {/* Grand total + CTA */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 20px", borderRadius: 10, background: "#000", color: "#fff", flexWrap: "wrap", gap: 16 }}>
           <div>
@@ -1392,9 +1460,17 @@ function PlannerTab({
               תוכן {fmtCurrency(planTotals.budget)} + פרסום חיצוני {fmtCurrency(cartTotal)}
             </div>
           </div>
-          <button style={{ padding: "14px 36px", background: "#10A37F", color: "#fff", fontSize: 14, fontWeight: 600, borderRadius: 9, border: "none", cursor: "pointer", transition: "opacity 0.2s" }} onMouseEnter={e => (e.currentTarget.style.opacity = "0.9")} onMouseLeave={e => (e.currentTarget.style.opacity = "1")}>
-            צור הצעת מחיר מלאה
-          </button>
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            {cartTotal > 0 && (
+              <div style={{ textAlign: "left", padding: "8px 16px", background: "rgba(16,163,127,0.15)", borderRadius: 8 }}>
+                <div style={{ fontSize: 10, color: "#A2A9B0", marginBottom: 2 }}>רווח Agency (20%)</div>
+                <div style={{ fontSize: 16, fontWeight: 700, color: "#10A37F" }}>+{fmtCurrency(Math.round(cartTotal * 0.2))}</div>
+              </div>
+            )}
+            <button style={{ padding: "14px 36px", background: "#10A37F", color: "#fff", fontSize: 14, fontWeight: 600, borderRadius: 9, border: "none", cursor: "pointer", transition: "opacity 0.2s" }} onMouseEnter={e => (e.currentTarget.style.opacity = "0.9")} onMouseLeave={e => (e.currentTarget.style.opacity = "1")}>
+              צור הצעת מחיר מלאה
+            </button>
+          </div>
         </div>
       </div>
     </div>
