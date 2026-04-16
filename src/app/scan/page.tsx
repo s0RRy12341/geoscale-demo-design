@@ -469,7 +469,7 @@ function HoverButton({ children, style, filled, onClick, href }: { children: Rea
 // ════════════════════════════════════════════════════════════
 
 export default function ScanPage() {
-  const [activeTab, setActiveTab] = useState<"overview" | "queries" | "audiences" | "products" | "content">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "queries" | "keywords" | "audiences" | "products" | "content">("overview");
   const [expandedQuery, setExpandedQuery] = useState<number | null>(null);
   const [fullAnswerView, setFullAnswerView] = useState<{ queryId: number; engine: "gpt" | "gemini" } | null>(null);
   const [queryFilter, setQueryFilter] = useState<"all" | "mentioned" | "missing" | "negative">("all");
@@ -580,6 +580,7 @@ export default function ScanPage() {
             {([
               { key: "overview" as const, label: "סקירה", iconPath: <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1" /> },
               { key: "queries" as const, label: "שאילתות", iconPath: <><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" /></>, count: totalQueries },
+              { key: "keywords" as const, label: "מילות מפתח", iconPath: <><path d="M15 7h3a5 5 0 015 5 5 5 0 01-5 5h-3m-6 0H6a5 5 0 01-5-5 5 5 0 015-5h3" /><path d="M8 12h8" /></>, count: 12 },
               { key: "audiences" as const, label: "קהלים", iconPath: <><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" /></>, count: PERSONAS.length },
               { key: "products" as const, label: "מוצרים / שירותים", iconPath: <><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" /></> },
               { key: "content" as const, label: "יצירת תוכן", iconPath: <><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" /></> },
@@ -1253,6 +1254,97 @@ export default function ScanPage() {
                   <span style={{ color: "#10A37F" }}>מוזכר: {filterCounts.mentioned}</span>
                   <span style={{ color: "#000000" }}>חסר: {filterCounts.missing}</span>
                   <span style={{ color: "#727272" }}>שלילי: 0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB: KEYWORDS (SEO) */}
+        {activeTab === "keywords" && (
+          <div>
+            <div style={{ ...card, padding: "14px 20px", marginBottom: 16, background: "#F9FAFB" }}>
+              <p style={{ fontSize: 13, color: "#333", margin: 0 }}>
+                <span style={{ fontWeight: 600 }}>מילות מפתח SEO</span> — הביטויים שבהם All4Horses מדורגת בגוגל, כולל הקשר למנועי AI.
+                <span style={{ display: "block", fontSize: 12, color: "#727272", marginTop: 4 }}>
+                  שיפור בדירוגי SEO משפיע ישירות על הנוכחות במנועי AI (GEO).
+                </span>
+              </p>
+            </div>
+
+            <div style={{ ...card, overflow: "hidden" }}>
+              <table style={{ width: "100%", fontSize: 14, borderCollapse: "collapse" }}>
+                <thead>
+                  <tr style={{ background: "#F9F9F9", borderBottom: "1px solid #BFBFBF" }}>
+                    <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>#</th>
+                    <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>מילת מפתח</th>
+                    <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>דירוג</th>
+                    <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>שינוי</th>
+                    <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>נפח חודשי</th>
+                    <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>קושי</th>
+                    <th style={{ textAlign: "center", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><AIEngineLogo engine="gpt" size={14} /> <AIEngineLogo engine="gemini" size={14} /></span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { kw: "רכיבה טיפולית", rank: 3, change: 2, vol: 2400, diff: 35, gpt: true, gemini: true },
+                    { kw: "חוות סוסים מרכז", rank: 5, change: -1, vol: 1800, diff: 42, gpt: true, gemini: true },
+                    { kw: "רכיבה טיפולית ADHD", rank: 2, change: 3, vol: 880, diff: 28, gpt: true, gemini: true },
+                    { kw: "שיעורי רכיבה על סוסים", rank: 7, change: 0, vol: 1200, diff: 38, gpt: false, gemini: true },
+                    { kw: "טיפול בעזרת סוסים", rank: 4, change: 5, vol: 720, diff: 31, gpt: true, gemini: false },
+                    { kw: "חוות סוסים ילדים", rank: 8, change: -3, vol: 960, diff: 33, gpt: false, gemini: true },
+                    { kw: "רכיבה ספורטיבית ישראל", rank: 12, change: -2, vol: 590, diff: 45, gpt: false, gemini: false },
+                    { kw: "קייטנת סוסים", rank: 6, change: 4, vol: 1100, diff: 29, gpt: true, gemini: true },
+                    { kw: "סוסים טיפוליים ילדים אוטיזם", rank: 1, change: 1, vol: 480, diff: 22, gpt: true, gemini: true },
+                    { kw: "טיולי סוסים גיבוש", rank: 9, change: 0, vol: 640, diff: 36, gpt: true, gemini: false },
+                    { kw: "חווית סוסים יום הולדת", rank: 15, change: -5, vol: 520, diff: 25, gpt: false, gemini: false },
+                    { kw: "all4horses ביקורות", rank: 1, change: 0, vol: 110, diff: 8, gpt: true, gemini: true },
+                  ].map((kw, i) => (
+                    <tr key={i} style={{ borderBottom: thinBorder }} onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "#F9F9F9"; }} onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "#FFFFFF"; }}>
+                      <td style={{ padding: "10px 14px", fontWeight: 500, color: "#A2A9B0" }}>{i + 1}</td>
+                      <td style={{ padding: "10px 14px", fontWeight: 500, color: "#333" }}>{kw.kw}</td>
+                      <td style={{ padding: "10px 14px" }}>
+                        <span style={{ fontSize: 14, fontWeight: 700, color: kw.rank <= 3 ? "#10A37F" : kw.rank <= 10 ? "#000" : "#DC2626" }}>{kw.rank}</span>
+                      </td>
+                      <td style={{ padding: "10px 14px" }}>
+                        {kw.change !== 0 ? (
+                          <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 12, fontWeight: 600, color: kw.change > 0 ? "#10A37F" : "#DC2626" }}>
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                              <path d={kw.change > 0 ? "M12 19V5M5 12l7-7 7 7" : "M12 5v14M5 12l7 7 7-7"} />
+                            </svg>
+                            {Math.abs(kw.change)}
+                          </span>
+                        ) : (
+                          <span style={{ fontSize: 12, color: "#999" }}>—</span>
+                        )}
+                      </td>
+                      <td style={{ padding: "10px 14px", fontSize: 13, color: "#333" }}>{kw.vol.toLocaleString()}</td>
+                      <td style={{ padding: "10px 14px" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                          <div style={{ width: 40, height: 4, borderRadius: 2, overflow: "hidden", background: "#F0F0F0" }}>
+                            <div style={{ width: `${kw.diff}%`, height: "100%", borderRadius: 2, background: kw.diff < 30 ? "#10A37F" : kw.diff < 50 ? "#E07800" : "#DC2626" }} />
+                          </div>
+                          <span style={{ fontSize: 12, color: "#333" }}>{kw.diff}</span>
+                        </div>
+                      </td>
+                      <td style={{ padding: "10px 14px", textAlign: "center" }}>
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                          <MentionIcon mentioned={kw.gpt} engine="gpt" />
+                          <MentionIcon mentioned={kw.gemini} engine="gemini" />
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div style={{ padding: "10px 14px", display: "flex", alignItems: "center", justifyContent: "space-between", borderTop: "1px solid #BFBFBF", background: "#F9F9F9" }}>
+                <span style={{ fontSize: 12, color: "#727272" }}>מציג 12 מילות מפתח</span>
+                <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 12 }}>
+                  <span style={{ color: "#10A37F" }}>טופ 3: 3</span>
+                  <span style={{ color: "#000" }}>טופ 10: 9</span>
+                  <span style={{ color: "#DC2626" }}>מתחת ל-10: 3</span>
                 </div>
               </div>
             </div>
