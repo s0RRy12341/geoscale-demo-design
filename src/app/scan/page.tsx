@@ -383,9 +383,8 @@ function StageBadge({ stage }: { stage: string }) {
 }
 
 function AIEngineLogo({ engine, size = 18 }: { engine: "gpt" | "gemini" | "perplexity"; size?: number }) {
-  if (engine === "gpt") return <svg width={size} height={size} viewBox="0 0 24 24" fill="#10A37F"><path d="M22.282 9.821a5.985 5.985 0 00-.516-4.91 6.046 6.046 0 00-6.51-2.9A6.065 6.065 0 0011.702.418 6.004 6.004 0 005.354 2.08a5.974 5.974 0 00-3.994 2.9 6.042 6.042 0 00.743 7.097 5.98 5.98 0 00.51 4.911 6.051 6.051 0 006.515 2.9A5.985 5.985 0 0013.702 22a6.003 6.003 0 006.349-1.662 5.98 5.98 0 003.994-2.9 6.042 6.042 0 00-.743-7.097l-.02-.02z" /></svg>;
-  if (engine === "gemini") return <svg width={size} height={size} viewBox="0 0 24 24"><defs><linearGradient id="gemG" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#4285F4" /><stop offset="100%" stopColor="#886FBF" /></linearGradient></defs><path d="M12 2C12 2 14.5 8.5 17 11S24 12 24 12 17.5 14.5 15 17 12 24 12 24 9.5 17.5 7 15 0 12 0 12 6.5 9.5 9 7 12 2 12 2z" fill="url(#gemG)" /></svg>;
-  return <svg width={size} height={size} viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#1A1A2E" /><path d="M7 12a5 5 0 005 5 5 5 0 005-5 5 5 0 00-5-5 5 5 0 00-5 5z" fill="none" stroke="#22D3EE" strokeWidth="1.5" /><circle cx="12" cy="7" r="1.5" fill="#22D3EE" /></svg>;
+  const src = engine === "gpt" ? "/logos/chatgpt.svg" : engine === "gemini" ? "/logos/gemini.svg" : "/logos/perplexity.svg";
+  return <img src={src} width={size} height={size} alt={engine === "gpt" ? "ChatGPT" : engine === "gemini" ? "Gemini" : "Perplexity"} style={{ display: "inline-block" }} />;
 }
 
 function MentionIcon({ mentioned, engine }: { mentioned: boolean; engine: "gpt" | "gemini" | "perplexity" }) {
@@ -693,7 +692,7 @@ export default function ScanPage() {
                 <div style={{ border: thinBorder, borderRadius: 10, padding: 16 }}>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="#10A37F"><path d="M22.282 9.821a5.985 5.985 0 00-.516-4.91 6.046 6.046 0 00-6.51-2.9A6.065 6.065 0 0011.702.418 6.004 6.004 0 005.354 2.08a5.974 5.974 0 00-3.994 2.9 6.042 6.042 0 00.743 7.097 5.98 5.98 0 00.51 4.911 6.051 6.051 0 006.515 2.9A5.985 5.985 0 0013.702 22a6.003 6.003 0 006.349-1.662 5.98 5.98 0 003.994-2.9 6.042 6.042 0 00-.743-7.097l-.02-.02z" /></svg>
+                      <img src="/logos/chatgpt.svg" width={18} height={18} alt="ChatGPT" style={{ display: "inline-block" }} />
                       <span style={{ fontSize: 14, fontWeight: 600, color: "#000000" }}>ChatGPT (GPT-4o)</span>
                     </div>
                     <span style={{ fontSize: 20, fontWeight: 600, color: "#10A37F" }}>57%</span>
@@ -706,7 +705,7 @@ export default function ScanPage() {
                 <div style={{ border: thinBorder, borderRadius: 10, padding: 16 }}>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="#4285F4"><path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zm0 3.6c2.21 0 4.122.84 5.64 2.16l-2.4 2.4A5.356 5.356 0 0012 7.2c-2.652 0-4.8 2.148-4.8 4.8s2.148 4.8 4.8 4.8c2.316 0 4.128-1.488 4.56-3.6H12v-3.6h8.28c.12.6.12 1.2.12 1.8 0 4.644-3.156 8.4-8.4 8.4-4.632 0-8.4-3.768-8.4-8.4S7.368 3.6 12 3.6z" /></svg>
+                      <img src="/logos/gemini.svg" width={18} height={18} alt="Gemini" style={{ display: "inline-block" }} />
                       <span style={{ fontSize: 14, fontWeight: 600, color: "#000000" }}>Google Gemini</span>
                     </div>
                     <span style={{ fontSize: 20, fontWeight: 600, color: "#4285F4" }}>73%</span>
@@ -1163,7 +1162,7 @@ export default function ScanPage() {
                               {/* ChatGPT Card */}
                               <div style={{ borderRadius: 10, padding: 14, background: "#FFFFFF", border: thinBorder }}>
                                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#10A37F"><path d="M22.282 9.821a5.985 5.985 0 00-.516-4.91 6.046 6.046 0 00-6.51-2.9A6.065 6.065 0 0011.702.418 6.004 6.004 0 005.354 2.08a5.974 5.974 0 00-3.994 2.9 6.042 6.042 0 00.743 7.097 5.98 5.98 0 00.51 4.911 6.051 6.051 0 006.515 2.9A5.985 5.985 0 0013.702 22a6.003 6.003 0 006.349-1.662 5.98 5.98 0 003.994-2.9 6.042 6.042 0 00-.743-7.097l-.02-.02z" /></svg>
+                                  <img src="/logos/chatgpt.svg" width={14} height={14} alt="ChatGPT" style={{ display: "inline-block" }} />
                                   <span style={{ fontSize: 12, fontWeight: 600, color: "#10A37F" }}>ChatGPT (GPT-4o)</span>
                                   <MentionBadge mentioned={q.gpt} />
                                 </div>
@@ -1188,7 +1187,7 @@ export default function ScanPage() {
                               {/* Gemini Card */}
                               <div style={{ borderRadius: 10, padding: 14, background: "#FFFFFF", border: thinBorder }}>
                                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#4285F4"><path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zm0 3.6c2.21 0 4.122.84 5.64 2.16l-2.4 2.4A5.356 5.356 0 0012 7.2c-2.652 0-4.8 2.148-4.8 4.8s2.148 4.8 4.8 4.8c2.316 0 4.128-1.488 4.56-3.6H12v-3.6h8.28c.12.6.12 1.2.12 1.8 0 4.644-3.156 8.4-8.4 8.4-4.632 0-8.4-3.768-8.4-8.4S7.368 3.6 12 3.6z" /></svg>
+                                  <img src="/logos/gemini.svg" width={14} height={14} alt="Gemini" style={{ display: "inline-block" }} />
                                   <span style={{ fontSize: 12, fontWeight: 600, color: "#4285F4" }}>Google Gemini</span>
                                   <MentionBadge mentioned={q.gemini} />
                                 </div>

@@ -1267,11 +1267,7 @@ function Screen4({ brandName }: { brandName: string }) {
               <div className="animate-fade-in-up">
                 <AIEngineCard
                   name="ChatGPT"
-                  icon={
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                      <path d="M22.282 9.821a5.985 5.985 0 00-.516-4.91 6.046 6.046 0 00-6.51-2.9A6.065 6.065 0 0011.11.584 6.047 6.047 0 004.626 3.6a5.985 5.985 0 00-3.998 2.9 6.046 6.046 0 00.743 7.097 5.98 5.98 0 00.51 4.911 6.051 6.051 0 006.515 2.9A5.985 5.985 0 0012.89 23.4a6.046 6.046 0 006.483-3.017 5.986 5.986 0 003.998-2.9 6.046 6.046 0 00-.743-7.097" />
-                    </svg>
-                  }
+                  icon={<img src="/logos/chatgpt.svg" width={20} height={20} alt="ChatGPT" style={{ display: "inline-block", filter: "brightness(0) invert(1)" }} />}
                   color="#10A37F"
                   active={true}
                   progress={gptProgress}
@@ -1285,11 +1281,7 @@ function Screen4({ brandName }: { brandName: string }) {
               <div className="animate-fade-in-up">
                 <AIEngineCard
                   name="ChatGPT"
-                  icon={
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                      <path d="M22.282 9.821a5.985 5.985 0 00-.516-4.91 6.046 6.046 0 00-6.51-2.9A6.065 6.065 0 0011.11.584 6.047 6.047 0 004.626 3.6a5.985 5.985 0 00-3.998 2.9 6.046 6.046 0 00.743 7.097 5.98 5.98 0 00.51 4.911 6.051 6.051 0 006.515 2.9A5.985 5.985 0 0012.89 23.4a6.046 6.046 0 006.483-3.017 5.986 5.986 0 003.998-2.9 6.046 6.046 0 00-.743-7.097" />
-                    </svg>
-                  }
+                  icon={<img src="/logos/chatgpt.svg" width={20} height={20} alt="ChatGPT" style={{ display: "inline-block", filter: "brightness(0) invert(1)" }} />}
                   color="#10A37F"
                   active={false}
                   progress={100}
@@ -1298,7 +1290,7 @@ function Screen4({ brandName }: { brandName: string }) {
                 <div className="mt-4">
                   <AIEngineCard
                     name="Gemini"
-                    icon={<svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M12 0L14.59 8.41L23 12L14.59 15.59L12 24L9.41 15.59L1 12L9.41 8.41Z"/></svg>}
+                    icon={<img src="/logos/gemini.svg" width={16} height={16} alt="Gemini" style={{ display: "inline-block", filter: "brightness(0) invert(1)" }} />}
                     color="#4285F4"
                     active={true}
                     progress={geminiProgress}
@@ -1314,11 +1306,7 @@ function Screen4({ brandName }: { brandName: string }) {
                 <div className="grid grid-cols-2 gap-3 mb-4">
                   <AIEngineCard
                     name="ChatGPT"
-                    icon={
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-                        <path d="M22.282 9.821a5.985 5.985 0 00-.516-4.91 6.046 6.046 0 00-6.51-2.9A6.065 6.065 0 0011.11.584 6.047 6.047 0 004.626 3.6a5.985 5.985 0 00-3.998 2.9 6.046 6.046 0 00.743 7.097 5.98 5.98 0 00.51 4.911 6.051 6.051 0 006.515 2.9A5.985 5.985 0 0012.89 23.4a6.046 6.046 0 006.483-3.017 5.986 5.986 0 003.998-2.9 6.046 6.046 0 00-.743-7.097" />
-                      </svg>
-                    }
+                    icon={<img src="/logos/chatgpt.svg" width={16} height={16} alt="ChatGPT" style={{ display: "inline-block", filter: "brightness(0) invert(1)" }} />}
                     color="#10A37F"
                     active={false}
                     progress={100}
@@ -1326,7 +1314,7 @@ function Screen4({ brandName }: { brandName: string }) {
                   />
                   <AIEngineCard
                     name="Gemini"
-                    icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M12 0L14.59 8.41L23 12L14.59 15.59L12 24L9.41 15.59L1 12L9.41 8.41Z"/></svg>}
+                    icon={<img src="/logos/gemini.svg" width={14} height={14} alt="Gemini" style={{ display: "inline-block", filter: "brightness(0) invert(1)" }} />}
                     color="#4285F4"
                     active={false}
                     progress={100}
