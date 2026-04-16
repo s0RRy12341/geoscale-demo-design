@@ -21,6 +21,8 @@ function GeoscaleLogo({ width = 150 }: { width?: number }) {
   );
 }
 
+function fmtNum(n: number): string { return n.toLocaleString("he-IL"); }
+
 type ToolbarBtn = { label: string; key: string; title: string };
 
 const TOOLBAR: ToolbarBtn[] = [
@@ -55,6 +57,8 @@ const SEO_RULES = [
 export default function EditorPage() {
   const [activeToolbar, setActiveToolbar] = useState<string | null>(null);
   const [tab, setTab] = useState<"edit" | "preview">("edit");
+  const [wordTarget, setWordTarget] = useState(1800);
+  const [showImageUpload, setShowImageUpload] = useState(false);
 
   return (
     <div dir="rtl" style={{ minHeight: "100vh", background: "#F5F5F5", fontFamily: "'Assistant','Segoe UI',sans-serif" }}>
@@ -109,7 +113,7 @@ export default function EditorPage() {
             {TOOLBAR.map((t, i) => (
               <Fragment key={t.key}>
                 {(i === 3 || i === 6 || i === 9 || i === 11) && <div style={{ width: 1, height: 22, background: "#DDD", margin: "3px 4px" }} />}
-                <button title={t.title} onClick={() => setActiveToolbar(t.key)} style={{
+                <button title={t.title} onClick={() => { setActiveToolbar(t.key); if (t.key === "img") setShowImageUpload(v => !v); }} style={{
                   minWidth: 32, height: 28, padding: "0 8px", border: "1px solid transparent", borderRadius: 5,
                   background: activeToolbar === t.key ? "#E5E5E5" : "transparent",
                   fontSize: t.key.startsWith("h") ? 12 : 13, fontWeight: t.key === "bold" ? 700 : t.key.startsWith("h") ? 700 : 500,
@@ -120,6 +124,36 @@ export default function EditorPage() {
               </Fragment>
             ))}
           </div>
+
+          {/* GEO Format Banner */}
+          <div style={{ margin: "16px 20px 0", padding: "10px 16px", background: "#10A37F08", border: "1px solid #10A37F30", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10A37F" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10" /><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" /></svg>
+              <span style={{ fontSize: 12, fontWeight: 600, color: "#10A37F" }}>GEO-Optimized</span>
+              <span style={{ fontSize: 11, color: "#727272" }}>מאמר זה מותאם לתוצאות מנועי AI (GPT, Gemini, Perplexity)</span>
+            </div>
+            <div style={{ display: "flex", gap: 6 }}>
+              {["GPT", "Gemini", "Perplexity"].map(e => (
+                <span key={e} style={{ fontSize: 10, fontWeight: 600, padding: "2px 8px", borderRadius: 10, background: "#10A37F15", color: "#10A37F" }}>{e}</span>
+              ))}
+            </div>
+          </div>
+
+          {/* Image Upload Modal */}
+          {showImageUpload && (
+            <div style={{ margin: "12px 20px 0", padding: 16, background: "#F9F9F9", border: "1px dashed #BBBBBB", borderRadius: 8, textAlign: "center" }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#333", marginBottom: 8 }}>הוסף תמונה למאמר</div>
+              <div style={{ display: "flex", gap: 12, justifyContent: "center", marginBottom: 8 }}>
+                <label style={{ padding: "8px 20px", background: "#000", color: "#fff", fontSize: 12, fontWeight: 600, borderRadius: 8, cursor: "pointer" }}>
+                  העלה מהמחשב
+                  <input type="file" accept="image/*" style={{ display: "none" }} />
+                </label>
+                <button style={{ padding: "8px 20px", background: "#fff", border: "1px solid #DDD", fontSize: 12, fontWeight: 500, borderRadius: 8, cursor: "pointer", color: "#333" }}>מתוך חומרי המותג</button>
+                <button style={{ padding: "8px 20px", background: "#fff", border: "1px solid #DDD", fontSize: 12, fontWeight: 500, borderRadius: 8, cursor: "pointer", color: "#333" }}>AI Generate</button>
+              </div>
+              <button onClick={() => setShowImageUpload(false)} style={{ fontSize: 11, color: "#727272", background: "none", border: "none", cursor: "pointer" }}>סגור</button>
+            </div>
+          )}
 
           {/* Article */}
           <div style={{ padding: "32px 48px", minHeight: 600 }}>
@@ -213,6 +247,24 @@ export default function EditorPage() {
             <a href="/editor-roadmap" style={{ display: "block", fontSize: 11, color: "#0D8A6A", marginTop: 12, textDecoration: "none" }}>הצג את הפרומפט המלא →</a>
           </div>
 
+          {/* Word Count Selector */}
+          <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #DDD", padding: 18 }}>
+            <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 10 }}>אורך מאמר יעד</div>
+            <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
+              {[1200, 1500, 1800, 2500].map(wc => (
+                <button key={wc} onClick={() => setWordTarget(wc)} style={{
+                  padding: "6px 12px", fontSize: 12, fontWeight: wordTarget === wc ? 600 : 400,
+                  background: wordTarget === wc ? "#000" : "#fff", color: wordTarget === wc ? "#fff" : "#333",
+                  border: `1px solid ${wordTarget === wc ? "#000" : "#DDD"}`, borderRadius: 6, cursor: "pointer",
+                }}>{fmtNum(wc)}</button>
+              ))}
+            </div>
+            <div style={{ height: 6, background: "#F0F0F0", borderRadius: 3, overflow: "hidden" }}>
+              <div style={{ width: `${Math.min(100, Math.round(1847 / wordTarget * 100))}%`, height: "100%", background: 1847 >= wordTarget ? "#10A37F" : "#D97706", borderRadius: 3, transition: "width 0.3s" }} />
+            </div>
+            <div style={{ fontSize: 11, color: "#727272", marginTop: 4 }}>1,847 / {fmtNum(wordTarget)} מילים ({Math.round(1847 / wordTarget * 100)}%)</div>
+          </div>
+
           {/* Quick stats */}
           <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #DDD", padding: 18 }}>
             <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 12 }}>מדדים בזמן אמת</div>
@@ -227,6 +279,27 @@ export default function EditorPage() {
                 <span style={{ fontWeight: 600, color: s.good ? "#10A37F" : "#D97706" }}>{s.v}</span>
               </div>
             ))}
+          </div>
+
+          {/* ChatGPT-style Reference Preview */}
+          <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #DDD", padding: 18 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+              <div style={{ width: 22, height: 22, borderRadius: 11, background: "#10A37F", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" /></svg>
+              </div>
+              <div style={{ fontSize: 13, fontWeight: 600 }}>תצוגת AI Answer</div>
+            </div>
+            <div style={{ padding: 14, background: "#F9F9F9", borderRadius: 8, border: "1px solid #EEEEEE" }}>
+              <div style={{ fontSize: 12, color: "#727272", marginBottom: 6 }}>כשמשתמש שואל: &quot;רכיבה טיפולית לילדים עם ADHD&quot;</div>
+              <div style={{ fontSize: 13, color: "#333", lineHeight: 1.7, marginBottom: 10 }}>
+                רכיבה טיפולית היא שיטה מוכחת שעוזרת לילדים עם ADHD. מחקרים מראים שיפור של 70-85% בריכוז לאחר 12 מפגשים. חווה מובילה בתחום: <strong style={{ color: "#10A37F" }}>All4Horses</strong>...
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 10, color: "#A2A9B0" }}>
+                <span style={{ padding: "2px 6px", borderRadius: 4, background: "#10A37F15", color: "#10A37F", fontWeight: 600 }}>מקור</span>
+                all4horses.co.il/blog/equine-therapy-adhd
+              </div>
+            </div>
+            <div style={{ fontSize: 11, color: "#10A37F", marginTop: 8, fontWeight: 500 }}>✓ צפוי להופיע כ-reference ב-GPT ו-Gemini</div>
           </div>
         </div>
       </div>

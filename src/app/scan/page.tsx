@@ -1182,10 +1182,24 @@ export default function ScanPage() {
                 <h2 style={{ fontSize: 18, fontWeight: 600, color: "#000000", margin: "0 0 4px" }}>קהלי יעד שזוהו</h2>
                 <p style={{ fontSize: 13, color: "#727272", margin: 0 }}>{PERSONAS.length} פרסונות זוהו בסריקה האחרונה</p>
               </div>
-              <HoverButton filled onClick={() => setShowPersonaForm(!showPersonaForm)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 18px", background: "#000000", color: "#FFFFFF", fontSize: 13, fontWeight: 600, border: "1px solid #000000", borderRadius: 9, cursor: "pointer" }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2"><path d="M12 5v14M5 12h14" /></svg>
-                הצע פרסונה
-              </HoverButton>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <span style={{ fontSize: 12, color: "#727272" }}>כמות פרסונות:</span>
+                  <div style={{ display: "flex", gap: 0, border: "1px solid #DDDDDD", borderRadius: 8, overflow: "hidden" }}>
+                    {[1, 2, 3, 4, 5].map(n => (
+                      <button key={n} style={{
+                        width: 32, height: 30, fontSize: 12, fontWeight: n === PERSONAS.length ? 600 : 400,
+                        background: n === PERSONAS.length ? "#000" : "#fff", color: n === PERSONAS.length ? "#fff" : "#333",
+                        border: "none", cursor: "pointer",
+                      }}>{n}</button>
+                    ))}
+                  </div>
+                </div>
+                <HoverButton filled onClick={() => setShowPersonaForm(!showPersonaForm)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 18px", background: "#000000", color: "#FFFFFF", fontSize: 13, fontWeight: 600, border: "1px solid #000000", borderRadius: 9, cursor: "pointer" }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2"><path d="M12 5v14M5 12h14" /></svg>
+                  הצע פרסונה
+                </HoverButton>
+              </div>
             </div>
 
             {showPersonaForm && (
