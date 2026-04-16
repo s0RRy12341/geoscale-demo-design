@@ -368,6 +368,8 @@ export default function Dashboard() {
           <nav style={{ display: "flex", alignItems: "center", gap: 32 }}>
             <a href="/" style={{ fontSize: 14, fontWeight: 600, color: "#000", textDecoration: "none" }}>דשבורד</a>
             <a href="/scan" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>סריקות</a>
+            <a href="/editor" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>עורך תוכן</a>
+            <a href="/editor-roadmap" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>Roadmap</a>
           </nav>
 
           {/* LEFT in RTL (grid col 3) = Logo */}
@@ -506,6 +508,54 @@ export default function Dashboard() {
                     </div>
                   );
                 })}
+              </div>
+            </div>
+          </div>
+
+          {/* ── Content Creation (editor feature spec) ── */}
+          <div className="mb-10">
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="text-xl font-semibold" style={{ color: "#000" }}>יצירת תוכן</h2>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-semibold px-2 py-0.5" style={{ background: "#FFF7ED", color: "#D97706", borderRadius: 20 }}>● בעבודה</span>
+                <a href="/editor-roadmap" className="text-xs font-medium" style={{ color: "#000", textDecoration: "underline" }}>Roadmap מלא →</a>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Editor preview */}
+              <a href="/editor" className="p-6 block" style={{ border: "1px solid #BFBFBF", borderRadius: 10, textDecoration: "none", background: "#fff" }}>
+                <div className="flex items-center gap-2 mb-2">
+                  <span style={{ width: 28, height: 28, borderRadius: 14, background: "#000", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700 }}>✎</span>
+                  <h3 className="text-sm font-semibold" style={{ color: "#000" }}>עורך WYSIWYG</h3>
+                </div>
+                <p className="text-xs mb-3" style={{ color: "#727272", lineHeight: 1.6 }}>עריכה חיה של מאמרים שנוצרו אוטומטית, סרגל כלים מלא כמו וורדפרס, שמירה אוטומטית והעלאת תמונות.</p>
+                <div className="text-[11px] font-semibold" style={{ color: "#000" }}>פתיחת העורך →</div>
+              </a>
+
+              {/* Claude model */}
+              <div className="p-6" style={{ border: "1px solid #BFBFBF", borderRadius: 10, background: "#fff" }}>
+                <div className="flex items-center gap-2 mb-2">
+                  <span style={{ width: 28, height: 28, borderRadius: 14, background: "linear-gradient(135deg,#D97706,#F59E0B)", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700 }}>✦</span>
+                  <h3 className="text-sm font-semibold" style={{ color: "#000" }}>Claude Opus 4.6 · Anthropic</h3>
+                </div>
+                <p className="text-xs mb-3" style={{ color: "#727272", lineHeight: 1.6 }}>החלפת מודל הכתיבה הנוכחי ל-Claude Opus 4.6 - איכות כתיבה גבוהה יותר, התאמה טובה יותר לפרומפט של ניר.</p>
+                <div className="flex items-center gap-2 text-[11px]" style={{ color: "#555" }}>
+                  <span style={{ width: 6, height: 6, borderRadius: 3, background: "#D97706" }} />
+                  אינטגרציית Anthropic API · prompt של ניר
+                </div>
+              </div>
+
+              {/* AI learning */}
+              <div className="p-6" style={{ border: "1px solid #BFBFBF", borderRadius: 10, background: "#fff" }}>
+                <div className="flex items-center gap-2 mb-2">
+                  <span style={{ width: 28, height: 28, borderRadius: 14, background: "#7C3AED", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700 }}>◉</span>
+                  <h3 className="text-sm font-semibold" style={{ color: "#000" }}>AI שלומד מעריכות</h3>
+                </div>
+                <p className="text-xs mb-3" style={{ color: "#727272", lineHeight: 1.6 }}>כל עריכה שהלקוח עושה נשמרת, מסווגת (סגנון/דקדוק/תוכן) ומזינה את ה-system prompt למאמר הבא.</p>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-xl font-bold" style={{ color: "#000" }}>37</span>
+                  <span className="text-[11px]" style={{ color: "#727272" }}>עריכות למדנו השבוע · 72% הלימה</span>
+                </div>
               </div>
             </div>
           </div>
