@@ -354,7 +354,7 @@ export default function Dashboard() {
     <div className="min-h-screen flex flex-col" style={{ background: "#FFFFFF" }} dir="rtl">
       {/* ═══ HEADER — 3-column grid: actions | nav | logo ═══ */}
       <header className="sticky top-0 z-50" style={{ background: "rgba(255,255,255,0.96)", borderBottom: "1px solid #BFBFBF" }}>
-        <div style={{ maxWidth: 1300, margin: "0 auto", padding: "0 24px", height: 72, display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center" }}>
+        <div style={{ maxWidth: 1300, margin: "0 auto", padding: "0 24px", height: 56, display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center" }}>
           {/* RIGHT in RTL (grid col 1) = Actions */}
           <div style={{ display: "flex", alignItems: "center", gap: 16, justifySelf: "start" }}>
             <a href="/new-scan" style={{ display: "inline-flex", alignItems: "center", padding: "8px 20px", background: "#000", color: "#fff", fontSize: 13, fontWeight: 600, borderRadius: 9, border: "1px solid #000", textDecoration: "none" }}>סריקה חדשה</a>
@@ -382,15 +382,15 @@ export default function Dashboard() {
 
       {/* ═══ MAIN CONTENT ═══ */}
       <main className="flex-1">
-        <div className="max-w-[1300px] mx-auto px-6 py-6">
+        <div className="max-w-[1300px] mx-auto px-6 py-4">
           {/* Page title */}
-          <div className="mb-6">
-            <h1 className="text-2xl font-semibold mb-0.5" style={{ color: "#000", letterSpacing: "-0.5px" }}>ניטור מותגים</h1>
-            <p className="text-sm" style={{ color: "#727272" }}>ניטור נוכחות מותגים במנועי AI</p>
+          <div className="mb-4">
+            <h1 className="text-xl font-semibold mb-0" style={{ color: "#000", letterSpacing: "-0.5px" }}>ניטור מותגים</h1>
+            <p className="text-xs" style={{ color: "#727272" }}>ניטור נוכחות מותגים במנועי AI</p>
           </div>
 
           {/* ── Top Metrics — compact GA style ── */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mb-5">
             {[
               { label: "מותגים", value: totalBrands, change: "+2" },
               { label: "סריקות", value: totalScans },
@@ -409,7 +409,7 @@ export default function Dashboard() {
           </div>
 
           {/* ── Top 5 Trending Up / Needs Attention ── */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-5">
             <div className="p-5" style={{ border: "1px solid #E5E5E5", borderRadius: 10 }}>
               <div className="flex items-center gap-2 mb-4">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10A37F" strokeWidth="2.5" strokeLinecap="round"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
@@ -458,7 +458,7 @@ export default function Dashboard() {
           </div>
 
           {/* ── AI Traffic & Bot Activity Row ── */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-5">
             <div className="p-5" style={{ border: "1px solid #E5E5E5", borderRadius: 10 }}>
               <h3 className="text-xs font-semibold mb-1" style={{ color: "#000" }}>AI vs Traditional SEO</h3>
               <p className="text-[11px] mb-3" style={{ color: "#727272" }}>חלוקת תנועה</p>
@@ -527,9 +527,9 @@ export default function Dashboard() {
           </div>
 
           {/* ── Brands Table (rows, not cards) ── */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold" style={{ color: "#000" }}>המותגים שלך</h2>
+          <div className="mb-5">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-base font-semibold" style={{ color: "#000" }}>המותגים שלך</h2>
               <div className="flex items-center gap-3">
                 <div className="relative">
                   <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="חיפוש..." className="w-48 px-3 py-2 pr-9 text-xs focus:outline-none" style={{ border: "1px solid #E5E5E5", borderRadius: 8 }} />

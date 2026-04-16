@@ -512,7 +512,7 @@ export default function ScanPage() {
 
       {/* -- Sticky Header -- 3-column grid: actions | nav | logo -- */}
       <header style={{ position: "sticky", top: 0, zIndex: 50, background: "rgba(255,255,255,0.96)", borderBottom: "1px solid #BFBFBF" }}>
-        <div style={{ maxWidth: 1300, margin: "0 auto", padding: "0 24px", height: 72, display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center" }}>
+        <div style={{ maxWidth: 1300, margin: "0 auto", padding: "0 24px", height: 56, display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center" }}>
           {/* RIGHT in RTL (grid col 1) = Actions */}
           <div style={{ display: "flex", alignItems: "center", gap: 16, justifySelf: "start" }}>
             <HoverButton filled href="/new-scan" style={{ display: "inline-flex", alignItems: "center", padding: "8px 20px", background: "#000", color: "#fff", fontSize: 13, fontWeight: 600, borderRadius: 9, border: "1px solid #000" }}>
@@ -614,7 +614,7 @@ export default function ScanPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
 
             {/* BIG TIME-SERIES CHART */}
-            <div style={{ ...card, padding: 24 }}>
+            <div style={{ ...card, padding: 18 }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <h3 style={{ ...sectionTitle }}>שיעור אזכור לאורך זמן</h3>
@@ -681,7 +681,7 @@ export default function ScanPage() {
             </div>
 
             {/* GPT vs Gemini */}
-            <div style={{ ...card, padding: 24 }}>
+            <div style={{ ...card, padding: 18 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
                 <h3 style={{ ...sectionTitle }}>השוואת מנועי AI</h3>
                 <Tooltip text="השוואת אחוזי האזכור של המותג בין ChatGPT ל-Google Gemini" />
@@ -741,7 +741,7 @@ export default function ScanPage() {
 
             {/* Persona + Competitors */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-              <div style={{ ...card, padding: 24 }}>
+              <div style={{ ...card, padding: 18 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
                   <h3 style={{ ...sectionTitle }}>פרסונה שזוהתה</h3>
                   <Tooltip text="פרופיל קהל היעד שזוהה מתוך ניתוח השאילתות ותשובות מנועי AI" />
@@ -760,7 +760,7 @@ export default function ScanPage() {
                   ))}
                 </div>
               </div>
-              <div style={{ ...card, padding: 24 }}>
+              <div style={{ ...card, padding: 18 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
                   <h3 style={{ ...sectionTitle }}>מתחרים</h3>
                   <Tooltip text="ציון הנוכחות של מתחרים מובילים לעומת המותג שלך" />
@@ -792,7 +792,7 @@ export default function ScanPage() {
 
             {/* Sentiment + Citation Quality */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-              <div style={{ ...card, padding: 24 }}>
+              <div style={{ ...card, padding: 18 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
                   <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000000", margin: 0 }}>סנטימנט</h3>
                   <Tooltip text="הטון הכללי שבו מנועי AI מציגים את המותג שלך - חיובי, ניטרלי או שלילי" />
@@ -806,7 +806,7 @@ export default function ScanPage() {
                   </div>
                 </div>
               </div>
-              <div style={{ ...card, padding: 24 }}>
+              <div style={{ ...card, padding: 18 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
                   <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000000", margin: 0 }}>איכות ציטוט</h3>
                   <Tooltip text="עד כמה מנועי AI מצטטים את המותג בצורה מדויקת ומלאה" />
@@ -825,7 +825,7 @@ export default function ScanPage() {
 
             {/* Signals */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-              <div style={{ ...card, padding: 24 }}>
+              <div style={{ ...card, padding: 18 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10A37F" strokeWidth="2.5"><path d="M20 6L9 17l-5-5" /></svg>
                   <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000000", margin: 0 }}>מה עבד</h3>
@@ -884,7 +884,7 @@ export default function ScanPage() {
             </div>
 
             {/* AI SUMMARY (1.12) */}
-            <div style={{ ...card, padding: 24 }}>
+            <div style={{ ...card, padding: 18 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
                 <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000", margin: 0 }}>AI Summary — מה המנועים אומרים עליכם</h3>
                 <Tooltip text="סיכום התשובות שמנועי AI מחזירים כשנשאלים על המותג שלך" />
@@ -912,7 +912,7 @@ export default function ScanPage() {
             </div>
 
             {/* SEO + GEO */}
-            <div style={{ ...card, padding: 24 }}>
+            <div style={{ ...card, padding: 18 }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000000", margin: 0 }}>קשר בין SEO ל-GEO</h3>
@@ -968,7 +968,7 @@ export default function ScanPage() {
             </div>
 
             {/* Top 5 Queries */}
-            <div style={{ ...card, padding: 24 }}>
+            <div style={{ ...card, padding: 18 }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000000", margin: 0 }}>5 שאילתות מובילות</h3>
@@ -1399,7 +1399,7 @@ export default function ScanPage() {
 
         {/* ═══ CONTENT CREATION TAB ═══ */}
         {activeTab === "content" && (
-          <div style={{ padding: "32px 0" }}>
+          <div style={{ padding: "24px 0" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <h2 style={{ fontSize: 20, fontWeight: 700, color: "#000", margin: 0 }}>יצירת תוכן</h2>
@@ -1408,7 +1408,7 @@ export default function ScanPage() {
               <a href="/roadmap" style={{ fontSize: 12, fontWeight: 500, color: "#000", textDecoration: "underline" }}>Roadmap →</a>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, marginBottom: 32 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginBottom: 24 }}>
               <a href="/editor" style={{ padding: 20, border: "1px solid #E5E5E5", borderRadius: 10, textDecoration: "none", background: "#fff", display: "block" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                   <span style={{ width: 24, height: 24, borderRadius: 12, background: "#000", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700 }}>✎</span>

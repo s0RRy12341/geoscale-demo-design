@@ -355,7 +355,7 @@ export default function BestLinksPage() {
     <div style={{ minHeight: "100vh", background: "#fff", fontFamily: "'Inter', 'Heebo', sans-serif" }} dir="rtl">
       {/* ── Header ── */}
       <header className="sticky top-0 z-50" style={{ background: "rgba(255,255,255,0.96)", borderBottom: "1px solid #BFBFBF" }}>
-        <div style={{ maxWidth: 1300, margin: "0 auto", padding: "0 24px", height: 72, display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center" }}>
+        <div style={{ maxWidth: 1300, margin: "0 auto", padding: "0 24px", height: 56, display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center" }}>
           {/* RIGHT in RTL = Actions */}
           <div style={{ display: "flex", alignItems: "center", gap: 16, justifySelf: "start" }}>
             <a href="/new-scan" style={{ display: "inline-flex", alignItems: "center", padding: "8px 20px", background: "#000", color: "#fff", fontSize: 13, fontWeight: 600, borderRadius: 9, border: "1px solid #000", textDecoration: "none" }}>סריקה חדשה</a>
@@ -408,7 +408,7 @@ export default function BestLinksPage() {
       </div>
 
       {/* ── Content ── */}
-      <div style={{ maxWidth: 1300, margin: "0 auto", padding: "32px 24px 80px" }}>
+      <div style={{ maxWidth: 1300, margin: "0 auto", padding: "24px 24px 60px" }}>
         {activeTab === "marketplace" && (
           <MarketplaceTab
             publishers={filteredPublishers}
@@ -631,7 +631,7 @@ function MarketplaceTab({
   return (
     <div>
       {/* Title */}
-      <div style={{ marginBottom: 28 }}>
+      <div style={{ marginBottom: 20 }}>
         <h1 style={{ fontSize: 26, fontWeight: 700, color: "#000", marginBottom: 6 }}>
           ScalePublish <span style={{ fontWeight: 400, fontSize: 20 }}>— פלטפורמת תוכן לסוכנויות</span>
         </h1>
@@ -980,7 +980,7 @@ function ProjectionPanel({
   const areaD = pathD + ` L ${pointCoords[pointCoords.length - 1].x},${H - PAD_B} L ${pointCoords[0].x},${H - PAD_B} Z`;
 
   return (
-    <div style={{ border: "1px solid #DDDDDD", borderRadius: 10, padding: 24, marginBottom: 28, background: "#fff" }}>
+    <div style={{ border: "1px solid #DDDDDD", borderRadius: 10, padding: 24, marginBottom: 20, background: "#fff" }}>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 24, marginBottom: 20, flexWrap: "wrap" }}>
         <div>
@@ -1209,7 +1209,7 @@ function PlannerTab({
       </div>
 
       {/* Plan Type Cards — SEO / GEO / Combined with discount */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 28 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 20 }}>
         {/* SEO Only */}
         {(() => {
           const seoPrices: Record<string, number> = { fast: 8500, medium: 5600, slow: 3500 };
@@ -1322,7 +1322,7 @@ function PlannerTab({
       />
 
       {/* Plan table */}
-      <div style={{ border: "1px solid #DDDDDD", borderRadius: 10, overflow: "hidden", marginBottom: 28 }}>
+      <div style={{ border: "1px solid #DDDDDD", borderRadius: 10, overflow: "hidden", marginBottom: 20 }}>
         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
           <thead>
             <tr style={{ background: "#F9F9F9" }}>
@@ -1362,7 +1362,7 @@ function PlannerTab({
       </div>
 
       {/* Summary cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 28 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 20 }}>
         <SummaryCard label={'סה"כ מאמרים'} value={String(planTotals.articles)} accent={false} />
         <SummaryCard label="תקציב כולל" value={fmtCurrency(planTotals.budget)} accent={false} />
         {planType === "combined" ? (
@@ -1377,7 +1377,7 @@ function PlannerTab({
       </div>
 
       {/* Proposal Builder — connects SEO plan + Marketplace cart */}
-      <div style={{ border: "1px solid #DDDDDD", borderRadius: 10, padding: 24, background: "#FFFFFF", marginBottom: 28 }}>
+      <div style={{ border: "1px solid #DDDDDD", borderRadius: 10, padding: 24, background: "#FFFFFF", marginBottom: 20 }}>
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 20, marginBottom: 18, flexWrap: "wrap" }}>
           <div>
             <div style={{ fontSize: 11, color: "#727272", fontWeight: 600, marginBottom: 4, letterSpacing: 0.3 }}>הצעת מחיר כוללת</div>
@@ -1515,13 +1515,13 @@ function PublishersTab() {
   return (
     <div>
       {/* Title */}
-      <div style={{ marginBottom: 28 }}>
+      <div style={{ marginBottom: 20 }}>
         <h1 style={{ fontSize: 26, fontWeight: 700, color: "#000", marginBottom: 6 }}>פורטל Publishers</h1>
         <p style={{ fontSize: 14, color: "#727272" }}>נהלו את האתרים שלכם, עקבו אחרי מכירות וצפו בפעילות agencies</p>
       </div>
 
       {/* Stats bar */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 28 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 20 }}>
         {stats.map((stat, i) => (
           <div key={i} style={{ border: "1px solid #DDDDDD", borderRadius: 10, padding: "16px 20px" }}>
             <div style={{ fontSize: 11, color: "#727272", marginBottom: 6 }}>{stat.label}</div>
@@ -1531,7 +1531,7 @@ function PublishersTab() {
       </div>
 
       {/* Add new site */}
-      <div style={{ border: "1px solid #DDDDDD", borderRadius: 10, padding: "20px 24px", marginBottom: 28, background: "#F9F9F9" }}>
+      <div style={{ border: "1px solid #DDDDDD", borderRadius: 10, padding: "20px 24px", marginBottom: 20, background: "#F9F9F9" }}>
         <div style={{ fontSize: 14, fontWeight: 600, color: "#000", marginBottom: 16 }}>הוסף אתר חדש</div>
         <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-end", gap: 16 }}>
           <div style={{ flex: "1 1 200px" }}>
@@ -1619,7 +1619,7 @@ function PublishersTab() {
       </div>
 
       {/* Publisher sites table */}
-      <div style={{ border: "1px solid #DDDDDD", borderRadius: 10, overflow: "hidden", marginBottom: 28 }}>
+      <div style={{ border: "1px solid #DDDDDD", borderRadius: 10, overflow: "hidden", marginBottom: 20 }}>
         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
           <thead>
             <tr style={{ background: "#F9F9F9" }}>
@@ -1651,7 +1651,7 @@ function PublishersTab() {
       </div>
 
       {/* Agency Interest */}
-      <div style={{ border: "1px solid #DDDDDD", borderRadius: 10, padding: "20px 24px", marginBottom: 28 }}>
+      <div style={{ border: "1px solid #DDDDDD", borderRadius: 10, padding: "20px 24px", marginBottom: 20 }}>
         <div style={{ fontSize: 14, fontWeight: 600, color: "#000", marginBottom: 16 }}>agencies שהתעניינו לאחרונה</div>
         <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
           {AGENCY_ACTIVITIES.map((activity, i) => (
@@ -1736,13 +1736,13 @@ function RejectedTab({ publishers, pendingCount }: { publishers: Publisher[]; pe
   return (
     <div>
       {/* Title */}
-      <div style={{ marginBottom: 28 }}>
+      <div style={{ marginBottom: 20 }}>
         <h1 style={{ fontSize: 26, fontWeight: 700, color: "#000", marginBottom: 6 }}>אתרים פסולים</h1>
         <p style={{ fontSize: 14, color: "#727272" }}>אתרים שנבדקו ולא עמדו בקריטריונים לאיכות</p>
       </div>
 
       {/* Stats bar */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 28 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 20 }}>
         {stats.map((stat, i) => (
           <div key={i} style={{ border: "1px solid #DDDDDD", borderRadius: 10, padding: "16px 20px" }}>
             <div style={{ fontSize: 11, color: "#727272", marginBottom: 6 }}>{stat.label}</div>
