@@ -9,6 +9,45 @@ import React, { useState } from "react";
 // Design: Ultra-minimal Geoscale brand language
 // ============================================================
 
+// ── TOOLTIP ──
+function Tooltip({ text }: { text: string }) {
+  const [show, setShow] = useState(false);
+  return (
+    <span
+      style={{ position: "relative", display: "inline-flex", alignItems: "center", cursor: "help" }}
+      onMouseEnter={() => setShow(true)}
+      onMouseLeave={() => setShow(false)}
+    >
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#B0B7BF" strokeWidth="2" style={{ display: "block", transition: "stroke 150ms" }} onMouseEnter={(e) => { (e.currentTarget as SVGElement).style.stroke = "#666"; }} onMouseLeave={(e) => { (e.currentTarget as SVGElement).style.stroke = "#B0B7BF"; }}>
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 16v-4M12 8h.01" />
+      </svg>
+      <div style={{
+        position: "absolute",
+        bottom: "calc(100% + 10px)",
+        right: "50%",
+        transform: "translateX(50%)",
+        background: "#1B1F23",
+        color: "#FFFFFF",
+        fontSize: 12,
+        lineHeight: 1.55,
+        padding: "8px 12px",
+        borderRadius: 6,
+        whiteSpace: "nowrap",
+        maxWidth: 280,
+        zIndex: 100,
+        pointerEvents: "none",
+        opacity: show ? 1 : 0,
+        transition: "opacity 150ms ease",
+        boxShadow: "0 4px 14px rgba(0,0,0,0.15)",
+      }}>
+        {text}
+        <span style={{ position: "absolute", bottom: -4, right: "50%", transform: "translateX(50%) rotate(45deg)", width: 8, height: 8, background: "#1B1F23" }} />
+      </div>
+    </span>
+  );
+}
+
 // ── PRODUCTS ──
 const PRODUCTS = [
   {
@@ -226,7 +265,7 @@ export default function ProductsPage() {
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10A37F" strokeWidth="2"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4M12 8h.01" /></svg>
               </div>
               <div>
-                <h2 style={{ fontSize: 16, fontWeight: 600, color: "#000", margin: "0 0 8px" }}>מוצרים / שירותים — מה זה ולמה?</h2>
+                <h2 style={{ fontSize: 16, fontWeight: 600, color: "#000", margin: "0 0 8px", display: "flex", alignItems: "center", gap: 6 }}>מוצרים / שירותים — מה זה ולמה? <Tooltip text="הסבר על תצוגת המוצרים והשירותים של Geoscale" /></h2>
                 <p style={{ fontSize: 14, lineHeight: 1.7, color: "#333", margin: "0 0 12px" }}>
                   בנוסף לפרסונות (קהלי יעד), Geoscale מאפשר לסרוק את נוכחות המותג לפי <strong>מוצרים ושירותים</strong> ספציפיים. כל מוצר או שירות מייצר סט שאילתות ייעודי — בדיוק כמו שפרסונה מייצרת שאילתות לפי פרופיל קהל היעד.
                 </p>
@@ -257,14 +296,14 @@ export default function ProductsPage() {
           {/* ── Top Metrics ── */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 24 }}>
             {[
-              { label: "מוצרים ושירותים", value: PRODUCTS.length },
-              { label: "סה\"כ שאילתות", value: totalProductQueries },
-              { label: "מוזכר ב-AI", value: totalMentioned },
-              { label: "ציון ממוצע", value: `${avgProductScore}%` },
+              { label: "מוצרים ושירותים", value: PRODUCTS.length, tip: "מספר המוצרים והשירותים שנסרקו" },
+              { label: "סה\"כ שאילתות", value: totalProductQueries, tip: "סך כל השאילתות שנבדקו עבור כל המוצרים" },
+              { label: "מוזכר ב-AI", value: totalMentioned, tip: "כמה פעמים המותג מוזכר בתשובות ChatGPT ו-Gemini" },
+              { label: "ציון ממוצע", value: `${avgProductScore}%`, tip: "ממוצע ציוני הנוכחות של כל המוצרים והשירותים" },
             ].map((m, i) => (
               <div key={i} style={{ ...card, padding: 20, textAlign: "center" }}>
                 <div style={{ fontSize: 28, fontWeight: 700, color: "#000", marginBottom: 2 }}>{m.value}</div>
-                <div style={{ fontSize: 13, color: "#727272" }}>{m.label}</div>
+                <div style={{ fontSize: 13, color: "#727272", display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}>{m.label} <Tooltip text={m.tip} /></div>
               </div>
             ))}
           </div>
@@ -272,12 +311,12 @@ export default function ProductsPage() {
           {/* ── Type Filter ── */}
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
             {([
-              { key: "all" as const, label: "הכל", count: PRODUCTS.length },
-              { key: "product" as const, label: "מוצרים", count: PRODUCTS.filter(p => p.type === "product").length },
-              { key: "service" as const, label: "שירותים", count: PRODUCTS.filter(p => p.type === "service").length },
+              { key: "all" as const, label: "הכל", count: PRODUCTS.length, tip: "הצג את כל המוצרים והשירותים" },
+              { key: "product" as const, label: "מוצרים", count: PRODUCTS.filter(p => p.type === "product").length, tip: "סנן לפי מוצרים פיזיים בלבד" },
+              { key: "service" as const, label: "שירותים", count: PRODUCTS.filter(p => p.type === "service").length, tip: "סנן לפי שירותים בלבד" },
             ]).map(f => (
               <button key={f.key} onClick={() => { setTypeFilter(f.key); setSelectedProduct(null); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 16px", borderRadius: 9, fontSize: 13, fontWeight: typeFilter === f.key ? 600 : 400, background: typeFilter === f.key ? "#000" : "#FFF", color: typeFilter === f.key ? "#FFF" : "#333", border: typeFilter === f.key ? "1px solid #000" : "1px solid #BFBFBF", cursor: "pointer" }}>
-                {f.label} <span style={{ opacity: 0.7 }}>({f.count})</span>
+                {f.label} <span style={{ opacity: 0.7 }}>({f.count})</span> <Tooltip text={f.tip} />
               </button>
             ))}
           </div>
@@ -297,14 +336,16 @@ export default function ProductsPage() {
                     <div>
                       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
                         <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000", margin: 0 }}>{p.name}</h3>
-                        <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 10, background: p.type === "product" ? "#10A37F15" : "#4285F415", color: p.type === "product" ? "#10A37F" : "#4285F4", fontWeight: 500 }}>
+                        <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 10, background: p.type === "product" ? "#10A37F15" : "#4285F415", color: p.type === "product" ? "#10A37F" : "#4285F4", fontWeight: 500, display: "inline-flex", alignItems: "center", gap: 4 }}>
                           {p.type === "product" ? "מוצר" : "שירות"}
+                          <Tooltip text={p.type === "product" ? "מוצר פיזי שהמותג מוכר" : "שירות שהמותג מספק"} />
                         </span>
                       </div>
                       <p style={{ fontSize: 12, color: "#727272", margin: 0 }}>{p.description}</p>
                     </div>
-                    <div style={{ width: 48, height: 48, borderRadius: 10, background: p.score >= 70 ? "#10A37F12" : "#F9F9F9", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <div style={{ width: 48, height: 48, borderRadius: 10, background: p.score >= 70 ? "#10A37F12" : "#F9F9F9", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, position: "relative" }}>
                       <span style={{ fontSize: 16, fontWeight: 700, color: p.score >= 70 ? "#10A37F" : "#000" }}>{p.score}%</span>
+                      <span style={{ position: "absolute", top: 2, left: 2 }}><Tooltip text="ציון נוכחות - אחוז הנראות בתשובות AI" /></span>
                     </div>
                   </div>
 
@@ -312,21 +353,21 @@ export default function ProductsPage() {
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 12 }}>
                     <div style={{ textAlign: "center", padding: "8px 0", background: "#F9F9F9", borderRadius: 8 }}>
                       <div style={{ fontSize: 16, fontWeight: 700, color: "#000" }}>{p.queries}</div>
-                      <div style={{ fontSize: 11, color: "#727272" }}>שאילתות</div>
+                      <div style={{ fontSize: 11, color: "#727272", display: "flex", alignItems: "center", justifyContent: "center", gap: 3 }}>שאילתות <Tooltip text="מספר השאילתות שנבדקו עבור מוצר זה" /></div>
                     </div>
                     <div style={{ textAlign: "center", padding: "8px 0", background: "#F9F9F9", borderRadius: 8 }}>
                       <div style={{ fontSize: 16, fontWeight: 700, color: "#10A37F" }}>{p.mentioned}</div>
-                      <div style={{ fontSize: 11, color: "#727272" }}>מוזכר</div>
+                      <div style={{ fontSize: 11, color: "#727272", display: "flex", alignItems: "center", justifyContent: "center", gap: 3 }}>מוזכר <Tooltip text="בכמה תשובות AI המותג מוזכר" /></div>
                     </div>
                     <div style={{ textAlign: "center", padding: "8px 0", background: p.queries - p.mentioned > 3 ? "#FFF8F0" : "#F9F9F9", borderRadius: 8 }}>
                       <div style={{ fontSize: 16, fontWeight: 700, color: p.queries - p.mentioned > 3 ? "#E07800" : "#000" }}>{p.queries - p.mentioned}</div>
-                      <div style={{ fontSize: 11, color: "#727272" }}>חסר</div>
+                      <div style={{ fontSize: 11, color: "#727272", display: "flex", alignItems: "center", justifyContent: "center", gap: 3 }}>חסר <Tooltip text="שאילתות שבהן המותג לא מוזכר - הזדמנות לשיפור" /></div>
                     </div>
                   </div>
 
                   {/* Top Query */}
                   <div style={{ padding: 12, background: "#F9F9F9", borderRadius: 8, border: thinBorder }}>
-                    <p style={{ fontSize: 11, fontWeight: 600, color: "#10A37F", margin: "0 0 4px" }}>שאילתה מובילה</p>
+                    <p style={{ fontSize: 11, fontWeight: 600, color: "#10A37F", margin: "0 0 4px", display: "flex", alignItems: "center", gap: 4 }}>שאילתה מובילה <Tooltip text="השאילתה עם הנפח הגבוה ביותר עבור מוצר זה" /></p>
                     <p style={{ fontSize: 13, color: "#333", margin: 0 }}>"{p.topQuery}"</p>
                   </div>
 
@@ -358,10 +399,10 @@ export default function ProductsPage() {
                   <thead>
                     <tr style={{ background: "#F9F9F9", borderBottom: "1px solid #BFBFBF" }}>
                       <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>#</th>
-                      <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>שאילתה</th>
-                      <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>שלב</th>
-                      <th style={{ textAlign: "center", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>ChatGPT</th>
-                      <th style={{ textAlign: "center", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>Gemini</th>
+                      <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}><span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>שאילתה <Tooltip text="הטקסט שנשלח למנוע ה-AI" /></span></th>
+                      <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}><span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>שלב <Tooltip text="שלב במסע הלקוח: חשיפה, מחקר, החלטה, תמיכה" /></span></th>
+                      <th style={{ textAlign: "center", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}><span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>ChatGPT <Tooltip text="האם המותג מוזכר בתשובת ChatGPT" /></span></th>
+                      <th style={{ textAlign: "center", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}><span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>Gemini <Tooltip text="האם המותג מוזכר בתשובת Google Gemini" /></span></th>
                       <th style={{ textAlign: "center", padding: "10px 14px", width: 40 }}></th>
                     </tr>
                   </thead>
@@ -439,7 +480,7 @@ export default function ProductsPage() {
           {/* ── Competitors ── */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 32 }}>
             <div style={{ ...card, padding: 24 }}>
-              <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000", margin: "0 0 16px" }}>מתחרים — מוצרים ושירותים</h3>
+              <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000", margin: "0 0 16px", display: "flex", alignItems: "center", gap: 6 }}>מתחרים — מוצרים ושירותים <Tooltip text="ציוני נוכחות AI של המתחרים באותן שאילתות" /></h3>
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                 {COMPETITORS.map((comp, i) => (
                   <div key={i} style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -455,7 +496,7 @@ export default function ProductsPage() {
             </div>
 
             <div style={{ ...card, padding: 24 }}>
-              <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000", margin: "0 0 16px" }}>חולשות מול מתחרים</h3>
+              <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000", margin: "0 0 16px", display: "flex", alignItems: "center", gap: 6 }}>חולשות מול מתחרים <Tooltip text="נושאים שבהם המתחרים מוזכרים יותר מהמותג שלך" /></h3>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {[
                   "חוסר אזכור בשאילתות ביטוח רכב חשמלי",
@@ -475,7 +516,7 @@ export default function ProductsPage() {
 
           {/* ── Coverage by Journey Stage ── */}
           <div style={{ ...card, padding: 24, marginBottom: 32 }}>
-            <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000", margin: "0 0 20px" }}>כיסוי לפי שלב במסע לקוח</h3>
+            <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000", margin: "0 0 20px", display: "flex", alignItems: "center", gap: 6 }}>כיסוי לפי שלב במסע לקוח <Tooltip text="אחוז הנוכחות של המותג בכל שלב במסע הלקוח" /></h3>
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               {[
                 { name: "חשיפה", percent: 72, count: 18 },

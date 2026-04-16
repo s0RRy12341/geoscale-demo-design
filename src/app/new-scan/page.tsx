@@ -10,6 +10,45 @@ import { useState, useEffect, useCallback, useRef } from "react";
 // Screen 4: The Scan Process (queries → ChatGPT → Gemini → Analysis)
 // ============================================================
 
+// ── Ahrefs-style Tooltip ──
+function Tooltip({ text }: { text: string }) {
+  const [show, setShow] = useState(false);
+  return (
+    <span
+      style={{ position: "relative", display: "inline-flex", alignItems: "center", cursor: "help" }}
+      onMouseEnter={() => setShow(true)}
+      onMouseLeave={() => setShow(false)}
+    >
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#B0B7BF" strokeWidth="2" style={{ display: "block", transition: "stroke 150ms" }} onMouseEnter={(e) => { (e.currentTarget as SVGElement).style.stroke = "#666"; }} onMouseLeave={(e) => { (e.currentTarget as SVGElement).style.stroke = "#B0B7BF"; }}>
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 16v-4M12 8h.01" />
+      </svg>
+      <div style={{
+        position: "absolute",
+        bottom: "calc(100% + 10px)",
+        right: "50%",
+        transform: "translateX(50%)",
+        background: "#1B1F23",
+        color: "#FFFFFF",
+        fontSize: 12,
+        lineHeight: 1.55,
+        padding: "8px 12px",
+        borderRadius: 6,
+        whiteSpace: "nowrap",
+        maxWidth: 280,
+        zIndex: 100,
+        pointerEvents: "none",
+        opacity: show ? 1 : 0,
+        transition: "opacity 150ms ease",
+        boxShadow: "0 4px 14px rgba(0,0,0,0.15)",
+      }}>
+        {text}
+        <span style={{ position: "absolute", bottom: -4, right: "50%", transform: "translateX(50%) rotate(45deg)", width: 8, height: 8, background: "#1B1F23" }} />
+      </div>
+    </span>
+  );
+}
+
 // ── Brand Constants (Geoscale exact palette) ──
 const BRAND = {
   teal: "#10A37F",
@@ -192,7 +231,7 @@ function Screen1({ onSubmit }: { onSubmit: (domain: string, brand: string) => vo
         />
         <div className="relative max-w-2xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: BRAND.black }}>
-            בדיקת נוכחות ב-AI
+            בדיקת נוכחות ב-AI <Tooltip text="בודק איך ChatGPT ו-Gemini מציגים את המותג שלכם בתשובות" />
           </h1>
           <p className="text-lg" style={{ color: BRAND.gray600 }}>
             בדקו איך מודלי AI (GPT, Gemini) מכירים וממליצים על המותג שלכם — לכל קהל יעד
@@ -214,13 +253,13 @@ function Screen1({ onSubmit }: { onSubmit: (domain: string, brand: string) => vo
               <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" />
               <line x1="7" y1="7" x2="7.01" y2="7" />
             </svg>
-            <span className="font-semibold text-lg">פרטי המותג</span>
+            <span className="font-semibold text-lg">פרטי המותג <Tooltip text="המידע ישמש לזיהוי המותג שלכם בתשובות מנועי AI" /></span>
           </div>
 
           {/* Domain Field */}
           <div className="mb-6">
             <label className="block text-sm font-medium mb-2" style={{ color: BRAND.gray700 }}>
-              כתובת האתר
+              כתובת האתר <Tooltip text="הדומיין הראשי של העסק - נסרק לזיהוי תוכן ומיצוב" />
             </label>
             <div className="relative">
               <input
@@ -246,7 +285,7 @@ function Screen1({ onSubmit }: { onSubmit: (domain: string, brand: string) => vo
           {/* Brand Name Field */}
           <div className="mb-8">
             <label className="block text-sm font-medium mb-2" style={{ color: BRAND.gray700 }}>
-              שם המותג
+              שם המותג <Tooltip text="השם שנחפש בתשובות ה-AI - הזינו בדיוק כפי שהלקוחות מכירים אתכם" />
             </label>
             <div className="relative">
               <input
@@ -280,7 +319,7 @@ function Screen1({ onSubmit }: { onSubmit: (domain: string, brand: string) => vo
         {/* What's New Box */}
         <div className="mt-6 bg-white rounded-[10px] border border-gray-200 p-6">
           <h3 className="font-semibold mb-3" style={{ color: BRAND.teal }}>
-            מה חדש?
+            מה חדש? <Tooltip text="עדכונים אחרונים במערכת הסריקה" />
           </h3>
           <ul className="space-y-2 text-sm" style={{ color: BRAND.gray600 }}>
             <li>המערכת מייצרת <strong>קהלי יעד רלוונטיים</strong> למותג</li>
@@ -550,8 +589,8 @@ function PersonaCard({ persona, index }: { persona: typeof MOCK_PERSONAS[0]; ind
       style={{ animationDelay: `${index * 0.1}s`, animation: "fade-in-up 0.5s ease-out forwards", opacity: 0 }}
     >
       <div className="flex items-start justify-between mb-3">
-        <span className="text-xs font-medium px-2 py-0.5 rounded-full" style={{ background: BRAND.gray100, color: BRAND.gray500 }}>
-          פרסונה
+        <span className="text-xs font-medium px-2 py-0.5 rounded-full flex items-center gap-1" style={{ background: BRAND.gray100, color: BRAND.gray500 }}>
+          פרסונה <Tooltip text="דמות מייצגת של קהל יעד שנוצרה מניתוח האתר שלכם" />
         </span>
         <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${persona.iconColor}15` }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={persona.iconColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -580,10 +619,10 @@ function PersonaCard({ persona, index }: { persona: typeof MOCK_PERSONAS[0]; ind
           />
         </div>
         <span
-          className="text-sm font-bold"
+          className="text-sm font-bold flex items-center gap-1"
           style={{ color: persona.match >= 90 ? BRAND.teal : BRAND.gray600 }}
         >
-          {persona.match}%
+          {persona.match}% <Tooltip text="ציון התאמה - עד כמה הפרסונה רלוונטית למותג לפי ניתוח האתר" />
         </span>
       </div>
 
@@ -644,7 +683,7 @@ function Screen3({ onStartScan }: { onStartScan: () => void }) {
       >
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-3xl md:text-4xl font-bold mb-2" style={{ color: BRAND.black }}>
-            בדיקת נוכחות ב-AI
+            בדיקת נוכחות ב-AI <Tooltip text="בחרו אילו קהלי יעד לבדוק במנועי AI" />
           </h1>
           <p className="text-sm" style={{ color: BRAND.gray500 }}>
             בדקו איך מודלי AI (GPT, Gemini) מכירים וממליצים על המותג שלכם — לכל קהל יעד
@@ -667,7 +706,7 @@ function Screen3({ onStartScan }: { onStartScan: () => void }) {
               <path d="M23 21v-2a4 4 0 00-3-3.87" />
               <path d="M16 3.13a4 4 0 010 7.75" />
             </svg>
-            <span className="font-semibold">בחירת קהלי יעד</span>
+            <span className="font-semibold">בחירת קהלי יעד <Tooltip text="המערכת יצרה פרסונות על בסיס ניתוח האתר - בחרו למי לבדוק" /></span>
           </div>
           <span className="flex items-center gap-1 text-sm cursor-pointer" style={{ color: BRAND.gray500 }}>
             <ArrowRight size={14} color={BRAND.gray500} />
@@ -678,7 +717,7 @@ function Screen3({ onStartScan }: { onStartScan: () => void }) {
         {/* Info box */}
         <div className="bg-gray-50 rounded-xl p-4 mb-4 border border-gray-100">
           <h4 className="font-semibold text-sm mb-1" style={{ color: BRAND.teal }}>
-            למה זה חשוב?
+            למה זה חשוב? <Tooltip text="קהלים שונים מחפשים אחרת - הסריקה מותאמת לכל פרסונה" />
           </h4>
           <p className="text-xs" style={{ color: BRAND.gray500 }}>
             כל קהל יעד מחפש אחרת. הסריקה בודקת איך מנועי AI מציגים את המותג שלכם עבור סוגי משתמשים שונים. בחרו את הרלוונטיים לכם.
@@ -687,14 +726,14 @@ function Screen3({ onStartScan }: { onStartScan: () => void }) {
 
         {/* Counter */}
         <div className="flex items-center justify-between mb-4">
-          <span className="text-xs" style={{ color: BRAND.gray400 }}>
-            ~ 35 שאילתות יבדקו
+          <span className="text-xs flex items-center gap-1" style={{ color: BRAND.gray400 }}>
+            ~ 35 שאילתות יבדקו <Tooltip text="מספר השאילתות הכולל שיישלחו למנועי AI עבור כל הקהלים שנבחרו" />
           </span>
           <span
-            className="text-sm font-semibold px-3 py-1 rounded-full"
+            className="text-sm font-semibold px-3 py-1 rounded-full flex items-center gap-1"
             style={{ background: "#F9F9F9", color: BRAND.tealDark }}
           >
-            5 / 5 נבחר
+            5 / 5 נבחר <Tooltip text="מספר קהלי היעד שנבחרו לסריקה מתוך הסך הכולל" />
           </span>
         </div>
       </div>
@@ -716,7 +755,7 @@ function Screen3({ onStartScan }: { onStartScan: () => void }) {
               background: "#000",
             }}
           >
-            <span>התחלת סריקה</span>
+            <span className="flex items-center gap-1">התחלת סריקה <Tooltip text="שולח את השאילתות ל-ChatGPT ו-Gemini ומנתח את התוצאות" /></span>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="8" />
               <path d="M21 21l-4.35-4.35" />
@@ -926,7 +965,7 @@ function AIEngineCard({
               {icon}
             </div>
             <div>
-              <h3 className="font-bold text-base">{name}</h3>
+              <h3 className="font-bold text-base flex items-center gap-1">{name} <Tooltip text={name === "ChatGPT" ? "סריקת תשובות ChatGPT של OpenAI עבור השאילתות" : name === "Gemini" ? "סריקת תשובות Gemini של Google עבור השאילתות" : `סריקת ${name}`} /></h3>
               <p className="text-xs" style={{ color: active ? color : BRAND.gray400 }}>
                 {active ? "סורק..." : progress >= 100 ? <span className="flex items-center gap-1">הושלם <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round"><path d="M20 6L9 17l-5-5"/></svg></span> : "ממתין"}
               </p>
@@ -1111,7 +1150,7 @@ function Screen4({ brandName }: { brandName: string }) {
       >
         <div className="max-w-3xl mx-auto text-center">
           <h1 className="text-3xl font-bold mb-1" style={{ color: BRAND.black }}>
-            בדיקת נוכחות ב-AI
+            בדיקת נוכחות ב-AI <Tooltip text="סריקה חיה של מנועי AI - בודק אזכורים, סנטימנט ומיקום המותג" />
           </h1>
           <p className="text-sm" style={{ color: BRAND.gray500 }}>
             בדקו איך מודלי AI (GPT, Gemini) מכירים וממליצים על המותג שלכם — לכל קהל יעד
@@ -1202,8 +1241,8 @@ function Screen4({ brandName }: { brandName: string }) {
             </div>
 
             {/* Scanning for X audiences */}
-            <p className="text-xs mt-3" style={{ color: BRAND.gray400 }}>
-              סורק עבור 5 קהלי יעד
+            <p className="text-xs mt-3 flex items-center justify-center gap-1" style={{ color: BRAND.gray400 }}>
+              סורק עבור 5 קהלי יעד <Tooltip text="כל קהל יעד נבדק בנפרד עם שאילתות מותאמות אישית" />
             </p>
           </div>
 
@@ -1258,8 +1297,8 @@ function Screen4({ brandName }: { brandName: string }) {
             {/* QUERIES PHASE */}
             {phase === "queries" && (
               <div className="animate-fade-in-up">
-                <h3 className="text-sm font-semibold mb-3" style={{ color: BRAND.gray600 }}>
-                  שאילתות נוצרות ({queryIndex + 1}/{MOCK_QUERIES.length})
+                <h3 className="text-sm font-semibold mb-3 flex items-center gap-1" style={{ color: BRAND.gray600 }}>
+                  שאילתות נוצרות ({queryIndex + 1}/{MOCK_QUERIES.length}) <Tooltip text="שאילתות חיפוש שנוצרות אוטומטית לפי תחום העסק וקהלי היעד" />
                 </h3>
                 <QueryStream queries={MOCK_QUERIES} currentIndex={queryIndex} />
               </div>
@@ -1344,7 +1383,7 @@ function Screen4({ brandName }: { brandName: string }) {
                       </svg>
                     </div>
                     <div>
-                      <h4 className="font-bold text-sm">מנתח תוצאות</h4>
+                      <h4 className="font-bold text-sm flex items-center gap-1">מנתח תוצאות <Tooltip text="משלב את כל התשובות מ-ChatGPT ו-Gemini לציון נוכחות אחד" /></h4>
                       <p className="text-xs" style={{ color: BRAND.gray500 }}>
                         משווה בין מודלים ומחשב ציוני נוכחות
                       </p>
@@ -1354,11 +1393,11 @@ function Screen4({ brandName }: { brandName: string }) {
                   {/* Analysis items appearing one by one */}
                   <div className="space-y-2">
                     {[
-                      { label: "סיווג אזכורים", done: analysisProgress > 20 },
-                      { label: "ניתוח סנטימנט", done: analysisProgress > 40 },
-                      { label: "השוואת מודלים", done: analysisProgress > 60 },
-                      { label: "חישוב ציון נוכחות", done: analysisProgress > 80 },
-                      { label: "הפקת תובנות", done: analysisProgress >= 100 },
+                      { label: "סיווג אזכורים", done: analysisProgress > 20, tip: "מסווג אם המותג הוזכר, הומלץ, או לא נמצא" },
+                      { label: "ניתוח סנטימנט", done: analysisProgress > 40, tip: "בודק אם האזכור חיובי, שלילי או ניטרלי" },
+                      { label: "השוואת מודלים", done: analysisProgress > 60, tip: "משווה תוצאות בין ChatGPT ל-Gemini" },
+                      { label: "חישוב ציון נוכחות", done: analysisProgress > 80, tip: "ציון 0-100 המשקף את חוזק הנוכחות במנועי AI" },
+                      { label: "הפקת תובנות", done: analysisProgress >= 100, tip: "המלצות פעולה לשיפור הנוכחות שלכם ב-AI" },
                     ].map((item, i) => (
                       <div
                         key={item.label}
@@ -1382,8 +1421,8 @@ function Screen4({ brandName }: { brandName: string }) {
                             }}
                           />
                         )}
-                        <span style={{ color: item.done ? BRAND.gray700 : BRAND.gray400 }}>
-                          {item.label}
+                        <span className="flex items-center gap-1" style={{ color: item.done ? BRAND.gray700 : BRAND.gray400 }}>
+                          {item.label} <Tooltip text={item.tip} />
                         </span>
                       </div>
                     ))}
@@ -1406,8 +1445,8 @@ function Screen4({ brandName }: { brandName: string }) {
                 <h3 className="text-2xl font-bold mb-2" style={{ color: BRAND.black }}>
                   הסריקה הושלמה!
                 </h3>
-                <p className="mb-6" style={{ color: BRAND.gray500 }}>
-                  נסרקו 10 שאילתות על פני 5 קהלי יעד ב-ChatGPT וב-Gemini
+                <p className="mb-6 flex items-center justify-center gap-1" style={{ color: BRAND.gray500 }}>
+                  נסרקו 10 שאילתות על פני 5 קהלי יעד ב-ChatGPT וב-Gemini <Tooltip text="סה״כ שאילתות שנבדקו בשני המנועים עבור כל קהלי היעד שנבחרו" />
                 </p>
                 <button
                   className="px-8 py-3 rounded-xl text-white font-semibold transition-all hover:scale-[1.02]"
