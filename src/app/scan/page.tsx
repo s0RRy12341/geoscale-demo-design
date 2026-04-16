@@ -180,30 +180,43 @@ function Tooltip({ text }: { text: string }) {
       onMouseEnter={() => setShow(true)}
       onMouseLeave={() => setShow(false)}
     >
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A2A9B0" strokeWidth="2" style={{ display: "block" }}>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B0B7BF" strokeWidth="2" style={{ display: "block", transition: "stroke 150ms" }} onMouseEnter={(e) => { (e.currentTarget as SVGElement).style.stroke = "#666"; }} onMouseLeave={(e) => { (e.currentTarget as SVGElement).style.stroke = "#B0B7BF"; }}>
         <circle cx="12" cy="12" r="10" />
         <path d="M12 16v-4M12 8h.01" />
       </svg>
-      {show && (
+      <div style={{
+        position: "absolute",
+        bottom: "calc(100% + 10px)",
+        right: "50%",
+        transform: "translateX(50%)",
+        background: "#1B1F23",
+        color: "#FFFFFF",
+        fontSize: 12,
+        lineHeight: 1.55,
+        padding: "8px 12px",
+        borderRadius: 6,
+        whiteSpace: "nowrap",
+        maxWidth: 280,
+        zIndex: 100,
+        pointerEvents: "none",
+        opacity: show ? 1 : 0,
+        transition: "opacity 150ms ease",
+        boxShadow: "0 4px 14px rgba(0,0,0,0.15)",
+        letterSpacing: "-0.01em",
+      }}>
+        <span style={{ whiteSpace: "normal" }}>{text}</span>
         <div style={{
           position: "absolute",
-          bottom: "calc(100% + 8px)",
+          bottom: -5,
           right: "50%",
           transform: "translateX(50%)",
-          background: "#333333",
-          color: "#FFFFFF",
-          fontSize: 12,
-          lineHeight: 1.5,
-          padding: "8px 12px",
-          borderRadius: 8,
-          whiteSpace: "nowrap",
-          maxWidth: 260,
-          zIndex: 100,
-          pointerEvents: "none",
-        }}>
-          <span style={{ whiteSpace: "normal" }}>{text}</span>
-        </div>
-      )}
+          width: 10,
+          height: 10,
+          background: "#1B1F23",
+          borderRadius: 1,
+          rotate: "45deg",
+        }} />
+      </div>
     </span>
   );
 }
@@ -260,8 +273,9 @@ function ChangeIndicator({ value, unit, invertColor }: { value: number; unit: st
 }
 
 function TimeSeriesChart({ period }: { period: "7" | "30" | "90" }) {
+  const [hoverIdx, setHoverIdx] = useState<number | null>(null);
   const chartW = 1000;
-  const chartH = 240;
+  const chartH = 260;
   const padTop = 20;
   const padBottom = 30;
   const padLeft = 40;
@@ -284,41 +298,69 @@ function TimeSeriesChart({ period }: { period: "7" | "30" | "90" }) {
   const gptAreaPoints = `${getX(0)},${getY(data.gpt[0])} ${gptPoints} ${getX(data.gpt.length - 1)},${padTop + innerH} ${getX(0)},${padTop + innerH}`;
   const geminiAreaPoints = `${getX(0)},${getY(data.gemini[0])} ${geminiPoints} ${getX(data.gemini.length - 1)},${padTop + innerH} ${getX(0)},${padTop + innerH}`;
 
-  // Horizontal grid lines
   const gridLines = 5;
   const gridValues = Array.from({ length: gridLines }, (_, i) => minVal + (range / (gridLines - 1)) * i);
 
   return (
-    <svg width="100%" height={chartH} viewBox={`0 0 ${chartW} ${chartH}`} preserveAspectRatio="xMidYMid meet">
-      {/* Grid lines */}
-      {gridValues.map((v, i) => (
-        <g key={i}>
-          <line x1={padLeft} y1={getY(v)} x2={chartW - padRight} y2={getY(v)} stroke="#F9F9F9" strokeWidth="1" />
-          <text x={padLeft - 8} y={getY(v) + 4} textAnchor="end" fill="#A2A9B0" fontSize="11" fontFamily="Inter, sans-serif">{Math.round(v)}%</text>
-        </g>
-      ))}
-
-      {/* Areas */}
-      <polygon points={geminiAreaPoints} fill="#4285F4" opacity="0.08" />
-      <polygon points={gptAreaPoints} fill="#10A37F" opacity="0.1" />
-
-      {/* Lines */}
-      <polyline points={geminiPoints} fill="none" stroke="#4285F4" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
-      <polyline points={gptPoints} fill="none" stroke="#10A37F" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
-
-      {/* Dots */}
-      {data.gpt.map((v, i) => (
-        <circle key={`gpt-${i}`} cx={getX(i)} cy={getY(v)} r="4" fill="#10A37F" />
-      ))}
-      {data.gemini.map((v, i) => (
-        <circle key={`gem-${i}`} cx={getX(i)} cy={getY(v)} r="4" fill="#4285F4" />
-      ))}
-
-      {/* X-axis labels */}
-      {data.labels.map((label, i) => (
-        <text key={i} x={getX(i)} y={chartH - 5} textAnchor="middle" fill="#A2A9B0" fontSize="11" fontFamily="Inter, sans-serif">{label}</text>
-      ))}
-    </svg>
+    <div style={{ position: "relative" }}>
+      <svg width="100%" height={chartH} viewBox={`0 0 ${chartW} ${chartH}`} preserveAspectRatio="xMidYMid meet">
+        {gridValues.map((v, i) => (
+          <g key={i}>
+            <line x1={padLeft} y1={getY(v)} x2={chartW - padRight} y2={getY(v)} stroke="#F0F0F0" strokeWidth="1" />
+            <text x={padLeft - 8} y={getY(v) + 4} textAnchor="end" fill="#A2A9B0" fontSize="11" fontFamily="Inter, sans-serif">{Math.round(v)}%</text>
+          </g>
+        ))}
+        <polygon points={geminiAreaPoints} fill="#4285F4" opacity="0.06" />
+        <polygon points={gptAreaPoints} fill="#10A37F" opacity="0.08" />
+        <polyline points={geminiPoints} fill="none" stroke="#4285F4" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+        <polyline points={gptPoints} fill="none" stroke="#10A37F" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+        {hoverIdx !== null && (
+          <line x1={getX(hoverIdx)} y1={padTop} x2={getX(hoverIdx)} y2={padTop + innerH} stroke="#BFBFBF" strokeWidth="1" strokeDasharray="4 3" />
+        )}
+        {data.gpt.map((v, i) => (
+          <circle key={`gpt-${i}`} cx={getX(i)} cy={getY(v)} r={hoverIdx === i ? 6 : 3.5} fill="#10A37F" stroke="#fff" strokeWidth={hoverIdx === i ? 2 : 0} style={{ transition: "r 150ms" }} />
+        ))}
+        {data.gemini.map((v, i) => (
+          <circle key={`gem-${i}`} cx={getX(i)} cy={getY(v)} r={hoverIdx === i ? 6 : 3.5} fill="#4285F4" stroke="#fff" strokeWidth={hoverIdx === i ? 2 : 0} style={{ transition: "r 150ms" }} />
+        ))}
+        {data.labels.map((label, i) => (
+          <text key={i} x={getX(i)} y={chartH - 5} textAnchor="middle" fill="#A2A9B0" fontSize="11" fontFamily="Inter, sans-serif">{label}</text>
+        ))}
+        {data.labels.map((_, i) => (
+          <rect key={`hover-${i}`} x={getX(i) - (innerW / data.labels.length) / 2} y={padTop} width={innerW / data.labels.length} height={innerH} fill="transparent" onMouseEnter={() => setHoverIdx(i)} onMouseLeave={() => setHoverIdx(null)} />
+        ))}
+      </svg>
+      {hoverIdx !== null && (
+        <div style={{
+          position: "absolute",
+          top: 10,
+          left: `${(getX(hoverIdx) / chartW) * 100}%`,
+          transform: "translateX(-50%)",
+          background: "#1B1F23",
+          color: "#fff",
+          padding: "10px 14px",
+          borderRadius: 8,
+          fontSize: 12,
+          lineHeight: 1.6,
+          zIndex: 10,
+          pointerEvents: "none",
+          boxShadow: "0 4px 14px rgba(0,0,0,0.2)",
+          whiteSpace: "nowrap",
+        }}>
+          <div style={{ fontWeight: 600, marginBottom: 4 }}>{data.labels[hoverIdx]}</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <span style={{ width: 8, height: 8, borderRadius: 4, background: "#10A37F", display: "inline-block" }} />
+            ChatGPT: {data.gpt[hoverIdx]}%
+            {hoverIdx > 0 && <span style={{ color: data.gpt[hoverIdx] >= data.gpt[hoverIdx - 1] ? "#4ADE80" : "#F87171", fontSize: 11 }}>{data.gpt[hoverIdx] >= data.gpt[hoverIdx - 1] ? "+" : ""}{data.gpt[hoverIdx] - data.gpt[hoverIdx - 1]}%</span>}
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <span style={{ width: 8, height: 8, borderRadius: 4, background: "#4285F4", display: "inline-block" }} />
+            Gemini: {data.gemini[hoverIdx]}%
+            {hoverIdx > 0 && <span style={{ color: data.gemini[hoverIdx] >= data.gemini[hoverIdx - 1] ? "#4ADE80" : "#F87171", fontSize: 11 }}>{data.gemini[hoverIdx] >= data.gemini[hoverIdx - 1] ? "+" : ""}{data.gemini[hoverIdx] - data.gemini[hoverIdx - 1]}%</span>}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -336,6 +378,46 @@ function StageBadge({ stage }: { stage: string }) {
   return (
     <span style={{ display: "inline-flex", fontSize: 12, fontWeight: 500, padding: "2px 8px", borderRadius: 10, border: "1px solid #DDDDDD", background: "#F9F9F9", color: "#333333" }}>
       {stage}
+    </span>
+  );
+}
+
+function AIEngineLogo({ engine, size = 18 }: { engine: "gpt" | "gemini" | "perplexity"; size?: number }) {
+  if (engine === "gpt") return <svg width={size} height={size} viewBox="0 0 24 24" fill="#10A37F"><path d="M22.282 9.821a5.985 5.985 0 00-.516-4.91 6.046 6.046 0 00-6.51-2.9A6.065 6.065 0 0011.702.418 6.004 6.004 0 005.354 2.08a5.974 5.974 0 00-3.994 2.9 6.042 6.042 0 00.743 7.097 5.98 5.98 0 00.51 4.911 6.051 6.051 0 006.515 2.9A5.985 5.985 0 0013.702 22a6.003 6.003 0 006.349-1.662 5.98 5.98 0 003.994-2.9 6.042 6.042 0 00-.743-7.097l-.02-.02z" /></svg>;
+  if (engine === "gemini") return <svg width={size} height={size} viewBox="0 0 24 24"><defs><linearGradient id="gemG" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#4285F4" /><stop offset="100%" stopColor="#886FBF" /></linearGradient></defs><path d="M12 2C12 2 14.5 8.5 17 11S24 12 24 12 17.5 14.5 15 17 12 24 12 24 9.5 17.5 7 15 0 12 0 12 6.5 9.5 9 7 12 2 12 2z" fill="url(#gemG)" /></svg>;
+  return <svg width={size} height={size} viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#1A1A2E" /><path d="M7 12a5 5 0 005 5 5 5 0 005-5 5 5 0 00-5-5 5 5 0 00-5 5z" fill="none" stroke="#22D3EE" strokeWidth="1.5" /><circle cx="12" cy="7" r="1.5" fill="#22D3EE" /></svg>;
+}
+
+function MentionIcon({ mentioned, engine }: { mentioned: boolean; engine: "gpt" | "gemini" | "perplexity" }) {
+  const [hover, setHover] = useState(false);
+  const engineNames = { gpt: "ChatGPT", gemini: "Gemini", perplexity: "Perplexity" };
+  return (
+    <span
+      style={{ position: "relative", display: "inline-flex", alignItems: "center", opacity: mentioned ? 1 : 0.25, cursor: "default" }}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+    >
+      <AIEngineLogo engine={engine} size={20} />
+      <div style={{
+        position: "absolute",
+        bottom: "calc(100% + 8px)",
+        right: "50%",
+        transform: "translateX(50%)",
+        background: "#1B1F23",
+        color: "#fff",
+        fontSize: 11,
+        padding: "5px 10px",
+        borderRadius: 5,
+        whiteSpace: "nowrap",
+        zIndex: 100,
+        pointerEvents: "none",
+        opacity: hover ? 1 : 0,
+        transition: "opacity 150ms ease",
+        boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+      }}>
+        {mentioned ? `מוזכר ב-${engineNames[engine]}` : `לא מוזכר ב-${engineNames[engine]}`}
+        <div style={{ position: "absolute", bottom: -4, right: "50%", transform: "translateX(50%)", width: 8, height: 8, background: "#1B1F23", rotate: "45deg", borderRadius: 1 }} />
+      </div>
     </span>
   );
 }
@@ -461,27 +543,26 @@ export default function ScanPage() {
         </div>
       </header>
 
-      {/* -- Brand Header (compact) -- */}
+      {/* -- Brand Header (centered like Ahrefs) -- */}
       <div style={{ background: "#FFFFFF", borderBottom: "1px solid #BFBFBF" }}>
-        <div style={{ maxWidth: 1300, margin: "0 auto", padding: "16px 24px" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-              <ProgressRing percent={76} size={60} strokeWidth={5} />
-              <div>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-                  <h1 style={{ fontSize: 26, fontWeight: 600, color: "#000000", margin: 0 }}>All4Horses</h1>
-                  <span style={{ fontSize: 12, fontWeight: 500, padding: "3px 10px", borderRadius: 10, border: "1px solid #10A37F", color: "#10A37F", background: "#FFFFFF" }}>נוכחות חזקה</span>
-                </div>
-                <p style={{ fontSize: 13, color: "#727272", margin: "2px 0 0", direction: "ltr", textAlign: "right" }}>all4horses.co.il</p>
+        <div style={{ maxWidth: 1300, margin: "0 auto", padding: "20px 24px" }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+              <img src="https://www.google.com/s2/favicons?domain=all4horses.co.il&sz=64" alt="" width={36} height={36} style={{ borderRadius: 8, border: "1px solid #E5E5E5" }} />
+              <div style={{ textAlign: "center" }}>
+                <h1 style={{ fontSize: 22, fontWeight: 600, color: "#000000", margin: 0 }}>All4Horses</h1>
+                <p style={{ fontSize: 13, color: "#727272", margin: "2px 0 0", direction: "ltr" }}>all4horses.co.il</p>
               </div>
+              <ProgressRing percent={76} size={48} strokeWidth={4} />
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <HoverButton href="/" style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 18px", background: "#FFFFFF", color: "#333333", fontSize: 13, fontWeight: 500, border: "1px solid #BFBFBF", borderRadius: 9, cursor: "pointer" }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /></svg>
+            <p style={{ fontSize: 12, color: "#999", margin: 0, textAlign: "center" }}>החברה המובילה לרכיבה טיפולית ופעילויות סוסים בישראל</p>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 4 }}>
+              <HoverButton href="/" style={{ display: "flex", alignItems: "center", gap: 6, padding: "7px 16px", background: "#FFFFFF", color: "#333333", fontSize: 12, fontWeight: 500, border: "1px solid #BFBFBF", borderRadius: 8, cursor: "pointer" }}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /></svg>
                 לוח בקרה
               </HoverButton>
-              <HoverButton filled href="/new-scan" style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 18px", background: "#000000", color: "#FFFFFF", fontSize: 13, fontWeight: 600, border: "1px solid #000000", borderRadius: 9, cursor: "pointer" }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>
+              <HoverButton filled href="/new-scan" style={{ display: "flex", alignItems: "center", gap: 6, padding: "7px 16px", background: "#000000", color: "#FFFFFF", fontSize: 12, fontWeight: 600, border: "1px solid #000000", borderRadius: 8, cursor: "pointer" }}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>
                 סריקה חדשה
               </HoverButton>
             </div>
@@ -576,25 +657,22 @@ export default function ScanPage() {
               </div>
             </div>
 
-            {/* 4 Stat Cards with change indicators + tooltips */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
+            {/* 4 Stat Cards — compact GA style */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
               {[
-                { label: "שיעור אזכור", value: "76%", iconPath: <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />, change: 4.2, unit: "%", invertColor: false },
-                { label: "מיקום ממוצע", value: "#9.7", iconPath: <path d="M12 20V10M18 20V4M6 20v-4" />, change: -1.3, unit: "", invertColor: true },
-                { label: "איכות ציטוט", value: "70%", iconPath: <path d="M10 11V6l-6 6 6 6v-5c5.523 0 10 4.477 10 10 0-8.284-4.477-15-10-15z" />, change: 2.1, unit: "%", invertColor: false },
-                { label: "סיכון מוניטין", value: `${reputationValue}%`, iconPath: <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />, change: 0, unit: "%", invertColor: false },
+                { label: "שיעור אזכור", value: "76%", change: 4.2, unit: "%", invertColor: false },
+                { label: "מיקום ממוצע", value: "9.7", change: -1.3, unit: "", invertColor: true },
+                { label: "איכות ציטוט", value: "70%", change: 2.1, unit: "%", invertColor: false },
+                { label: "סיכון מוניטין", value: `${reputationValue}%`, change: 0, unit: "%", invertColor: false },
               ].map((stat, i) => (
-                <div key={i} style={{ ...card, padding: 20 }}>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10A37F" strokeWidth="2">{stat.iconPath}</svg>
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
-                    <span style={{ fontSize: 24, fontWeight: 600, color: stat.label === "סיכון מוניטין" ? reputationColor : "#000000" }}>{stat.value}</span>
-                    {stat.change !== 0 && <ChangeIndicator value={stat.change} unit={stat.unit} invertColor={stat.invertColor} />}
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <span style={{ fontSize: 13, color: "#727272" }}>{stat.label}</span>
+                <div key={i} style={{ ...card, padding: "14px 16px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 6 }}>
+                    <span style={{ fontSize: 12, color: "#727272", fontWeight: 500 }}>{stat.label}</span>
                     <Tooltip text={METRIC_TOOLTIPS[stat.label] || ""} />
+                  </div>
+                  <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+                    <span style={{ fontSize: 28, fontWeight: 700, color: stat.label === "סיכון מוניטין" ? reputationColor : "#000000", letterSpacing: "-1px" }}>{stat.value}</span>
+                    {stat.change !== 0 && <ChangeIndicator value={stat.change} unit={stat.unit} invertColor={stat.invertColor} />}
                   </div>
                 </div>
               ))}
@@ -778,6 +856,59 @@ export default function ScanPage() {
               </div>
             </div>
 
+            {/* AI INSIGHTS (1.11) */}
+            <div style={{ ...card, padding: 24, background: "#FAFBFC", borderRight: "4px solid #10A37F" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10A37F" strokeWidth="2"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
+                <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000", margin: 0 }}>תובנות AI</h3>
+                <Tooltip text="תובנות שנוצרו אוטומטית מניתוח הסריקה האחרונה" />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {[
+                  { type: "warning", text: "שים לב — יש ירידה ב-3 ביטויים מרכזיים (\"שיעורי רכיבה למתחילים\", \"ציוד רכיבה לילדים\", \"חוות סוסים עם לינה\"). מומלץ לחזק את התוכן בנושאים אלה." },
+                  { type: "opportunity", text: "יש לך 4 שאילתות שאתה לא מופיע בטופ 5 — צור תכנים ייעודיים לשאילתות: \"מענק סל שיקום לרכיבה טיפולית\", \"חוות סוסים ליד ירושלים\", \"חוג רכיבה שבועי\", \"רכיבה טיפולית עלויות\"." },
+                  { type: "insight", text: "יש עלייה בגרף GEO (+4.2%) שמקבילה ליציבות ב-SEO — תשקיע ב-SEO כדי לקדם GEO, כי GEO תלוי ב-SEO. ביטויים חזקים ב-SEO מגדילים את הסיכוי לאזכור ב-AI." },
+                  { type: "positive", text: "הציון שלך ב-Gemini (73%) גבוה מהממוצע בתחום (52%). המשך בפעילות התוכן הנוכחית — זה עובד." },
+                ].map((insight, i) => {
+                  const colors = { warning: { bg: "#FEF3C7", border: "#F59E0B", icon: "⚠" }, opportunity: { bg: "#DBEAFE", border: "#3B82F6", icon: "🎯" }, insight: { bg: "#F3E8FF", border: "#8B5CF6", icon: "💡" }, positive: { bg: "#D1FAE5", border: "#10B981", icon: "✓" } };
+                  const c = colors[insight.type as keyof typeof colors];
+                  return (
+                    <div key={i} style={{ padding: "10px 14px", background: c.bg + "40", borderRight: `3px solid ${c.border}`, borderRadius: 8, fontSize: 13, lineHeight: 1.6, color: "#333" }}>
+                      {insight.text}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* AI SUMMARY (1.12) */}
+            <div style={{ ...card, padding: 24 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+                <h3 style={{ fontSize: 15, fontWeight: 600, color: "#000", margin: 0 }}>AI Summary — מה המנועים אומרים עליכם</h3>
+                <Tooltip text="סיכום התשובות שמנועי AI מחזירים כשנשאלים על המותג שלך" />
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                <div style={{ border: thinBorder, borderRadius: 10, padding: 16 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+                    <AIEngineLogo engine="gpt" size={18} />
+                    <span style={{ fontSize: 13, fontWeight: 600, color: "#10A37F" }}>ChatGPT Summary</span>
+                  </div>
+                  <p style={{ fontSize: 13, lineHeight: 1.7, color: "#333", margin: 0 }}>
+                    &ldquo;All4Horses היא חוות סוסים מובילה בישראל, המתמחה ברכיבה טיפולית לילדים עם צרכים מיוחדים. החווה מציעה תוכניות מותאמות אישית לילדים עם ADHD ואוטיזם, בהנחיית צוות מטפלים מוסמכים. ציון 4.8/5 בביקורות גוגל.&rdquo;
+                  </p>
+                </div>
+                <div style={{ border: thinBorder, borderRadius: 10, padding: 16 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+                    <AIEngineLogo engine="gemini" size={18} />
+                    <span style={{ fontSize: 13, fontWeight: 600, color: "#4285F4" }}>Gemini Summary</span>
+                  </div>
+                  <p style={{ fontSize: 13, lineHeight: 1.7, color: "#333", margin: 0 }}>
+                    &ldquo;All4Horses מספקת שירותי רכיבה טיפולית ופעילויות סוסים באזור המרכז. החווה ידועה בגישה המקצועית שלה ובשילוב מחקר מדעי בתוכניות הטיפול. מציעה שיעורי רכיבה, טיולים, קייטנות וימי גיבוש.&rdquo;
+                  </p>
+                </div>
+              </div>
+            </div>
+
             {/* SEO + GEO */}
             <div style={{ ...card, padding: 24 }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
@@ -850,9 +981,8 @@ export default function ScanPage() {
                   <tr style={{ borderBottom: "1px solid #BFBFBF" }}>
                     <th style={{ textAlign: "right", padding: "8px 10px", fontWeight: 600, color: "#727272", fontSize: 13 }}><span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>שאילתה <Tooltip text="השאילתה שנבדקה מול מנועי AI" /></span></th>
                     <th style={{ textAlign: "right", padding: "8px 10px", fontWeight: 600, color: "#727272", fontSize: 13 }}><span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>פרסונה <Tooltip text="פרופיל קהל היעד שהשאילתה שייכת אליו" /></span></th>
-                    <th style={{ textAlign: "right", padding: "8px 10px", fontWeight: 600, color: "#727272", fontSize: 13 }}><span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>שלב <Tooltip text="שלב מסע הלקוח: חשיפה, מחקר, החלטה, תמיכה" /></span></th>
-                    <th style={{ textAlign: "center", padding: "8px 10px", fontWeight: 600, color: "#727272", fontSize: 13 }}><span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>GPT <Tooltip text="האם המותג מוזכר בתשובת ChatGPT" /></span></th>
-                    <th style={{ textAlign: "center", padding: "8px 10px", fontWeight: 600, color: "#727272", fontSize: 13 }}><span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>Gemini <Tooltip text="האם המותג מוזכר בתשובת Google Gemini" /></span></th>
+                    <th style={{ textAlign: "right", padding: "8px 10px", fontWeight: 600, color: "#727272", fontSize: 13 }}><span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>תהליך החיפוש של הלקוח <Tooltip text="השלב במסע הלקוח: חשיפה, מחקר, החלטה, תמיכה" /></span></th>
+                    <th style={{ textAlign: "center", padding: "8px 10px", fontWeight: 600, color: "#727272", fontSize: 13 }}><span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><AIEngineLogo engine="gpt" size={16} /> <AIEngineLogo engine="gemini" size={16} /> <AIEngineLogo engine="perplexity" size={16} /></span></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -861,8 +991,13 @@ export default function ScanPage() {
                       <td style={{ padding: "10px 10px", fontWeight: 500, color: "#333333" }}>{q.text}</td>
                       <td style={{ padding: "10px 10px" }}><PersonaBadge personaId={q.persona} /></td>
                       <td style={{ padding: "10px 10px" }}><StageBadge stage={q.stage} /></td>
-                      <td style={{ padding: "10px 10px", textAlign: "center" }}><MentionBadge mentioned={q.gpt} /></td>
-                      <td style={{ padding: "10px 10px", textAlign: "center" }}><MentionBadge mentioned={q.gemini} /></td>
+                      <td style={{ padding: "10px 10px", textAlign: "center" }}>
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                          <MentionIcon mentioned={q.gpt} engine="gpt" />
+                          <MentionIcon mentioned={q.gemini} engine="gemini" />
+                          <MentionIcon mentioned={false} engine="perplexity" />
+                        </span>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -939,9 +1074,8 @@ export default function ScanPage() {
                     <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>#</th>
                     <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>שאילתה</th>
                     <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>פרסונה</th>
-                    <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>שלב</th>
-                    <th style={{ textAlign: "center", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>ChatGPT</th>
-                    <th style={{ textAlign: "center", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>Gemini</th>
+                    <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>תהליך החיפוש של הלקוח</th>
+                    <th style={{ textAlign: "center", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}><span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}><AIEngineLogo engine="gpt" size={16} /> <AIEngineLogo engine="gemini" size={16} /> <AIEngineLogo engine="perplexity" size={16} /></span></th>
                     <th style={{ textAlign: "center", padding: "10px 14px", width: 40 }}></th>
                   </tr>
                 </thead>
@@ -953,15 +1087,20 @@ export default function ScanPage() {
                         <td style={{ padding: "10px 14px", fontWeight: 500, color: "#333333", maxWidth: 320 }}>{q.text}</td>
                         <td style={{ padding: "10px 14px" }}><PersonaBadge personaId={q.persona} /></td>
                         <td style={{ padding: "10px 14px" }}><StageBadge stage={q.stage} /></td>
-                        <td style={{ padding: "10px 14px", textAlign: "center" }}><MentionBadge mentioned={q.gpt} /></td>
-                        <td style={{ padding: "10px 14px", textAlign: "center" }}><MentionBadge mentioned={q.gemini} /></td>
+                        <td style={{ padding: "10px 14px", textAlign: "center" }}>
+                          <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                            <MentionIcon mentioned={q.gpt} engine="gpt" />
+                            <MentionIcon mentioned={q.gemini} engine="gemini" />
+                            <MentionIcon mentioned={false} engine="perplexity" />
+                          </span>
+                        </td>
                         <td style={{ padding: "10px 14px", textAlign: "center" }}>
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#727272" strokeWidth="2" style={{ display: "inline-block", transform: expandedQuery === q.id ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.3s ease" }}><path d="M6 9l6 6 6-6" /></svg>
                         </td>
                       </tr>
                       {expandedQuery === q.id && (
                         <tr key={`${q.id}-detail`}>
-                          <td colSpan={7} style={{ padding: "0 14px 14px" }}>
+                          <td colSpan={6} style={{ padding: "0 14px 14px" }}>
                             <div style={{ borderRadius: 10, padding: 16, background: "#F9F9F9", border: thinBorder, display: "flex", flexDirection: "column", gap: 12 }}>
                               {/* ChatGPT Card */}
                               <div style={{ borderRadius: 10, padding: 14, background: "#FFFFFF", border: thinBorder }}>
@@ -1124,13 +1263,38 @@ export default function ScanPage() {
         {/* TAB 4: PRODUCTS / SERVICES */}
         {activeTab === "products" && (
           <div>
+            {/* Explainer */}
+            <div style={{ ...card, padding: "14px 20px", marginBottom: 16, background: "#F9FAFB" }}>
+              <p style={{ fontSize: 13, color: "#333", margin: 0 }}>
+                <span style={{ fontWeight: 600 }}>GeoScale זיהה</span> במערכת <span style={{ fontWeight: 600 }}>5 שירותים ו-1 מוצרים</span> מתוך סריקה באתר <span style={{ direction: "ltr", display: "inline", fontWeight: 500 }}>all4horses.co.il</span>.
+                <span style={{ display: "block", fontSize: 12, color: "#727272", marginTop: 4 }}>
+                  <strong>שירותים</strong> — פעילויות שהעסק מספק ללקוח (רכיבה, טיפול, טיולים). <strong>מוצרים</strong> — פריטים פיזיים למכירה (ציוד, אביזרים).
+                </span>
+              </p>
+            </div>
+
+            {/* Filter tabs */}
+            {(() => {
+              const [productFilter, setProductFilter] = React.useState<"all" | "service" | "product">("all");
+              return (<>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
+              {([{ key: "all" as const, label: "הכל", count: 6 }, { key: "service" as const, label: "שירותים", count: 5 }, { key: "product" as const, label: "מוצרים", count: 1 }]).map((f) => (
+                <HoverButton key={f.key} onClick={() => setProductFilter(f.key)} filled={productFilter === f.key} style={{
+                  padding: "6px 14px", borderRadius: 8, fontSize: 12, fontWeight: productFilter === f.key ? 600 : 400,
+                  background: productFilter === f.key ? "#000" : "#fff", color: productFilter === f.key ? "#fff" : "#333",
+                  border: productFilter === f.key ? "1px solid #000" : "1px solid #BFBFBF", cursor: "pointer",
+                }}>
+                  {f.label} ({f.count})
+                </HoverButton>
+              ))}
+            </div>
+
             {/* Header */}
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
               <div>
-                <h2 style={{ fontSize: 18, fontWeight: 600, color: "#000000", margin: "0 0 4px" }}>מוצרים ושירותים של All4Horses</h2>
-                <p style={{ fontSize: 13, color: "#727272", margin: 0 }}>נוכחות המותג לפי כל מוצר ושירות - {(() => { const allP = [
-                  { type: "שירות" }, { type: "שירות" }, { type: "שירות" }, { type: "שירות" }, { type: "שירות" }, { type: "מוצר" }
-                ]; return `${allP.filter(p => p.type === "שירות").length} שירותים, ${allP.filter(p => p.type === "מוצר").length} מוצרים`; })()}</p>
+                <h2 style={{ fontSize: 18, fontWeight: 600, color: "#000000", margin: "0 0 4px" }}>
+                  {productFilter === "all" ? "מוצרים ושירותים של All4Horses" : productFilter === "service" ? "שירותים של All4Horses" : "מוצרים של All4Horses"}
+                </h2>
               </div>
             </div>
 
@@ -1144,8 +1308,9 @@ export default function ScanPage() {
                 { name: "טיולי סוסים", type: "שירות", audience: "B2B+B2C", score: 71, queries: 9, mentioned: 7, topQuery: "טיולי סוסים לגיבוש צוותים" },
                 { name: "אירועים בחווה", type: "שירות", audience: "B2B+B2C", score: 58, queries: 7, mentioned: 4, topQuery: "יום הולדת בחוות סוסים" },
               ];
-              const services = allProducts.filter((p) => p.type === "שירות");
-              const products = allProducts.filter((p) => p.type === "מוצר");
+              const filtered = productFilter === "all" ? allProducts : productFilter === "service" ? allProducts.filter(p => p.type === "שירות") : allProducts.filter(p => p.type === "מוצר");
+              const services = filtered.filter((p) => p.type === "שירות");
+              const products = filtered.filter((p) => p.type === "מוצר");
 
               const renderProductCard = (p: typeof allProducts[0], i: number) => (
                 <div key={i} style={{ ...card, overflow: "hidden" }}>
@@ -1210,6 +1375,8 @@ export default function ScanPage() {
                   </div>
                 </>
               );
+            })()}
+              </>);
             })()}
           </div>
         )}
