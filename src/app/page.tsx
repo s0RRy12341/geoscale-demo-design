@@ -73,6 +73,45 @@ function IconScan({ size = 14 }: { size?: number }) {
   return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="#A2A9B0" strokeWidth="1.5" strokeLinecap="round"><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" /></svg>;
 }
 
+// ── Ahrefs-style Tooltip ──
+function Tooltip({ text }: { text: string }) {
+  const [show, setShow] = useState(false);
+  return (
+    <span
+      style={{ position: "relative", display: "inline-flex", alignItems: "center", cursor: "help" }}
+      onMouseEnter={() => setShow(true)}
+      onMouseLeave={() => setShow(false)}
+    >
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#B0B7BF" strokeWidth="2" style={{ display: "block", transition: "stroke 150ms" }} onMouseEnter={(e) => { (e.currentTarget as SVGElement).style.stroke = "#666"; }} onMouseLeave={(e) => { (e.currentTarget as SVGElement).style.stroke = "#B0B7BF"; }}>
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 16v-4M12 8h.01" />
+      </svg>
+      <div style={{
+        position: "absolute",
+        bottom: "calc(100% + 10px)",
+        right: "50%",
+        transform: "translateX(50%)",
+        background: "#1B1F23",
+        color: "#FFFFFF",
+        fontSize: 12,
+        lineHeight: 1.55,
+        padding: "8px 12px",
+        borderRadius: 6,
+        whiteSpace: "nowrap",
+        maxWidth: 280,
+        zIndex: 100,
+        pointerEvents: "none",
+        opacity: show ? 1 : 0,
+        transition: "opacity 150ms ease",
+        boxShadow: "0 4px 14px rgba(0,0,0,0.15)",
+      }}>
+        {text}
+        <span style={{ position: "absolute", bottom: -4, right: "50%", transform: "translateX(50%) rotate(45deg)", width: 8, height: 8, background: "#1B1F23" }} />
+      </div>
+    </span>
+  );
+}
+
 // ── Brand Card ──
 function BrandCard({ brand, onSelect }: { brand: typeof MOCK_BRANDS[0]; onSelect: () => void }) {
   const [expanded, setExpanded] = useState(false);
@@ -119,15 +158,15 @@ function BrandCard({ brand, onSelect }: { brand: typeof MOCK_BRANDS[0]; onSelect
         <div className="grid grid-cols-3 gap-2">
           <div className="text-center py-3" style={{ background: "#F9F9F9", borderRadius: 8 }}>
             <div className="text-lg font-bold" style={{ color: "#000" }}>{brand.articles}</div>
-            <div className="text-[11px]" style={{ color: "#727272" }}>מאמרים</div>
+            <div className="text-[11px] flex items-center justify-center gap-1" style={{ color: "#727272" }}>מאמרים <Tooltip text="מאמרי GEO שפורסמו" /></div>
           </div>
           <div className="text-center py-3" style={{ background: brand.pendingArticles > 0 ? "#FFF8F0" : "#F9F9F9", borderRadius: 8 }}>
             <div className="text-lg font-bold" style={{ color: brand.pendingArticles > 0 ? "#E07800" : "#000" }}>{brand.pendingArticles}</div>
-            <div className="text-[11px]" style={{ color: "#727272" }}>ממתינים</div>
+            <div className="text-[11px] flex items-center justify-center gap-1" style={{ color: "#727272" }}>ממתינים <Tooltip text="מאמרים שנוצרו וטרם פורסמו" /></div>
           </div>
           <div className="text-center py-3" style={{ background: "#F9F9F9", borderRadius: 8 }}>
             <div className="text-lg font-bold" style={{ color: "#10A37F" }}>{brand.score}%</div>
-            <div className="text-[11px]" style={{ color: "#727272" }}>ציון נוכחות</div>
+            <div className="text-[11px] flex items-center justify-center gap-1" style={{ color: "#727272" }}>ציון נוכחות <Tooltip text="ציון הנוכחות הכולל של המותג במנועי AI" /></div>
           </div>
         </div>
 
@@ -135,7 +174,7 @@ function BrandCard({ brand, onSelect }: { brand: typeof MOCK_BRANDS[0]; onSelect
         <div className="overflow-hidden transition-all duration-400 ease-in-out" style={{ maxHeight: expanded ? `${h}px` : 0, opacity: expanded ? 1 : 0 }}>
           <div ref={ref}>
             <div className="mt-4 pt-4" style={{ borderTop: "1px solid #DDDDDD" }}>
-              <p className="text-sm font-semibold mb-3" style={{ color: "#000" }}>פעולות נדרשות</p>
+              <p className="text-sm font-semibold mb-3 flex items-center gap-1" style={{ color: "#000" }}>פעולות נדרשות <Tooltip text="משימות שיש להשלים כדי לשפר את הנוכחות" /></p>
               <div className="space-y-2 mb-4">
                 {brand.actions.map((a, i) => (
                   <div key={i} className="flex items-center gap-2 text-sm">
@@ -153,7 +192,7 @@ function BrandCard({ brand, onSelect }: { brand: typeof MOCK_BRANDS[0]; onSelect
 
               {/* Top query - full width, not cut off */}
               <div className="p-4" style={{ background: "#F9F9F9", borderRadius: 10, border: "1px solid #DDDDDD" }}>
-                <p className="text-xs font-semibold mb-1" style={{ color: "#10A37F" }}>שאילתה מובילה</p>
+                <p className="text-xs font-semibold mb-1 flex items-center gap-1" style={{ color: "#10A37F" }}>שאילתה מובילה <Tooltip text="השאילתה שבה המותג מוזכר הכי הרבה" /></p>
                 <p className="text-sm leading-relaxed" style={{ color: "#333" }}>"{brand.topQuery}"</p>
               </div>
             </div>
@@ -385,21 +424,21 @@ export default function Dashboard() {
         <div className="max-w-[1300px] mx-auto px-6 py-4">
           {/* Page title */}
           <div className="mb-4">
-            <h1 className="text-xl font-semibold mb-0" style={{ color: "#000", letterSpacing: "-0.5px" }}>ניטור מותגים</h1>
+            <h1 className="text-xl font-semibold mb-0 flex items-center gap-2" style={{ color: "#000", letterSpacing: "-0.5px" }}>ניטור מותגים <Tooltip text="לוח בקרה מרכזי לניטור הנוכחות של מותגים במנועי AI" /></h1>
             <p className="text-xs" style={{ color: "#727272" }}>ניטור נוכחות מותגים במנועי AI</p>
           </div>
 
           {/* ── Top Metrics — compact GA style ── */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mb-5">
             {[
-              { label: "מותגים", value: totalBrands, change: "+2" },
-              { label: "סריקות", value: totalScans },
-              { label: "שאילתות", value: totalQueries },
-              { label: "ציון ממוצע", value: `${avgScore}%`, change: "+3.2%" },
-              { label: "ממתינים לפרסום", value: totalPending, color: totalPending > 0 ? "#E07800" : undefined },
+              { label: "מותגים", value: totalBrands, change: "+2", tooltip: "כמות המותגים הפעילים במערכת" },
+              { label: "סריקות", value: totalScans, tooltip: "סה״כ סריקות שבוצעו" },
+              { label: "שאילתות", value: totalQueries, tooltip: "מספר השאילתות שנבדקו מול מנועי AI" },
+              { label: "ציון ממוצע", value: `${avgScore}%`, change: "+3.2%", tooltip: "ציון הנוכחות הממוצע של כל המותגים" },
+              { label: "ממתינים לפרסום", value: totalPending, color: totalPending > 0 ? "#E07800" : undefined, tooltip: "מאמרים שנוצרו וממתינים לפרסום באתר" },
             ].map((m, i) => (
               <div key={i} className="p-3" style={{ border: "1px solid #E5E5E5", borderRadius: 8 }}>
-                <div className="text-xs mb-1" style={{ color: "#727272" }}>{m.label}</div>
+                <div className="text-xs mb-1 flex items-center gap-1" style={{ color: "#727272" }}>{m.label} {(m as any).tooltip && <Tooltip text={(m as any).tooltip} />}</div>
                 <div className="flex items-baseline gap-2">
                   <span className="text-2xl font-bold" style={{ color: (m as any).color || "#000", letterSpacing: "-0.5px" }}>{m.value}</span>
                   {m.change && <span className="text-xs font-semibold" style={{ color: "#10A37F" }}><IconArrowUp /> {m.change}</span>}
@@ -413,7 +452,7 @@ export default function Dashboard() {
             <div className="p-5" style={{ border: "1px solid #E5E5E5", borderRadius: 10 }}>
               <div className="flex items-center gap-2 mb-4">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10A37F" strokeWidth="2.5" strokeLinecap="round"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
-                <h3 className="text-sm font-semibold" style={{ color: "#000" }}>טופ 5 אתרים שהתקדמו</h3>
+                <h3 className="text-sm font-semibold flex items-center gap-1" style={{ color: "#000" }}>טופ 5 אתרים שהתקדמו <Tooltip text="המותגים עם השיפור הגדול ביותר בציון הנוכחות" /></h3>
               </div>
               {[
                 { name: "כלכליסט", domain: "calcalist.co.il", score: 88, change: "+6.2%" },
@@ -434,7 +473,7 @@ export default function Dashboard() {
             <div className="p-5" style={{ border: "1px solid #E5E5E5", borderRadius: 10, background: "#FFFBFA" }}>
               <div className="flex items-center gap-2 mb-4">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5v14M5 12l7 7 7-7" /></svg>
-                <h3 className="text-sm font-semibold" style={{ color: "#DC2626" }}>טופ 5 אתרים שצריכים טיפול</h3>
+                <h3 className="text-sm font-semibold flex items-center gap-1" style={{ color: "#DC2626" }}>טופ 5 אתרים שצריכים טיפול <Tooltip text="מותגים עם ירידה בציון - דורשים טיפול בתוכן" /></h3>
               </div>
               {[
                 { name: "Just In Time", domain: "justintime.co.il", score: 52, change: "-5.1%" },

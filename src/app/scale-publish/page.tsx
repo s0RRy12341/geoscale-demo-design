@@ -346,11 +346,11 @@ export default function BestLinksPage() {
     budget: planData.reduce((s, r) => s + r.budget, 0),
   }), [planData]);
 
-  const TABS: { key: TabKey; label: string }[] = [
-    { key: "marketplace", label: "מאגר אתרים" },
-    { key: "planner", label: "בונה תוכנית" },
-    { key: "publishers", label: "פורטל Publishers" },
-    { key: "rejected", label: "אתרים פסולים" },
+  const TABS: { key: TabKey; label: string; tooltip: string }[] = [
+    { key: "marketplace", label: "מאגר אתרים", tooltip: "מאגר אתרים מאומתים לפרסום תוכן SEO ו-GEO" },
+    { key: "planner", label: "בונה תוכנית", tooltip: "בנו תוכנית עבודה חודשית והפיקו הצעת מחיר" },
+    { key: "publishers", label: "פורטל Publishers", tooltip: "ניהול אתרים שלכם כ-Publisher בפלטפורמה" },
+    { key: "rejected", label: "אתרים פסולים", tooltip: "אתרים שלא עמדו בקריטריוני האיכות" },
   ];
 
   return (
@@ -400,7 +400,7 @@ export default function BestLinksPage() {
                 transition: "all 0.2s",
               }}
             >
-              {tab.label}
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>{tab.label} <Tooltip text={tab.tooltip} /></span>
               {tab.key === "rejected" && rejectedPublishers.length > 0 && (
                 <span style={{ marginRight: 6, background: "#E53E3E15", color: "#E53E3E", fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 20 }}>{rejectedPublishers.length}</span>
               )}
@@ -533,7 +533,7 @@ export default function BestLinksPage() {
 
             {/* Agency Margin Section */}
             <div style={{ padding: "16px 24px", borderTop: "1px solid #DDDDDD", background: "#F9F9F9" }}>
-              <div style={{ fontSize: 12, fontWeight: 600, color: "#333", marginBottom: 10 }}>אחוזי רווח Agency</div>
+              <div style={{ fontSize: 12, fontWeight: 600, color: "#333", marginBottom: 10, display: "flex", alignItems: "center", gap: 4 }}>אחוזי רווח Agency <Tooltip text="אחוז הרווח שלכם כסוכנות - מתווסף לעלות הבסיס ומוצג ללקוח" /></div>
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <input
                   type="range"
@@ -558,23 +558,23 @@ export default function BestLinksPage() {
 
             <div style={{ padding: "20px 24px", borderTop: "1px solid #DDDDDD" }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, fontSize: 13 }}>
-                <span style={{ color: "#727272" }}>סה"כ אתרים</span>
+                <span style={{ color: "#727272", display: "flex", alignItems: "center", gap: 4 }}>סה&quot;כ אתרים <Tooltip text="מספר האתרים שנבחרו לתוכנית" /></span>
                 <span style={{ fontWeight: 600 }}>{cart.length}</span>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, fontSize: 13 }}>
-                <span style={{ color: "#727272" }}>סה"כ שאילתות</span>
+                <span style={{ color: "#727272", display: "flex", alignItems: "center", gap: 4 }}>סה&quot;כ שאילתות <Tooltip text="כמות השאילתות שהאתרים הנבחרים מכסים" /></span>
                 <span style={{ fontWeight: 600 }}>{cartQueries}</span>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, fontSize: 13 }}>
-                <span style={{ color: "#727272" }}>מחיר בסיס</span>
+                <span style={{ color: "#727272", display: "flex", alignItems: "center", gap: 4 }}>מחיר בסיס <Tooltip text="העלות שלכם לפני תוספת רווח Agency" /></span>
                 <span style={{ fontWeight: 600 }}>{fmtCurrency(cartTotal)}</span>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, fontSize: 13 }}>
-                <span style={{ color: "#727272" }}>רווח Agency ({agencyMargin}%)</span>
+                <span style={{ color: "#727272", display: "flex", alignItems: "center", gap: 4 }}>רווח Agency ({agencyMargin}%) <Tooltip text="הרווח שלכם - מחושב כאחוז ממחיר הבסיס" /></span>
                 <span style={{ fontWeight: 600, color: "#10A37F" }}>{fmtCurrency(marginAmount)}</span>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20, fontSize: 14, paddingTop: 8, borderTop: "1px solid #F0F0F0" }}>
-                <span style={{ fontWeight: 600 }}>סה"כ ללקוח</span>
+                <span style={{ fontWeight: 600, display: "flex", alignItems: "center", gap: 4 }}>סה&quot;כ ללקוח <Tooltip text="הסכום שהלקוח ישלם - מחיר בסיס + רווח Agency" /></span>
                 <span style={{ fontWeight: 700, fontSize: 16 }}>{fmtCurrency(clientTotal)}</span>
               </div>
               <button style={{ width: "100%", padding: "12px 0", background: "#000", color: "#fff", fontSize: 14, fontWeight: 600, borderRadius: 9, border: "none", cursor: "pointer" }}>
@@ -638,8 +638,8 @@ function MarketplaceTab({
     <div>
       {/* Title */}
       <div style={{ marginBottom: 20 }}>
-        <h1 style={{ fontSize: 26, fontWeight: 700, color: "#000", marginBottom: 6 }}>
-          ScalePublish <span style={{ fontWeight: 400, fontSize: 20 }}>— פלטפורמת תוכן לסוכנויות</span>
+        <h1 style={{ fontSize: 26, fontWeight: 700, color: "#000", marginBottom: 6, display: "flex", alignItems: "center", gap: 8 }}>
+          ScalePublish <span style={{ fontWeight: 400, fontSize: 20 }}>— פלטפורמת תוכן לסוכנויות</span> <Tooltip text="פלטפורמה לבחירת אתרים, בניית תוכניות עבודה והפקת הצעות מחיר ללקוחות" />
         </h1>
         <p style={{ fontSize: 14, color: "#727272", lineHeight: 1.6 }}>
           בחרו אתרים, בנו תוכנית עבודה והפיקו הצעות מחיר — SEO ו-GEO במקום אחד

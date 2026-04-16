@@ -577,12 +577,12 @@ export default function ScanPage() {
         <div style={{ maxWidth: 1300, margin: "0 auto", padding: "0 24px" }}>
           <div style={{ display: "flex", gap: 0 }}>
             {([
-              { key: "overview" as const, label: "סקירה", iconPath: <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1" /> },
-              { key: "queries" as const, label: "שאילתות", iconPath: <><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" /></>, count: totalQueries },
-              { key: "keywords" as const, label: "מילות מפתח", iconPath: <><path d="M15 7h3a5 5 0 015 5 5 5 0 01-5 5h-3m-6 0H6a5 5 0 01-5-5 5 5 0 015-5h3" /><path d="M8 12h8" /></>, count: 12 },
-              { key: "audiences" as const, label: "קהלים", iconPath: <><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" /></>, count: PERSONAS.length },
-              { key: "products" as const, label: "מוצרים / שירותים", iconPath: <><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" /></> },
-              { key: "content" as const, label: "יצירת תוכן", iconPath: <><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" /></> },
+              { key: "overview" as const, label: "סקירה", tooltip: "תצוגת סקירה כללית של נוכחות המותג", iconPath: <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1" /> },
+              { key: "queries" as const, label: "שאילתות", tooltip: "כל השאילתות שנבדקו מול מנועי AI", iconPath: <><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" /></>, count: totalQueries },
+              { key: "keywords" as const, label: "מילות מפתח", tooltip: "ביטויי SEO ומילות מפתח אורגניות", iconPath: <><path d="M15 7h3a5 5 0 015 5 5 5 0 01-5 5h-3m-6 0H6a5 5 0 01-5-5 5 5 0 015-5h3" /><path d="M8 12h8" /></>, count: 12 },
+              { key: "audiences" as const, label: "קהלים", tooltip: "פרסונות קהל יעד שזוהו מהסריקה", iconPath: <><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" /></>, count: PERSONAS.length },
+              { key: "products" as const, label: "מוצרים / שירותים", tooltip: "מוצרים ושירותים שזוהו באתר", iconPath: <><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" /></> },
+              { key: "content" as const, label: "יצירת תוכן", tooltip: "תור יצירת תוכן GEO-Optimized", iconPath: <><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" /></> },
             ]).map((tab) => (
               <button
                 key={tab.key}
@@ -599,6 +599,7 @@ export default function ScanPage() {
               >
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">{tab.iconPath}</svg>
                 {tab.label}
+                {(tab as any).tooltip && <Tooltip text={(tab as any).tooltip} />}
                 {tab.count !== undefined && (
                   <span style={{ fontSize: 11, padding: "1px 6px", borderRadius: 10, background: "#F9F9F9", color: "#727272", border: "1px solid #DDDDDD" }}>{tab.count}</span>
                 )}
@@ -1129,9 +1130,9 @@ export default function ScanPage() {
                 <thead>
                   <tr style={{ background: "#F9F9F9", borderBottom: "1px solid #BFBFBF" }}>
                     <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>#</th>
-                    <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>שאילתה</th>
-                    <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>פרסונה</th>
-                    <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>תהליך החיפוש של הלקוח</th>
+                    <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}><span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>שאילתה <Tooltip text="השאילתה שנבדקה מול מנועי AI" /></span></th>
+                    <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}><span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>פרסונה <Tooltip text="פרופיל קהל היעד שהשאילתה שייכת אליו" /></span></th>
+                    <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}><span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>תהליך החיפוש של הלקוח <Tooltip text="השלב במסע הלקוח: חשיפה, מחקר, החלטה, תמיכה" /></span></th>
                     <th style={{ textAlign: "center", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}><span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}><AIEngineLogo engine="gpt" size={16} /> <AIEngineLogo engine="gemini" size={16} /> <AIEngineLogo engine="perplexity" size={16} /></span></th>
                     <th style={{ textAlign: "center", padding: "10px 14px", width: 40 }}></th>
                   </tr>
@@ -1276,11 +1277,11 @@ export default function ScanPage() {
                 <thead>
                   <tr style={{ background: "#F9F9F9", borderBottom: "1px solid #BFBFBF" }}>
                     <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>#</th>
-                    <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>מילת מפתח</th>
-                    <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>דירוג</th>
-                    <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>שינוי</th>
-                    <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>נפח חודשי</th>
-                    <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>קושי</th>
+                    <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}><span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>מילת מפתח <Tooltip text="ביטוי החיפוש שנבדק" /></span></th>
+                    <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}><span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>דירוג <Tooltip text="המיקום בתוצאות החיפוש של גוגל" /></span></th>
+                    <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}><span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>שינוי <Tooltip text="שינוי בדירוג ביחס לתקופה הקודמת" /></span></th>
+                    <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}><span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>נפח חודשי <Tooltip text="מספר חיפושים חודשי ממוצע לביטוי זה" /></span></th>
+                    <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}><span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>קושי <Tooltip text="רמת הקושי לדרג גבוה עבור ביטוי זה (0-100)" /></span></th>
                     <th style={{ textAlign: "center", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 13 }}>
                       <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><AIEngineLogo engine="gpt" size={14} /> <AIEngineLogo engine="gemini" size={14} /></span>
                     </th>
@@ -1355,7 +1356,7 @@ export default function ScanPage() {
           <div>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
               <div>
-                <h2 style={{ fontSize: 18, fontWeight: 600, color: "#000000", margin: "0 0 4px" }}>קהלי יעד שזוהו</h2>
+                <h2 style={{ fontSize: 18, fontWeight: 600, color: "#000000", margin: "0 0 4px", display: "flex", alignItems: "center", gap: 8 }}>קהלי יעד שזוהו <Tooltip text="פרסונות קהל יעד שזוהו מניתוח השאילתות ותשובות AI" /></h2>
                 <p style={{ fontSize: 13, color: "#727272", margin: 0 }}>{PERSONAS.length} פרסונות זוהו בסריקה האחרונה</p>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -1481,8 +1482,9 @@ export default function ScanPage() {
             {/* Header */}
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
               <div>
-                <h2 style={{ fontSize: 18, fontWeight: 600, color: "#000000", margin: "0 0 4px" }}>
+                <h2 style={{ fontSize: 18, fontWeight: 600, color: "#000000", margin: "0 0 4px", display: "flex", alignItems: "center", gap: 8 }}>
                   {productFilter === "all" ? "מוצרים ושירותים של All4Horses" : productFilter === "service" ? "שירותים של All4Horses" : "מוצרים של All4Horses"}
+                  <Tooltip text="מוצרים ושירותים שזוהו באתר ונבדקו מול מנועי AI" />
                 </h2>
               </div>
             </div>
@@ -1574,7 +1576,7 @@ export default function ScanPage() {
             {/* Header */}
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <h2 style={{ fontSize: 18, fontWeight: 700, color: "#000", margin: 0 }}>יצירת תוכן</h2>
+                <h2 style={{ fontSize: 18, fontWeight: 700, color: "#000", margin: 0, display: "flex", alignItems: "center", gap: 8 }}>יצירת תוכן <Tooltip text="תור יצירת מאמרים GEO-Optimized עבור שאילתות שנבחרו" /></h2>
                 <span style={{ fontSize: 11, padding: "2px 10px", borderRadius: 10, background: "#F9F9F9", color: "#727272", border: thinBorder }}>{contentQueue.length} פריטים</span>
               </div>
               <HoverButton filled onClick={() => setActiveTab("queries")} style={{ padding: "6px 14px", fontSize: 12, fontWeight: 600, color: "#fff", background: "#000", border: "1px solid #000", borderRadius: 8, cursor: "pointer" }}>

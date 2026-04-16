@@ -7,6 +7,44 @@ import { Fragment, useState } from "react";
 // Powered by Claude (Anthropic) · learns from user edits
 // ============================================================
 
+function Tooltip({ text }: { text: string }) {
+  const [show, setShow] = useState(false);
+  return (
+    <span
+      style={{ position: "relative", display: "inline-flex", alignItems: "center", cursor: "help" }}
+      onMouseEnter={() => setShow(true)}
+      onMouseLeave={() => setShow(false)}
+    >
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#B0B7BF" strokeWidth="2" style={{ display: "block", transition: "stroke 150ms" }} onMouseEnter={(e) => { (e.currentTarget as SVGElement).style.stroke = "#666"; }} onMouseLeave={(e) => { (e.currentTarget as SVGElement).style.stroke = "#B0B7BF"; }}>
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 16v-4M12 8h.01" />
+      </svg>
+      <div style={{
+        position: "absolute",
+        bottom: "calc(100% + 10px)",
+        right: "50%",
+        transform: "translateX(50%)",
+        background: "#1B1F23",
+        color: "#FFFFFF",
+        fontSize: 12,
+        lineHeight: 1.55,
+        padding: "8px 12px",
+        borderRadius: 6,
+        whiteSpace: "nowrap",
+        maxWidth: 280,
+        zIndex: 100,
+        pointerEvents: "none",
+        opacity: show ? 1 : 0,
+        transition: "opacity 150ms ease",
+        boxShadow: "0 4px 14px rgba(0,0,0,0.15)",
+      }}>
+        {text}
+        <span style={{ position: "absolute", bottom: -4, right: "50%", transform: "translateX(50%) rotate(45deg)", width: 8, height: 8, background: "#1B1F23" }} />
+      </div>
+    </span>
+  );
+}
+
 function GeoscaleLogo({ width = 150 }: { width?: number }) {
   return (
     <div style={{ direction: "ltr", width }}>
@@ -68,7 +106,7 @@ export default function EditorPage() {
           <a href="/new-scan" style={{ display: "inline-flex", alignItems: "center", padding: "8px 20px", background: "#000", color: "#fff", fontSize: 13, fontWeight: 600, borderRadius: 9, border: "1px solid #000", textDecoration: "none" }}>סריקה חדשה</a>
           <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "#727272" }}>
             <span style={{ width: 8, height: 8, borderRadius: 4, background: "#10A37F" }} />
-            <span>נשמר אוטומטית לפני 3 שניות</span>
+            <span>נשמר אוטומטית לפני 3 שניות <Tooltip text="המערכת שומרת את העבודה שלך אוטומטית כל כמה שניות" /></span>
           </div>
         </div>
         <nav style={{ display: "flex", alignItems: "center", gap: 32 }}>
@@ -103,7 +141,7 @@ export default function EditorPage() {
               <span>נוצר על ידי</span>
               <span style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "4px 10px", borderRadius: 6, background: "#FAF7F2", border: "1px solid #E8DFCE", color: "#8B6B3D", fontSize: 11, fontWeight: 600 }}>
                 <span style={{ width: 6, height: 6, borderRadius: 3, background: "#D97706" }} />
-                Claude Opus 4.6 · Anthropic
+                Claude Opus 4.6 · Anthropic <Tooltip text="מודל הבינה המלאכותית שיצר את המאמר הזה" />
               </span>
             </div>
           </div>
@@ -129,7 +167,7 @@ export default function EditorPage() {
           <div style={{ margin: "16px 20px 0", padding: "10px 16px", background: "#10A37F08", border: "1px solid #10A37F30", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10A37F" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10" /><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" /></svg>
-              <span style={{ fontSize: 12, fontWeight: 600, color: "#10A37F" }}>GEO-Optimized</span>
+              <span style={{ fontSize: 12, fontWeight: 600, color: "#10A37F" }}>GEO-Optimized <Tooltip text="Generative Engine Optimization - המאמר מותאם להופיע כמקור בתוצאות מנועי AI" /></span>
               <span style={{ fontSize: 11, color: "#727272" }}>מאמר זה מותאם לתוצאות מנועי AI (GPT, Gemini, Perplexity)</span>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -214,12 +252,12 @@ export default function EditorPage() {
           <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #DDD", padding: 18 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
               <div style={{ width: 28, height: 28, borderRadius: 14, background: "linear-gradient(135deg,#D97706,#F59E0B)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 14, fontWeight: 700 }}>✦</div>
-              <div style={{ fontSize: 13, fontWeight: 600 }}>המודל לומד מעריכות שלך</div>
+              <div style={{ fontSize: 13, fontWeight: 600 }}>המודל לומד מעריכות שלך <Tooltip text="המערכת מנתחת כל עריכה שלך ומשפרת את הסגנון בהתאם" /></div>
             </div>
             <div style={{ fontSize: 12, color: "#555", lineHeight: 1.6, marginBottom: 12 }}>
               Claude מנתח את העריכות שאת ואינה מבצעות ומתאים את הסגנון אוטומטית.
             </div>
-            <div style={{ fontSize: 11, color: "#727272", marginBottom: 4 }}>עריכות שנלמדו השבוע</div>
+            <div style={{ fontSize: 11, color: "#727272", marginBottom: 4 }}>עריכות שנלמדו השבוע <Tooltip text="מספר העריכות שהמודל ניתח והפנים לשיפור המאמרים הבאים" /></div>
             <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
               <span style={{ fontSize: 22, fontWeight: 700, color: "#000" }}>37</span>
               <span style={{ fontSize: 11, color: "#10A37F", fontWeight: 600 }}>↑ 18% תאימות סגנון</span>
@@ -227,14 +265,14 @@ export default function EditorPage() {
             <div style={{ height: 4, background: "#F0F0F0", borderRadius: 2, marginTop: 10, overflow: "hidden" }}>
               <div style={{ width: "72%", height: "100%", background: "linear-gradient(90deg,#10A37F,#D97706)" }} />
             </div>
-            <div style={{ fontSize: 10, color: "#727272", marginTop: 4 }}>72% הלימה לסגנון המותג</div>
+            <div style={{ fontSize: 10, color: "#727272", marginTop: 4 }}>72% הלימה לסגנון המותג <Tooltip text="אחוז ההתאמה בין סגנון הכתיבה של המאמר לסגנון המותג שלך" /></div>
           </div>
 
           {/* SEO checklist (Inna's rules) */}
           <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #DDD", padding: 18 }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-              <div style={{ fontSize: 13, fontWeight: 600 }}>בדיקת SEO - פרומפט ניר</div>
-              <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 10, background: "#10A37F15", color: "#10A37F", fontWeight: 600 }}>8/10</span>
+              <div style={{ fontSize: 13, fontWeight: 600 }}>בדיקת SEO - פרומפט ניר <Tooltip text="רשימת בדיקות SEO אוטומטית על בסיס הפרומפט שלך" /></div>
+              <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 10, background: "#10A37F15", color: "#10A37F", fontWeight: 600 }}>8/10 <Tooltip text="8 מתוך 10 כללי SEO עוברים בהצלחה" /></span>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
               {SEO_RULES.map(r => (
@@ -249,7 +287,7 @@ export default function EditorPage() {
 
           {/* Word Count Selector */}
           <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #DDD", padding: 18 }}>
-            <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 10 }}>אורך מאמר יעד</div>
+            <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 10 }}>אורך מאמר יעד <Tooltip text="בחר את אורך המאמר הרצוי - המערכת תתאים את התוכן" /></div>
             <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
               {[1200, 1500, 1800, 2500].map(wc => (
                 <button key={wc} onClick={() => setWordTarget(wc)} style={{
@@ -267,15 +305,15 @@ export default function EditorPage() {
 
           {/* Quick stats */}
           <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #DDD", padding: 18 }}>
-            <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 12 }}>מדדים בזמן אמת</div>
+            <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 12 }}>מדדים בזמן אמת <Tooltip text="מדדי איכות התוכן מתעדכנים אוטומטית תוך כדי עריכה" /></div>
             {[
-              { k: "צפיפות מילת מפתח", v: "1.4%", good: true },
-              { k: "ציון קריאות", v: "8.2/10", good: true },
-              { k: "E-E-A-T signals", v: "חזק", good: true },
-              { k: "תאימות AI Answer", v: "92%", good: true },
+              { k: "צפיפות מילת מפתח", v: "1.4%", good: true, tip: "אחוז ההופעות של מילת המפתח מתוך סך המילים - מומלץ 1-2%" },
+              { k: "ציון קריאות", v: "8.2/10", good: true, tip: "מדד קלות הקריאה של הטקסט - ככל שגבוה יותר, כך קל יותר לקרוא" },
+              { k: "E-E-A-T signals", v: "חזק", good: true, tip: "אותות מומחיות, ניסיון, סמכות ואמינות - קריטי לדירוג בגוגל" },
+              { k: "תאימות AI Answer", v: "92%", good: true, tip: "הסיכוי שמנועי AI יצטטו את התוכן שלך כמקור בתשובותיהם" },
             ].map(s => (
               <div key={s.k} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 0", borderBottom: "1px solid #F5F5F5", fontSize: 12 }}>
-                <span style={{ color: "#555" }}>{s.k}</span>
+                <span style={{ color: "#555", display: "inline-flex", alignItems: "center", gap: 4 }}>{s.k} <Tooltip text={s.tip} /></span>
                 <span style={{ fontWeight: 600, color: s.good ? "#10A37F" : "#D97706" }}>{s.v}</span>
               </div>
             ))}
@@ -287,7 +325,7 @@ export default function EditorPage() {
               <div style={{ width: 22, height: 22, borderRadius: 11, background: "#10A37F", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" /></svg>
               </div>
-              <div style={{ fontSize: 13, fontWeight: 600 }}>תצוגת AI Answer</div>
+              <div style={{ fontSize: 13, fontWeight: 600 }}>תצוגת AI Answer <Tooltip text="תצוגה מקדימה של איך התוכן שלך יופיע בתשובות AI כמו ChatGPT ו-Gemini" /></div>
             </div>
             <div style={{ padding: 14, background: "#F9F9F9", borderRadius: 8, border: "1px solid #EEEEEE" }}>
               <div style={{ fontSize: 12, color: "#727272", marginBottom: 6 }}>כשמשתמש שואל: &quot;רכיבה טיפולית לילדים עם ADHD&quot;</div>
@@ -299,7 +337,7 @@ export default function EditorPage() {
                 all4horses.co.il/blog/equine-therapy-adhd
               </div>
             </div>
-            <div style={{ fontSize: 11, color: "#10A37F", marginTop: 8, fontWeight: 500 }}>✓ צפוי להופיע כ-reference ב-GPT ו-Gemini</div>
+            <div style={{ fontSize: 11, color: "#10A37F", marginTop: 8, fontWeight: 500, display: "flex", alignItems: "center", gap: 4 }}>✓ צפוי להופיע כ-reference ב-GPT ו-Gemini <Tooltip text="על בסיס ניתוח GEO, המאמר עומד בקריטריונים להצגה כמקור מצוטט" /></div>
           </div>
         </div>
       </div>
