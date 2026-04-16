@@ -368,8 +368,9 @@ export default function Dashboard() {
           <nav style={{ display: "flex", alignItems: "center", gap: 32 }}>
             <a href="/" style={{ fontSize: 14, fontWeight: 600, color: "#000", textDecoration: "none" }}>דשבורד</a>
             <a href="/scan" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>סריקות</a>
+            <a href="/scale-publish" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>ScalePublish</a>
             <a href="/editor" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>עורך תוכן</a>
-            <a href="/editor-roadmap" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>Roadmap</a>
+            <a href="/roadmap" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>Roadmap</a>
           </nav>
 
           {/* LEFT in RTL (grid col 3) = Logo */}
@@ -381,129 +382,142 @@ export default function Dashboard() {
 
       {/* ═══ MAIN CONTENT ═══ */}
       <main className="flex-1">
-        <div className="max-w-[1300px] mx-auto px-6 py-8">
+        <div className="max-w-[1300px] mx-auto px-6 py-6">
           {/* Page title */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-semibold mb-1" style={{ color: "#000", letterSpacing: "-1px" }}>ניטור מותגים</h1>
-            <p className="text-base" style={{ color: "#727272" }}>ניטור נוכחות מותגים במנועי AI</p>
+          <div className="mb-6">
+            <h1 className="text-2xl font-semibold mb-0.5" style={{ color: "#000", letterSpacing: "-0.5px" }}>ניטור מותגים</h1>
+            <p className="text-sm" style={{ color: "#727272" }}>ניטור נוכחות מותגים במנועי AI</p>
           </div>
 
-          {/* ── Top Metrics (big numbers like example10) ── */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+          {/* ── Top Metrics — compact GA style ── */}
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8">
             {[
               { label: "מותגים", value: totalBrands, change: "+2" },
               { label: "סריקות", value: totalScans },
               { label: "שאילתות", value: totalQueries },
               { label: "ציון ממוצע", value: `${avgScore}%`, change: "+3.2%" },
+              { label: "ממתינים לפרסום", value: totalPending, color: totalPending > 0 ? "#E07800" : undefined },
             ].map((m, i) => (
-              <div key={i} className="p-5 text-center" style={{ border: "1px solid #BFBFBF", borderRadius: 10 }}>
-                <div className="text-4xl font-bold mb-1" style={{ color: "#000" }}>{m.value}</div>
-                <div className="text-sm" style={{ color: "#727272" }}>{m.label}</div>
-                {m.change && (
-                  <div className="flex items-center justify-center gap-1 mt-1 text-xs font-medium" style={{ color: "#10A37F" }}>
-                    <IconArrowUp /> {m.change}
-                  </div>
-                )}
+              <div key={i} className="p-3" style={{ border: "1px solid #E5E5E5", borderRadius: 8 }}>
+                <div className="text-xs mb-1" style={{ color: "#727272" }}>{m.label}</div>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-2xl font-bold" style={{ color: (m as any).color || "#000", letterSpacing: "-0.5px" }}>{m.value}</span>
+                  {m.change && <span className="text-xs font-semibold" style={{ color: "#10A37F" }}><IconArrowUp /> {m.change}</span>}
+                </div>
               </div>
             ))}
           </div>
 
-          {/* ── AI Traffic & Bot Activity Row (Alexei reference cards) ── */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
-            {/* AI vs SEO Traffic */}
-            <div className="p-6" style={{ border: "1px solid #BFBFBF", borderRadius: 10 }}>
-              <div className="flex items-center gap-2 mb-1">
-                <h3 className="text-sm font-semibold" style={{ color: "#000" }}>AI vs Traditional SEO</h3>
+          {/* ── Top 5 Trending Up / Needs Attention ── */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+            <div className="p-5" style={{ border: "1px solid #E5E5E5", borderRadius: 10 }}>
+              <div className="flex items-center gap-2 mb-4">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10A37F" strokeWidth="2.5" strokeLinecap="round"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
+                <h3 className="text-sm font-semibold" style={{ color: "#000" }}>טופ 5 אתרים שהתקדמו</h3>
               </div>
-              <p className="text-xs mb-4" style={{ color: "#727272" }}>חלוקת תנועה - ציטוטי AI מול תוצאות אורגניות</p>
+              {[
+                { name: "כלכליסט", domain: "calcalist.co.il", score: 88, change: "+6.2%" },
+                { name: "תכום הדברות", domain: "techom-pest.co.il", score: 82, change: "+4.8%" },
+                { name: "All4Horses", domain: "all4horses.co.il", score: 76, change: "+4.2%" },
+                { name: "לחם ארטיזן", domain: "artisan-bread.co.il", score: 71, change: "+2.1%" },
+                { name: "מכללת אורין שפלטר", domain: "orin-college.co.il", score: 64, change: "+1.5%" },
+              ].map((b, i) => (
+                <a key={i} href="/scan" className="flex items-center gap-3 py-2.5 px-2 transition-colors hover:bg-[#F9F9F9]" style={{ borderRadius: 6, textDecoration: "none", borderBottom: i < 4 ? "1px solid #F0F0F0" : "none" }}>
+                  <span className="text-xs font-medium w-5 text-center" style={{ color: "#A2A9B0" }}>{i + 1}</span>
+                  <img src={`https://www.google.com/s2/favicons?domain=${b.domain}&sz=64`} alt="" width={20} height={20} style={{ borderRadius: 4, flexShrink: 0, border: "1px solid #F0F0F0" }} />
+                  <span className="text-sm font-medium flex-1 truncate" style={{ color: "#000" }}>{b.name}</span>
+                  <span className="text-sm font-bold" style={{ color: "#10A37F" }}>{b.score}%</span>
+                  <span className="text-xs font-semibold" style={{ color: "#10A37F" }}>{b.change}</span>
+                </a>
+              ))}
+            </div>
+            <div className="p-5" style={{ border: "1px solid #E5E5E5", borderRadius: 10, background: "#FFFBFA" }}>
+              <div className="flex items-center gap-2 mb-4">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5v14M5 12l7 7 7-7" /></svg>
+                <h3 className="text-sm font-semibold" style={{ color: "#DC2626" }}>טופ 5 אתרים שצריכים טיפול</h3>
+              </div>
+              {[
+                { name: "Just In Time", domain: "justintime.co.il", score: 52, change: "-5.1%" },
+                { name: "מכללת אורין שפלטר", domain: "orin-college.co.il", score: 64, change: "-3.2%" },
+                { name: "לחם ארטיזן", domain: "artisan-bread.co.il", score: 71, change: "-1.8%" },
+              ].map((b, i) => (
+                <a key={i} href="/scan" className="flex items-center gap-3 py-2.5 px-2 transition-colors hover:bg-[#FEF2F2]" style={{ borderRadius: 6, textDecoration: "none", borderBottom: i < 2 ? "1px solid #FEE2E2" : "none" }}>
+                  <span className="text-xs font-medium w-5 text-center" style={{ color: "#A2A9B0" }}>{i + 1}</span>
+                  <img src={`https://www.google.com/s2/favicons?domain=${b.domain}&sz=64`} alt="" width={20} height={20} style={{ borderRadius: 4, flexShrink: 0, border: "1px solid #F0F0F0" }} />
+                  <span className="text-sm font-medium flex-1 truncate" style={{ color: "#000" }}>{b.name}</span>
+                  <span className="text-sm font-bold" style={{ color: "#DC2626" }}>{b.score}%</span>
+                  <span className="text-xs font-semibold" style={{ color: "#DC2626" }}>{b.change}</span>
+                </a>
+              ))}
+              {Array.from({ length: 2 }).map((_, i) => (
+                <div key={`empty-${i}`} className="flex items-center gap-3 py-2.5 px-2" style={{ borderBottom: i < 1 ? "1px solid #FEE2E2" : "none" }}>
+                  <span className="text-xs" style={{ color: "#D1D5DB" }}>—</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ── AI Traffic & Bot Activity Row ── */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8">
+            <div className="p-5" style={{ border: "1px solid #E5E5E5", borderRadius: 10 }}>
+              <h3 className="text-xs font-semibold mb-1" style={{ color: "#000" }}>AI vs Traditional SEO</h3>
+              <p className="text-[11px] mb-3" style={{ color: "#727272" }}>חלוקת תנועה</p>
               <div className="flex items-baseline gap-2 mb-2">
-                <span className="text-3xl font-bold" style={{ color: "#10A37F" }}>13.3%</span>
+                <span className="text-2xl font-bold" style={{ color: "#10A37F" }}>13.3%</span>
                 <span className="text-xs font-semibold" style={{ color: "#10A37F" }}>+28.4%</span>
               </div>
-              <div className="text-xs mb-3" style={{ color: "#727272" }}>23,847 תנועה מ-AI Engines</div>
-              {/* Stacked bar */}
-              <div className="flex h-2.5 overflow-hidden mb-3" style={{ borderRadius: 20 }}>
+              <div className="flex h-2 overflow-hidden mb-2" style={{ borderRadius: 20 }}>
                 <div style={{ width: "13.3%", background: "#10A37F" }} />
                 <div style={{ width: "86.7%", background: "#E5E5E5" }} />
               </div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="flex items-center gap-1.5" style={{ color: "#333" }}>
-                  <span style={{ width: 8, height: 8, borderRadius: 4, background: "#10A37F", display: "inline-block" }} />
-                  AI Engines · 23,847
-                </span>
-                <span className="flex items-center gap-1.5" style={{ color: "#333" }}>
-                  <span style={{ width: 8, height: 8, borderRadius: 4, background: "#BFBFBF", display: "inline-block" }} />
-                  SEO מסורתי · 156,234
-                </span>
+              <div className="flex items-center justify-between text-[11px]" style={{ color: "#727272" }}>
+                <span>AI · 23,847</span>
+                <span>SEO · 156,234</span>
               </div>
             </div>
-
-            {/* AI Bot Crawl Activity */}
-            <div className="p-6" style={{ border: "1px solid #BFBFBF", borderRadius: 10 }}>
+            <div className="p-5" style={{ border: "1px solid #E5E5E5", borderRadius: 10 }}>
               <div className="flex items-center justify-between mb-1">
-                <h3 className="text-sm font-semibold" style={{ color: "#000" }}>AI Bot Crawl Activity</h3>
+                <h3 className="text-xs font-semibold" style={{ color: "#000" }}>Bot Crawl Activity</h3>
                 <span className="text-[10px] font-semibold px-2 py-0.5" style={{ background: "#10A37F15", color: "#10A37F", borderRadius: 20 }}>live</span>
               </div>
-              <p className="text-xs mb-4" style={{ color: "#727272" }}>בוטים של AI שסורקים את האתר שלך</p>
-              <div className="flex flex-col gap-2.5">
+              <div className="flex flex-col gap-2 mt-3">
                 {[
-                  { bot: "GPTBot", domain: "openai.com", pages: "1,247", ago: "לפני 2 שעות", active: true },
-                  { bot: "PerplexityBot", domain: "perplexity.ai", pages: "892", ago: "לפני 15 דקות", active: true },
-                  { bot: "Claude-Web", domain: "anthropic.com", pages: "456", ago: "לפני 4 שעות", active: true },
-                  { bot: "BingBot", domain: "bing.com", pages: "2,134", ago: "לפני שעה", active: true },
+                  { bot: "GPTBot", domain: "openai.com", pages: "1,247", ago: "2h" },
+                  { bot: "PerplexityBot", domain: "perplexity.ai", pages: "892", ago: "15m" },
+                  { bot: "Claude-Web", domain: "anthropic.com", pages: "456", ago: "4h" },
+                  { bot: "BingBot", domain: "bing.com", pages: "2,134", ago: "1h" },
                 ].map((b, i) => (
-                  <div key={i} className="flex items-center gap-2.5">
-                    <img
-                      src={`https://www.google.com/s2/favicons?domain=${b.domain}&sz=64`}
-                      alt=""
-                      width={20}
-                      height={20}
-                      style={{ borderRadius: 4, flexShrink: 0, border: "1px solid #F0F0F0" }}
-                    />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-xs font-semibold" style={{ color: "#000" }}>{b.bot}</span>
-                        <span className="text-[10px] font-semibold px-1.5 py-0.5" style={{ background: "#10A37F15", color: "#10A37F", borderRadius: 20 }}>active</span>
-                      </div>
-                      <div className="text-[11px]" style={{ color: "#727272" }}>{b.pages} דפים · {b.ago}</div>
-                    </div>
+                  <div key={i} className="flex items-center gap-2">
+                    <img src={`https://www.google.com/s2/favicons?domain=${b.domain}&sz=64`} alt="" width={16} height={16} style={{ borderRadius: 3, flexShrink: 0 }} />
+                    <span className="text-xs font-medium flex-1" style={{ color: "#333" }}>{b.bot}</span>
+                    <span className="text-[11px]" style={{ color: "#727272" }}>{b.pages}</span>
+                    <span className="text-[10px]" style={{ color: "#A2A9B0" }}>{b.ago}</span>
                   </div>
                 ))}
               </div>
             </div>
-
-            {/* Engine Coverage Summary */}
-            <div className="p-6" style={{ border: "1px solid #BFBFBF", borderRadius: 10 }}>
-              <div className="flex items-center gap-2 mb-1">
-                <h3 className="text-sm font-semibold" style={{ color: "#000" }}>Engine Coverage Summary</h3>
-              </div>
-              <p className="text-xs mb-4" style={{ color: "#727272" }}>אחוז כיסוי בכל מנוע AI</p>
-              <div className="flex flex-col gap-3">
+            <div className="p-5" style={{ border: "1px solid #E5E5E5", borderRadius: 10 }}>
+              <h3 className="text-xs font-semibold mb-3" style={{ color: "#000" }}>Engine Coverage</h3>
+              <div className="flex flex-col gap-2.5">
                 {[
                   { engine: "Google AIO", domain: "google.com", score: 78 },
                   { engine: "Bing Copilot", domain: "bing.com", score: 82 },
-                  { engine: "ChatGPT Search", domain: "openai.com", score: 71 },
+                  { engine: "ChatGPT", domain: "openai.com", score: 71 },
                   { engine: "Gemini", domain: "gemini.google.com", score: 69 },
                   { engine: "Perplexity", domain: "perplexity.ai", score: 85 },
                 ].map((e, i) => {
                   const color = e.score >= 80 ? "#10A37F" : e.score >= 70 ? "#E07800" : "#DC2626";
                   return (
                     <div key={i}>
-                      <div className="flex items-center justify-between mb-1">
-                        <div className="flex items-center gap-1.5 min-w-0">
-                          <img
-                            src={`https://www.google.com/s2/favicons?domain=${e.domain}&sz=64`}
-                            alt=""
-                            width={14}
-                            height={14}
-                            style={{ borderRadius: 3, flexShrink: 0 }}
-                          />
-                          <span className="text-xs font-medium" style={{ color: "#333" }}>{e.engine}</span>
+                      <div className="flex items-center justify-between mb-0.5">
+                        <div className="flex items-center gap-1.5">
+                          <img src={`https://www.google.com/s2/favicons?domain=${e.domain}&sz=64`} alt="" width={12} height={12} style={{ borderRadius: 2, flexShrink: 0 }} />
+                          <span className="text-[11px] font-medium" style={{ color: "#333" }}>{e.engine}</span>
                         </div>
-                        <span className="text-xs font-bold" style={{ color }}>{e.score}%</span>
+                        <span className="text-[11px] font-bold" style={{ color }}>{e.score}%</span>
                       </div>
-                      <div style={{ height: 5, borderRadius: 3, background: "#F0F0F0", overflow: "hidden" }}>
-                        <div style={{ height: "100%", width: `${e.score}%`, background: color, borderRadius: 3 }} />
+                      <div style={{ height: 4, borderRadius: 2, background: "#F0F0F0", overflow: "hidden" }}>
+                        <div style={{ height: "100%", width: `${e.score}%`, background: color, borderRadius: 2 }} />
                       </div>
                     </div>
                   );
@@ -512,142 +526,77 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* ── Content Creation (editor feature spec) ── */}
-          <div className="mb-10">
-            <div className="flex items-center justify-between mb-5">
-              <h2 className="text-xl font-semibold" style={{ color: "#000" }}>יצירת תוכן</h2>
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-semibold px-2 py-0.5" style={{ background: "#FFF7ED", color: "#D97706", borderRadius: 20 }}>● בעבודה</span>
-                <a href="/editor-roadmap" className="text-xs font-medium" style={{ color: "#000", textDecoration: "underline" }}>Roadmap מלא →</a>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Editor preview */}
-              <a href="/editor" className="p-6 block" style={{ border: "1px solid #BFBFBF", borderRadius: 10, textDecoration: "none", background: "#fff" }}>
-                <div className="flex items-center gap-2 mb-2">
-                  <span style={{ width: 28, height: 28, borderRadius: 14, background: "#000", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700 }}>✎</span>
-                  <h3 className="text-sm font-semibold" style={{ color: "#000" }}>עורך WYSIWYG</h3>
+          {/* ── Brands Table (rows, not cards) ── */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold" style={{ color: "#000" }}>המותגים שלך</h2>
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="חיפוש..." className="w-48 px-3 py-2 pr-9 text-xs focus:outline-none" style={{ border: "1px solid #E5E5E5", borderRadius: 8 }} />
+                  <div className="absolute right-2.5 top-1/2 -translate-y-1/2"><IconSearch /></div>
                 </div>
-                <p className="text-xs mb-3" style={{ color: "#727272", lineHeight: 1.6 }}>עריכה חיה של מאמרים שנוצרו אוטומטית, סרגל כלים מלא כמו וורדפרס, שמירה אוטומטית והעלאת תמונות.</p>
-                <div className="text-[11px] font-semibold" style={{ color: "#000" }}>פתיחת העורך →</div>
-              </a>
-
-              {/* Claude model */}
-              <div className="p-6" style={{ border: "1px solid #BFBFBF", borderRadius: 10, background: "#fff" }}>
-                <div className="flex items-center gap-2 mb-2">
-                  <span style={{ width: 28, height: 28, borderRadius: 14, background: "linear-gradient(135deg,#D97706,#F59E0B)", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700 }}>✦</span>
-                  <h3 className="text-sm font-semibold" style={{ color: "#000" }}>Claude Opus 4.6 · Anthropic</h3>
-                </div>
-                <p className="text-xs mb-3" style={{ color: "#727272", lineHeight: 1.6 }}>החלפת מודל הכתיבה הנוכחי ל-Claude Opus 4.6 - איכות כתיבה גבוהה יותר, התאמה טובה יותר לפרומפט של ניר.</p>
-                <div className="flex items-center gap-2 text-[11px]" style={{ color: "#555" }}>
-                  <span style={{ width: 6, height: 6, borderRadius: 3, background: "#D97706" }} />
-                  אינטגרציית Anthropic API · prompt של ניר
-                </div>
-              </div>
-
-              {/* AI learning */}
-              <div className="p-6" style={{ border: "1px solid #BFBFBF", borderRadius: 10, background: "#fff" }}>
-                <div className="flex items-center gap-2 mb-2">
-                  <span style={{ width: 28, height: 28, borderRadius: 14, background: "#7C3AED", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700 }}>◉</span>
-                  <h3 className="text-sm font-semibold" style={{ color: "#000" }}>AI שלומד מעריכות</h3>
-                </div>
-                <p className="text-xs mb-3" style={{ color: "#727272", lineHeight: 1.6 }}>כל עריכה שהלקוח עושה נשמרת, מסווגת (סגנון/דקדוק/תוכן) ומזינה את ה-system prompt למאמר הבא.</p>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-xl font-bold" style={{ color: "#000" }}>37</span>
-                  <span className="text-[11px]" style={{ color: "#727272" }}>עריכות למדנו השבוע · 72% הלימה</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* ── Brands Section ── */}
-          <div className="mb-10">
-            <div className="flex items-center justify-between mb-5">
-              <h2 className="text-xl font-semibold" style={{ color: "#000" }}>המותגים שלך</h2>
-              <div className="relative">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="חיפוש מותג..."
-                  className="w-56 px-4 py-2.5 pr-10 text-sm focus:outline-none"
-                  style={{ border: "1px solid #BFBFBF", borderRadius: 9 }}
-                />
-                <div className="absolute right-3 top-1/2 -translate-y-1/2"><IconSearch /></div>
+                <select className="text-xs px-3 py-2" style={{ border: "1px solid #E5E5E5", borderRadius: 8, color: "#333", background: "#fff" }}>
+                  <option>מיון: לפי דחיפות</option>
+                  <option>מיון: ציון גבוה ← נמוך</option>
+                  <option>מיון: ציון נמוך ← גבוה</option>
+                  <option>מיון: שם א-ת</option>
+                </select>
               </div>
             </div>
 
             {isSearching ? <SearchLoader /> : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {displayedBrands.map((brand) => (
-                  <BrandCard key={brand.domain} brand={brand} onSelect={() => window.location.href = "/scan"} />
-                ))}
-              </div>
-            )}
-
-            {!isSearching && displayedBrands.length === 0 && (
-              <div className="text-center py-12" style={{ border: "1px solid #BFBFBF", borderRadius: 10 }}>
-                <p className="text-sm" style={{ color: "#727272" }}>לא נמצאו מותגים עבור "{searchQuery}"</p>
+              <div style={{ border: "1px solid #E5E5E5", borderRadius: 10, overflow: "hidden" }}>
+                <table style={{ width: "100%", fontSize: 13, borderCollapse: "collapse" }}>
+                  <thead>
+                    <tr style={{ background: "#FAFAFA", borderBottom: "1px solid #E5E5E5" }}>
+                      <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 11 }}>מותג</th>
+                      <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 11 }}>GEO Score</th>
+                      <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 11 }}>סריקות</th>
+                      <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 11 }}>שאילתות</th>
+                      <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 11 }}>ממתינים</th>
+                      <th style={{ textAlign: "right", padding: "10px 14px", fontWeight: 600, color: "#727272", fontSize: 11 }}>שאילתה מובילה</th>
+                      <th style={{ width: 40 }}></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {displayedBrands.sort((a, b) => a.score - b.score).map((brand) => {
+                      const scoreColor = brand.score >= 80 ? "#10A37F" : brand.score >= 65 ? "#E07800" : "#DC2626";
+                      return (
+                        <tr key={brand.domain} onClick={() => window.location.href = "/scan"} className="cursor-pointer transition-colors hover:bg-[#FAFAFA]" style={{ borderBottom: "1px solid #F0F0F0" }}>
+                          <td style={{ padding: "10px 14px" }}>
+                            <div className="flex items-center gap-3">
+                              <img src={`https://www.google.com/s2/favicons?domain=${brand.domain}&sz=64`} alt="" width={22} height={22} style={{ borderRadius: 5, flexShrink: 0, border: "1px solid #F0F0F0" }} />
+                              <div>
+                                <div className="text-sm font-medium" style={{ color: "#000" }}>{brand.name}</div>
+                                <div className="text-[11px]" style={{ color: "#A2A9B0", direction: "ltr", textAlign: "right" }}>{brand.domain}</div>
+                              </div>
+                            </div>
+                          </td>
+                          <td style={{ padding: "10px 14px" }}>
+                            <span className="text-sm font-bold" style={{ color: scoreColor }}>{brand.score}%</span>
+                          </td>
+                          <td style={{ padding: "10px 14px" }}>
+                            <span className="text-sm" style={{ color: "#333" }}>{brand.scans}</span>
+                          </td>
+                          <td style={{ padding: "10px 14px" }}>
+                            <span className="text-sm" style={{ color: "#333" }}>{brand.queries}</span>
+                          </td>
+                          <td style={{ padding: "10px 14px" }}>
+                            <span className="text-sm font-medium" style={{ color: brand.pendingArticles > 0 ? "#E07800" : "#333" }}>{brand.pendingArticles}</span>
+                          </td>
+                          <td style={{ padding: "10px 14px", maxWidth: 220 }}>
+                            <span className="text-xs truncate block" style={{ color: "#727272" }}>{brand.topQuery}</span>
+                          </td>
+                          <td style={{ padding: "10px 14px", textAlign: "center" }}><IconChevronLeft /></td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
               </div>
             )}
           </div>
 
-          {/* ── Bottom: Pending Actions + Recent Activity ── */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
-            {/* Pending Actions */}
-            <div className="p-6" style={{ border: "1px solid #BFBFBF", borderRadius: 10 }}>
-              <div className="flex items-center justify-between mb-5">
-                <h3 className="text-base font-semibold" style={{ color: "#000" }}>פעולות ממתינות</h3>
-                <span className="text-sm font-semibold px-3 py-1" style={{ background: "#F9F9F9", borderRadius: 8, color: "#000" }}>
-                  {totalPending} ממתינות
-                </span>
-              </div>
-              <div className="space-y-1">
-                {MOCK_BRANDS.filter(b => b.actions.some(a => !a.done)).slice(0, 5).map((brand) => {
-                  const pending = brand.actions.filter(a => !a.done).length;
-                  return (
-                    <a
-                      key={brand.domain}
-                      href="/scan"
-                      className="flex items-center gap-4 p-3 transition-colors hover:bg-[#F9F9F9]"
-                      style={{ borderRadius: 8, textDecoration: "none" }}
-                    >
-                      <div className="flex items-center justify-center shrink-0" style={{ width: 40, height: 40, borderRadius: 10, background: "#F9F9F9" }}>
-                        <span className="text-sm font-bold" style={{ color: brand.score >= 70 ? "#10A37F" : "#000" }}>{brand.score}%</span>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate" style={{ color: "#000" }}>{brand.name}</p>
-                        <p className="text-xs" style={{ color: "#727272" }}>{pending} פעולות · {brand.pendingArticles} מאמרים ממתינים</p>
-                      </div>
-                      <IconChevronLeft />
-                    </a>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Recent Activity */}
-            <div className="p-6" style={{ border: "1px solid #BFBFBF", borderRadius: 10 }}>
-              <h3 className="text-base font-semibold mb-5" style={{ color: "#000" }}>פעילות אחרונה</h3>
-              <div className="space-y-1">
-                {RECENT_ACTIVITY.map((a, i) => (
-                  <div key={i} className="flex items-center gap-4 p-3 transition-colors hover:bg-[#F9F9F9]" style={{ borderRadius: 8 }}>
-                    <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0" style={{ background: "#F9F9F9" }}>
-                      <IconChart size={16} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate" style={{ color: "#000" }}>{a.brand}</p>
-                      <p className="text-xs" style={{ color: "#727272" }}>סריקה הושלמה</p>
-                    </div>
-                    <div className="text-left shrink-0">
-                      <span className="text-sm font-bold" style={{ color: "#10A37F" }}>{a.score}%</span>
-                      <p className="text-[11px]" style={{ color: "#A2A9B0", direction: "ltr" }}>{a.time}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
         </div>
       </main>
 

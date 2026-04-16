@@ -118,11 +118,19 @@ export default function EditorRoadmapPage() {
     <div dir="rtl" style={{ minHeight: "100vh", background: "#F5F5F5", fontFamily: "'Assistant','Segoe UI',sans-serif" }}>
       {/* Header */}
       <header style={{ background: "#fff", borderBottom: "1px solid #DDD", padding: "14px 32px", display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center" }}>
-        <div><a href="/" style={{ fontSize: 13, color: "#727272", textDecoration: "none" }}>← דשבורד</a></div>
-        <nav style={{ display: "flex", gap: 24 }}>
-          <a href="/" style={{ fontSize: 14, color: "#727272", textDecoration: "none" }}>דשבורד</a>
-          <a href="/editor" style={{ fontSize: 14, color: "#727272", textDecoration: "none" }}>עורך תוכן</a>
-          <a href="/editor-roadmap" style={{ fontSize: 14, fontWeight: 600, color: "#000", textDecoration: "none" }}>Roadmap</a>
+        <div style={{ display: "flex", alignItems: "center", gap: 16, justifySelf: "start" }}>
+          <a href="/new-scan" style={{ display: "inline-flex", alignItems: "center", padding: "8px 20px", background: "#000", color: "#fff", fontSize: 13, fontWeight: 600, borderRadius: 9, border: "1px solid #000", textDecoration: "none" }}>סריקה חדשה</a>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "#727272" }}>
+            <span style={{ width: 8, height: 8, borderRadius: 4, background: "#10A37F" }} />
+            <span>מחובר</span>
+          </div>
+        </div>
+        <nav style={{ display: "flex", alignItems: "center", gap: 32 }}>
+          <a href="/" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>דשבורד</a>
+          <a href="/scan" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>סריקות</a>
+          <a href="/scale-publish" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>ScalePublish</a>
+          <a href="/editor" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none" }}>עורך תוכן</a>
+          <a href="/roadmap" style={{ fontSize: 14, fontWeight: 600, color: "#000", textDecoration: "none" }}>Roadmap</a>
         </nav>
         <div style={{ justifySelf: "end" }}><GeoscaleLogo width={140} /></div>
       </header>

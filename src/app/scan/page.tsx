@@ -469,7 +469,7 @@ function HoverButton({ children, style, filled, onClick, href }: { children: Rea
 // ════════════════════════════════════════════════════════════
 
 export default function ScanPage() {
-  const [activeTab, setActiveTab] = useState<"overview" | "queries" | "audiences" | "products">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "queries" | "audiences" | "products" | "content">("overview");
   const [expandedQuery, setExpandedQuery] = useState<number | null>(null);
   const [fullAnswerView, setFullAnswerView] = useState<{ queryId: number; engine: "gpt" | "gemini" } | null>(null);
   const [queryFilter, setQueryFilter] = useState<"all" | "mentioned" | "missing" | "negative">("all");
@@ -529,6 +529,7 @@ export default function ScanPage() {
             <a href="/" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none", transition: "all 150ms" }} onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#000"; }} onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#727272"; }}>דשבורד</a>
             <a href="/scan" style={{ fontSize: 14, fontWeight: 600, color: "#000", textDecoration: "none" }}>סריקות</a>
             <a href="/scale-publish" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none", transition: "all 150ms" }} onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#000"; }} onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#727272"; }}>ScalePublish</a>
+            <a href="/editor" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none", transition: "all 150ms" }} onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#000"; }} onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#727272"; }}>עורך תוכן</a>
             <a href="/roadmap" style={{ fontSize: 14, fontWeight: 400, color: "#727272", textDecoration: "none", transition: "all 150ms" }} onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#000"; }} onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#727272"; }}>Roadmap</a>
           </nav>
 
@@ -579,6 +580,7 @@ export default function ScanPage() {
               { key: "queries" as const, label: "שאילתות", iconPath: <><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" /></>, count: totalQueries },
               { key: "audiences" as const, label: "קהלים", iconPath: <><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" /></>, count: PERSONAS.length },
               { key: "products" as const, label: "מוצרים / שירותים", iconPath: <><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" /></> },
+              { key: "content" as const, label: "יצירת תוכן", iconPath: <><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" /></> },
             ]).map((tab) => (
               <button
                 key={tab.key}
@@ -1378,6 +1380,82 @@ export default function ScanPage() {
             })()}
               </>);
             })()}
+          </div>
+        )}
+
+        {/* ═══ CONTENT CREATION TAB ═══ */}
+        {activeTab === "content" && (
+          <div style={{ padding: "32px 0" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <h2 style={{ fontSize: 20, fontWeight: 700, color: "#000", margin: 0 }}>יצירת תוכן</h2>
+                <span style={{ fontSize: 10, fontWeight: 600, padding: "3px 10px", background: "#FFF7ED", color: "#D97706", borderRadius: 20 }}>● בעבודה</span>
+              </div>
+              <a href="/roadmap" style={{ fontSize: 12, fontWeight: 500, color: "#000", textDecoration: "underline" }}>Roadmap →</a>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, marginBottom: 32 }}>
+              <a href="/editor" style={{ padding: 20, border: "1px solid #E5E5E5", borderRadius: 10, textDecoration: "none", background: "#fff", display: "block" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                  <span style={{ width: 24, height: 24, borderRadius: 12, background: "#000", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700 }}>✎</span>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: "#000" }}>עורך WYSIWYG</span>
+                </div>
+                <p style={{ fontSize: 11, color: "#727272", lineHeight: 1.5, margin: "0 0 8px" }}>עריכה חיה, סרגל כלים מלא, שמירה אוטומטית והעלאת תמונות.</p>
+                <span style={{ fontSize: 11, fontWeight: 600, color: "#000" }}>פתיחת העורך →</span>
+              </a>
+              <div style={{ padding: 20, border: "1px solid #E5E5E5", borderRadius: 10, background: "#fff" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                  <span style={{ width: 24, height: 24, borderRadius: 12, background: "linear-gradient(135deg,#D97706,#F59E0B)", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700 }}>✦</span>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: "#000" }}>Claude Opus 4.6</span>
+                </div>
+                <p style={{ fontSize: 11, color: "#727272", lineHeight: 1.5, margin: 0 }}>מודל כתיבה מתקדם עם התאמה לפרומפט ניר.</p>
+              </div>
+              <div style={{ padding: 20, border: "1px solid #E5E5E5", borderRadius: 10, background: "#fff" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                  <span style={{ width: 24, height: 24, borderRadius: 12, background: "#7C3AED", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700 }}>◉</span>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: "#000" }}>AI שלומד מעריכות</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+                  <span style={{ fontSize: 18, fontWeight: 700, color: "#000" }}>37</span>
+                  <span style={{ fontSize: 11, color: "#727272" }}>עריכות · 72% הלימה</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Content pipeline status */}
+            <div style={{ border: "1px solid #E5E5E5", borderRadius: 12, background: "#fff", padding: 24 }}>
+              <h3 style={{ fontSize: 14, fontWeight: 600, color: "#000", margin: "0 0 16px" }}>תוכנית תוכן — 6 חודשים</h3>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 20 }}>
+                {[
+                  { label: "סה״כ מאמרים", value: "24", color: "#000" },
+                  { label: "הושלמו", value: "8", color: "#10A37F" },
+                  { label: "בעריכה", value: "3", color: "#D97706" },
+                  { label: "ממתינים", value: "13", color: "#727272" },
+                ].map((kpi, i) => (
+                  <div key={i} style={{ textAlign: "center", padding: "12px 0", background: "#F9F9F9", borderRadius: 8 }}>
+                    <div style={{ fontSize: 11, color: "#727272", marginBottom: 4 }}>{kpi.label}</div>
+                    <div style={{ fontSize: 22, fontWeight: 700, color: kpi.color }}>{kpi.value}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {[
+                  { title: "רכיבה טיפולית לילדים עם ADHD", status: "הושלם", statusColor: "#10A37F", statusBg: "#10A37F15" },
+                  { title: "סוסים כבעלי חיים טיפוליים", status: "הושלם", statusColor: "#10A37F", statusBg: "#10A37F15" },
+                  { title: "טיפול באמצעות סוסים — מדריך מקיף", status: "בעריכה", statusColor: "#D97706", statusBg: "#FFF7ED" },
+                  { title: "חוות סוסים במרכז הארץ", status: "ממתין", statusColor: "#727272", statusBg: "#F5F5F5" },
+                  { title: "רכיבה ספורטיבית למתחילים", status: "ממתין", statusColor: "#727272", statusBg: "#F5F5F5" },
+                ].map((article, i) => (
+                  <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", border: "1px solid #EEEEEE", borderRadius: 8 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <span style={{ fontSize: 12, color: "#BBBBBB", fontWeight: 500, width: 20 }}>{i + 1}</span>
+                      <span style={{ fontSize: 13, color: "#000", fontWeight: 500 }}>{article.title}</span>
+                    </div>
+                    <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 10px", borderRadius: 20, color: article.statusColor, background: article.statusBg }}>{article.status}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
       </div>
