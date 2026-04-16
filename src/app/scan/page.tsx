@@ -725,7 +725,7 @@ export default function ScanPage() {
                 const journeyTooltips: Record<string, string> = {
                   "חשיפה": "אחוז הנוכחות בשאילתות גילוי ראשוני של המותג",
                   "מחקר": "אחוז הנוכחות בשאילתות מחקר והשוואה",
-                  "החלטה": "אחוז הנוכחות בשאילתות שלב קבלת ההחלטה",
+                  "החלטה": "אחוז הנוכחות בשאילתות קבלת ההחלטה",
                   "תמיכה": "אחוז הנוכחות בשאילתות שירות ותמיכה",
                   "מוניטין": "אחוז הנוכחות בשאילתות חוות דעת וביקורות",
                 };
@@ -734,7 +734,7 @@ export default function ScanPage() {
                     <div style={{ fontSize: 22, fontWeight: 700, color: stage.percent >= 80 ? "#10A37F" : "#000000", marginBottom: 4 }}>{stage.percent}%</div>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 4, fontSize: 13, fontWeight: 600, color: "#000000", marginBottom: 2 }}>
                       {stage.name}
-                      <Tooltip text={journeyTooltips[stage.name] || "שלב במסע הלקוח"} />
+                      <Tooltip text={journeyTooltips[stage.name] || "נקודה בתהליך החיפוש של הלקוח"} />
                     </div>
                     <div style={{ fontSize: 12, color: "#727272" }}>{stage.count} שאילתות</div>
                   </div>

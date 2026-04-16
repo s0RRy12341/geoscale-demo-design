@@ -1470,17 +1470,18 @@ function PlannerTab({
           </div>
         </div>
 
-        {/* Validation warnings */}
+        {/* Validation warnings — red indicators (Alexei: "שכחת לבחור", "שכחת לוגו") */}
         {cartSiteCount === 0 && (
-          <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 18px", borderRadius: 8, background: "#FFF7ED", border: "1px solid #F59E0B40", marginBottom: 14 }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D97706" strokeWidth="2" strokeLinecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
-            <span style={{ fontSize: 12, color: "#92400E" }}>טרם נבחרו אתרי פרסום — הוסיפו אתרים מה-Marketplace להצעה מלאה</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 18px", borderRadius: 8, background: "#FEF2F2", border: "1px solid #DC262640", marginBottom: 14 }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2.5" strokeLinecap="round"><circle cx="12" cy="12" r="10" /><path d="M15 9l-6 6M9 9l6 6" /></svg>
+            <span style={{ fontSize: 12, color: "#DC2626", fontWeight: 600 }}>שכחת לבחור אתרים — </span>
+            <button onClick={goToMarketplace} style={{ fontSize: 12, fontWeight: 600, color: "#DC2626", background: "none", border: "none", cursor: "pointer", textDecoration: "underline", padding: 0 }}>בחר אתרים מה-Marketplace</button>
           </div>
         )}
         {cartSiteCount > 0 && cartSiteCount < 3 && (
-          <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 18px", borderRadius: 8, background: "#EFF6FF", border: "1px solid #3B82F640", marginBottom: 14 }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4M12 8h.01" /></svg>
-            <span style={{ fontSize: 12, color: "#1E40AF" }}>מומלץ לבחור לפחות 3 אתרים לכיסוי אופטימלי של שאילתות AI</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 18px", borderRadius: 8, background: "#FFF7ED", border: "1px solid #F59E0B40", marginBottom: 14 }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D97706" strokeWidth="2" strokeLinecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
+            <span style={{ fontSize: 12, color: "#92400E" }}>מומלץ לבחור לפחות 3 אתרים לכיסוי אופטימלי של שאילתות AI</span>
           </div>
         )}
 
