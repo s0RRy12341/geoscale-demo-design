@@ -69,41 +69,49 @@ interface Phase {
 }
 
 // ── SEO Multi-Query Prompt (for copy) ──
-const multiQueryPrompt = `## Multi-Query Architecture (NON-NEGOTIABLE)
+const multiQueryPrompt = `## Multi-Query Content Architecture (NON-NEGOTIABLE)
 
-Every article must target ONE umbrella keyword AND capture 5-10 related sub-queries within it. Each H2 section should independently answer a distinct search intent that people search for.
+When the system receives ONE query from a scan, it must generate 5-10 related sub-queries from that single query. The article is then built to answer ALL of them - the original query plus every sub-query it spawned.
 
 ### How It Works
-1. Before writing: For the given primary keyword, identify 5-10 related sub-queries that users also search. These become your H2 sections.
-2. Each H2 = a standalone answer: Every section must be self-contained enough that Google could extract it as a featured snippet or PAA answer for its sub-query.
-3. FAQ captures remaining long-tail: The FAQ section at the end targets 3-5 additional queries that didn't fit as H2 sections.
+1. System receives a single query from the scan (e.g. "what is the best CRM for small businesses")
+2. From that one query, generate 5-10 related sub-queries that users also ask AI engines about the same topic
+3. Each H2 section in the article answers one of those sub-queries independently
+4. Each section must be self-contained enough that an AI engine could extract it as a direct answer
+5. FAQ at the end captures 3-5 additional long-tail queries that didn't fit as H2 sections
+6. Result: one article covers 8-15 queries instead of just the original one
 
-### Sub-Query Mapping Table
-Before writing, create this mapping (do NOT include it in the output - this is your internal planning):
-| Section (H2) | Sub-Query It Answers | Search Intent Type |
+### Sub-Query Generation Table
+Before writing, generate this mapping from the original query (do NOT include it in the output - internal planning only):
+| Original Query -> | Generated Sub-Query | Intent Type |
 |---|---|---|
-| H2 #1 | [related query] | informational / commercial / navigational |
-| H2 #2 | [related query] | ... |
-| FAQ Q1 | [long-tail query] | ... |
+| (input query) | sub-query #1 | informational / commercial / comparison |
+| | sub-query #2 | ... |
+| | sub-query #3 | ... |
+| | FAQ sub-query #1 | long-tail |
 
 ### Rules
-- The primary keyword is the umbrella. Sub-queries are naturally related - never force unrelated topics.
-- Each H2 section title should reflect its sub-query naturally (not verbatim keyword-stuffed).
-- At least 3 of the sub-queries should be different intent types (informational, commercial, comparison, how-to, etc.).
-- The article flows as one cohesive piece - readers should NOT feel like they're reading separate articles glued together.
-- Include the primary keyword in the opening paragraph AND weave it through at least 2 H2 headings, but the sub-query keywords dominate their respective sections.
-- Think of it like an umbrella page: one URL captures traffic from 8-15 different search queries.
+- Sub-queries must naturally stem from the original query - never force unrelated topics
+- Each H2 section title should reflect its sub-query naturally, not be keyword-stuffed
+- At least 3 of the generated sub-queries should be different intent types (informational, commercial, comparison, how-to, etc.)
+- The article flows as one cohesive piece - readers should NOT feel like separate articles glued together
+- The original query should appear in the opening paragraph and at least 2 H2 headings
+- Think of it as: one query in -> one comprehensive article out that ranks for 8-15 related queries
 
 ### Example
-Primary keyword: "רכיבה טיפולית"
-| H2 Section | Sub-Query |
+Original query from scan: "what is the best project management tool for remote teams"
+
+Generated sub-queries:
+| H2 Section | Sub-Query Generated From Original |
 |---|---|
-| מה זה רכיבה טיפולית ולמי היא מתאימה | "מה זה רכיבה טיפולית" |
-| היתרונות שהמחקר כבר הוכיח | "יתרונות רכיבה טיפולית" |
-| רכיבה טיפולית לילדים עם ADHD | "רכיבה טיפולית ADHD" |
-| ההבדל בין רכיבה ספורטיבית לטיפולית | "הבדל רכיבה ספורטיבית טיפולית" |
-| איך בוחרים חוות סוסים לטיפול | "איך לבחור חוות סוסים" |
-| FAQ: כמה עולה / מגיל כמה / כמה זמן לוקח | long-tail queries |`;
+| Top project management tools for remote teams in 2025 | "best project management tools remote teams" |
+| How to choose a PM tool when your team is fully distributed | "how to choose project management software remote" |
+| Asana vs Monday vs ClickUp for remote collaboration | "asana vs monday vs clickup remote" |
+| Free project management tools that actually work remotely | "free project management tools remote teams" |
+| What features matter most for async remote work | "project management features async teams" |
+| FAQ: pricing / integrations / onboarding time / security | long-tail queries from the same topic |
+
+All of these were generated from ONE original query. The article answers all of them.`;
 
 // ── Data ──
 // Sorted by criticality — NO dates, just priority order
@@ -441,7 +449,7 @@ export default function RoadmapPage() {
             <h3 style={{ fontSize: 15, fontWeight: 700, color: "#000", margin: 0 }}>פרומפט Multi-Query לכתיבת תוכן — להעתקה לפרודקשן</h3>
           </div>
           <p style={{ fontSize: 12, color: "#555", marginBottom: 12, lineHeight: 1.6 }}>
-            זהו הפרומפט שצריך להוסיף למנוע כתיבת התוכן של Geoscale. הרעיון: כל מאמר שהמערכת מייצרת לא מטרגט רק שאילתה אחת - אלא שאילתה ראשית + 5-10 שאילתות משנה. כל H2 עונה על שאילתה נפרדת שאנשים מחפשים, וה-FAQ תופס long-tail נוספים. ככה URL אחד תופס תנועה מ-8-15 שאילתות שונות.
+            זהו הפרומפט שצריך להוסיף למנוע כתיבת התוכן של Geoscale. הרעיון: המערכת מקבלת שאילתה אחת מהסריקה, ומייצרת ממנה 5-10 שאילתות משנה קשורות. המאמר שנבנה עונה על כולן - השאילתה המקורית + כל מה שנגזר ממנה. ככה מאמר אחד תופס תנועה מ-8-15 שאילתות שונות במקום אחת בלבד.
           </p>
           <p style={{ fontSize: 12, color: "#555", marginBottom: 16, lineHeight: 1.6 }}>
             <strong>דוגמה חיה:</strong> ראו איך adsgpt.io בונה את המאמרים שלהם — <span style={{ color: "#4285F4" }}>adsgpt.io/blog/social-media-marketing-strategy</span> — כל section עונה על שאילתה עצמאית, והמאמר כולו מדורג על עשרות שאילתות קשורות.
