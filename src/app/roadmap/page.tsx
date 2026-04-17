@@ -68,72 +68,80 @@ interface Phase {
 }
 
 // ── Data ──
+// Sorted by criticality — NO dates, just priority order
 const phases: Phase[] = [
   {
     id: 1,
-    title: "תשתית ו-UX",
-    color: "#000000",
+    title: "קריטי - חובה עכשיו",
+    color: "#DC2626",
     features: [
-      { name: "עיצוב UX ב-Slice", description: "ציור flow בחירת אתרים, קטגוריזציה, סל קניות. אפיון מפורט + אישור לפני dev", priority: "P0", status: "in_progress" },
-      { name: "מודל נתונים - Publishers", description: "סכמת DB לאתרים: domain, DR, metrics, category, pricing, status", priority: "P0", status: "not_started" },
-      { name: "מודל נתונים - Work Plans", description: "סכמת DB לתוכניות עבודה: brand, duration, speed, articles, budget", priority: "P0", status: "not_started" },
-      { name: "API בסיסי - CRUD Publishers", description: "REST endpoints: list, create, update, delete publishers", priority: "P0", status: "not_started" },
+      { name: "מנוע כתיבת תוכן Multi-Query", description: "כל מאמר שהמערכת מייצרת חייב לכלול מספר שאילתות משנה תחת שאילתה ראשית אחת. כמו adsgpt.io - כל H2/H3 עונה על שאילתה עצמאית, FAQ תופס long-tail נוספים. פרומפט הכתיבה חייב עדכון", priority: "P0", status: "not_started" },
+      { name: "גרף זמן ראשי (כמו Ahrefs/GA)", description: "גרף time-series גדול בראש דף סקירה: שיעור אזכור GPT+Gemini לאורך זמן, עם סינון 7/30/90 ימים. קיים בדמו, חסר בפרודקשן", priority: "P0", status: "not_started" },
+      { name: "אינדיקטור שינוי (+/-) על כל מדד", description: "ליד כל שיעור אזכור, מיקום ממוצע ואיכות ציטוט: חץ ירוק/אדום עם מספר השינוי בהשוואה לסריקה קודמת. קיים בדמו, חסר בפרודקשן", priority: "P0", status: "not_started" },
+      { name: "AI Strategy Box (המלצות אוטומטיות)", description: "בלוק צהוב/בולט בדף סקירה עם 3-5 המלצות אסטרטגיות מבוססות נתוני הסריקה. כמו בדמו - מה לעשות כדי להשתפר. חסר לגמרי בפרודקשן", priority: "P0", status: "not_started" },
+      { name: "What Worked / What's Missing", description: "שתי קופסאות ירוק/אדום עם bullet points: מה עבד (אזכורים חיוביים, ציטוטים) ומה חסר (שאילתות ללא אזכור, אזורים חלשים). קיים בדמו, חסר בפרודקשן", priority: "P0", status: "not_started" },
+      { name: "AI Summary (ChatGPT + Gemini)", description: "שני בלוקים זה-ליד-זה עם סיכום טקסטואלי של מה כל מנוע AI אומר על המותג. קיים בדמו, חסר בפרודקשן", priority: "P0", status: "not_started" },
+      { name: "טבלת קשר SEO-GEO", description: "טבלה שמקשרת keywords מסורתיים לשאילתות AI: keyword, נפח חיפוש, קושי, שאילתות קשורות עם toggle SEO/GEO. קיים בדמו, חסר בפרודקשן", priority: "P0", status: "not_started" },
+      { name: "לוגו מותג במקום אחוז ליד שם", description: "במסך סריקות/דשבורד - להחליף את העיגול עם ה-% שליד שם המותג בלוגו המותג בפועל (favicon/logo). ה-% יעבור למיקום אחר בכרטיס", priority: "P0", status: "not_started" },
+      { name: "Tooltips על כל מדד", description: "אייקון מידע (i) ליד כל מספר ומדד עם popup הסבר. קיים בדמו, חסר בפרודקשן", priority: "P0", status: "not_started" },
     ],
   },
   {
     id: 2,
-    title: "מאגר אתרים ודירוג",
-    color: "#10A37F",
+    title: "חשוב - משפיע על חוויה ומכירה",
+    color: "#E07800",
     features: [
-      { name: "ממשק Publisher להכנסת אתרים", description: "Dashboard לpublishers: הכנסת אתרים ידנית/אקסל, ניהול מחירים, צפייה בסטטיסטיקות agencies", priority: "P0", status: "not_started" },
-      { name: "מערכת דירוג אוטומטית (SEO)", description: "בדיקה מול DataForSEO/Ahrefs: DR, keywords, organic traffic, Google index", priority: "P0", status: "not_started" },
-      { name: "מערכת דירוג אוטומטית (GIO)", description: "בדיקת הופעה ב-ChatGPT, Gemini, Bing Chat. שאילתות רלוונטיות", priority: "P1", status: "not_started" },
-      { name: "קטגוריזציה אוטומטית", description: "AI-based categorization של אתרים + אפשרות עריכה ידנית", priority: "P1", status: "not_started" },
-      { name: "מאגר אתרים פסולים", description: "שמירת אתרים שנפסלו + סיבות + אפשרות re-check", priority: "P2", status: "not_started" },
-      { name: "פורטל Publishers", description: "ממשק ל-publishers להכנסת אתרים ידנית/אקסל, dashboard עם agencies שראו/קנו, הכנסות, סטטיסטיקות", priority: "P0", status: "not_started" },
-      { name: "תקנון וחתימה דיגיטלית", description: "חוזה publishers: תנאי שימוש, איסור שינוי מחירים, חתימה דיגיטלית", priority: "P2", status: "not_started" },
+      { name: "ניתוח מתחרים ויזואלי", description: "גרף בר אופקי של 4-5 מתחרים עם אחוז אזכור, ליד כל אחד שם ודומיין. קיים בדמו, חסר בפרודקשן - כרגע אין השוואה למתחרים כלל", priority: "P0", status: "not_started" },
+      { name: "Donut Charts - סנטימנט ואיכות ציטוט", description: "שני גרפי donut: (1) סנטימנט - חיובי/ניטרלי/שלילי (2) איכות ציטוט - גבוה/בינוני/נמוך. בפרודקשן יש בר פשוט, בדמו יש donut מקצועי יותר", priority: "P1", status: "not_started" },
+      { name: "הפרדת מוצרים/שירותים + B2C/B2B", description: "בטאב מוצרים: תגיות מוצר/שירות ו-B2C/B2B על כל פריט. כרגע הטאב ריק עם 'טרם זוהו מוצרים'", priority: "P1", status: "not_started" },
+      { name: "משיכת לוגו ותמונת מוצר אוטומטית", description: "למשוך favicon/logo מהדומיין של המותג + תמונות מוצר מהאתר אוטומטית", priority: "P1", status: "not_started" },
+      { name: "Hover Effects ו-Transitions", description: "כל כפתור, כרטיס ושורה בטבלה צריכים להגיב ל-hover עם שינוי צבע/shadow חלק. הפרודקשן מרגיש סטטי", priority: "P1", status: "not_started" },
+      { name: "עורך תוכן (Content Editor)", description: "ממשק WYSIWYG לעריכת מאמרים שהמערכת מייצרת, עם תצוגה מקדימה ואפשרות לפרסם ישירות. קיים בדמו כ-editor, בפרודקשן רק 'צור רעיונות תוכן'", priority: "P1", status: "not_started" },
+      { name: "גרף סינון לפי זמן (Date Range Filter)", description: "אפשרות לסנן כל הנתונים לפי טווח זמן מותאם אישית: 7 ימים, 30 ימים, 90 ימים, custom", priority: "P1", status: "not_started" },
+      { name: "התראות מוניטין באדום", description: "צביעה אדומה אוטומטית על שורות בטבלאות כשיש חוסר אזכור, אתרים פסולים, או ירידה חדה. כרגע אין אינדיקציה ויזואלית לבעיות", priority: "P1", status: "not_started" },
+      { name: "Dashboard משותף SEO+GEO", description: "מסך dashboard אחיד עם toggle/filter: שאילתות AI <-> keywords מסורתיים, מיקומים, נפח חיפוש", priority: "P1", status: "not_started" },
+      { name: "הצעת מחיר SEO/GEO/משולב", description: "3 אופציות pricing נפרדות: SEO בלבד, GEO בלבד, חבילה משולבת עם הנחת 15%. לקוח בוחר מה רלוונטי", priority: "P1", status: "not_started" },
+      { name: "עד 10 פרסונות לכל מותג", description: "הרחבת מערכת הפרסונות מ-5 ל-10 פרסונות. כל פרסונה עם שאילתות ייחודיות, שלבי מסע לקוח, ואנליטיקס נפרד", priority: "P1", status: "not_started" },
+      { name: "שאילתות ותוכן per-site בסל", description: "בסל הקניות של ScalePublish: לכל אתר שנבחר, הצגת השאילתות הרלוונטיות שהתוכן צריך לטרגט", priority: "P1", status: "not_started" },
     ],
   },
   {
     id: 3,
-    title: "Pricing וסל קניות",
-    color: "#0D8A6A",
+    title: "שיפור - מוסיף ערך משמעותי",
+    color: "#10A37F",
     features: [
-      { name: "מערכת Pricing", description: "הגדרת מחירים per publisher, אחוזי רווח לagency (15-20%), rounding", priority: "P0", status: "done" },
-      { name: "סל קניות (Cart Widget)", description: "Widget צף: budget, כמות כתבות, שאילתות, אתרים. הוספה/הסרה real-time", priority: "P0", status: "done" },
-      { name: "הצעת מחיר אוטומטית", description: "יצירת PDF/דוח מהסל: 3 options (אגרסיבי/בינוני/שמרני), פירוט מחירים", priority: "P1", status: "not_started" },
-      { name: "תקנון וחתימה דיגיטלית", description: "חוזה publishers: תנאי שימוש, איסור שינוי מחירים, חתימה דיגיטלית", priority: "P2", status: "not_started" },
-      { name: "Agency Markup & Margins", description: "אחוזי רווח 15-20% על מחירי publishers, עריכה ידנית, rounding, חישוב אוטומטי", priority: "P0", status: "done" },
+      { name: "נתונים מכל מנועי AI", description: "הרחבה מעבר ל-GPT וGemini: הוספת Bing Chat, Perplexity, Claude ומנועים נוספים לסריקה", priority: "P1", status: "not_started" },
+      { name: "SEO Dashboard נפרד", description: "דשבורד SEO עצמאי עם נתוני keywords, דירוגים, traffic אורגני - נפרד מ-GEO. כולל חיבור ל-GSC/Ahrefs", priority: "P1", status: "not_started" },
+      { name: "הצעת מחיר אוטומטית (PDF)", description: "יצירת PDF/דוח מתוכנית העבודה: 3 אופציות (אגרסיבי/בינוני/שמרני), פירוט מחירים, שליחה ללקוח", priority: "P1", status: "not_started" },
+      { name: "מנגנון המלצות אוטומטי", description: "המלצה על כמות כתבות שבועיות/חודשיות לפי budget ויעדים, מבוססת נתוני סריקה", priority: "P1", status: "not_started" },
+      { name: "ScalePublish - מאגר אתרים לפרסום", description: "מרקטפלייס של publishers עם דירוגים, מחירים, קטגוריות. סל קניות לבחירת אתרים לפרסום מאמרים", priority: "P1", status: "not_started" },
+      { name: "מערכת דירוג אוטומטית (SEO)", description: "בדיקת publishers מול DataForSEO/Ahrefs: DR, keywords, organic traffic, Google index", priority: "P1", status: "not_started" },
+      { name: "מערכת דירוג אוטומטית (GIO)", description: "בדיקת הופעה של publishers ב-ChatGPT, Gemini, Bing Chat בשאילתות רלוונטיות", priority: "P1", status: "not_started" },
+      { name: "קטגוריזציה אוטומטית", description: "AI-based categorization של אתרי publishers + אפשרות עריכה ידנית", priority: "P1", status: "not_started" },
     ],
   },
   {
     id: 4,
-    title: "תוכנית עבודה ו-Dashboard",
-    color: "#5CCFAA",
+    title: "תשתית - נדרש לשלבים הבאים",
+    color: "#4285F4",
     features: [
-      { name: "בונה תוכנית עבודה", description: "בחירת משך (3-6 חודשים), מהירות (אגרסיבי/בינוני/שמרני), חלוקה אוטומטית לפי לוח זמנים", priority: "P0", status: "done" },
-      { name: "Dashboard משותף SEO+GEO", description: "ממשק אחיד עם toggle/filter: שאילתות <-> keywords, מיקומים, נפח חיפוש", priority: "P1", status: "not_started" },
-      { name: "מנגנון המלצות אוטומטי", description: "המלצה על כמות כתבות שבועיות/חודשיות לפי budget ויעדים", priority: "P1", status: "not_started" },
-      { name: "Analytics ל-Publishers", description: "Dashboard publishers: agencies שראו/קנו, הכנסות, סטטיסטיקות", priority: "P2", status: "done" },
-      { name: "הצעת מחיר SEO/GEO/משולב", description: "3 אופציות pricing נפרדות עם הנחת 15% בחבילה משולבת SEO+GEO", priority: "P1", status: "done" },
+      { name: "מודל נתונים - Publishers", description: "סכמת DB לאתרי publishers: domain, DR, metrics, category, pricing, status", priority: "P0", status: "not_started" },
+      { name: "מודל נתונים - Work Plans", description: "סכמת DB לתוכניות עבודה: brand, duration, speed, articles, budget - מחובר לתוכנית עבודה הקיימת", priority: "P0", status: "not_started" },
+      { name: "API בסיסי - CRUD Publishers", description: "REST endpoints: list, create, update, delete publishers. תשתית ל-ScalePublish", priority: "P0", status: "not_started" },
+      { name: "ממשק Publisher להכנסת אתרים", description: "Dashboard לpublishers: הכנסת אתרים ידנית/אקסל, ניהול מחירים, סטטיסטיקות", priority: "P0", status: "not_started" },
+      { name: "פורטל Publishers", description: "ממשק עצמאי ל-publishers: הכנסת אתרים, dashboard עם agencies שראו/קנו, הכנסות", priority: "P1", status: "not_started" },
     ],
   },
   {
     id: 5,
-    title: "UX Dashboard ודרישות אלכסיי",
-    color: "#4285F4",
+    title: "עתידי - Nice to Have",
+    color: "#727272",
     features: [
-      { name: "Tooltips על כל מדד", description: "אייקון עין/מידע ליד כל מספר ומדד עם הסבר מה זה - בכל המסכים", priority: "P0", status: "done" },
-      { name: "גרף זמן ראשי (כמו Ahrefs/GA)", description: "גרף time-series גדול בראש כל מסך: שיעור אזכור GPT+Gemini לפי סריקות קודמות, עם סינון לפי זמן", priority: "P0", status: "done" },
-      { name: "Hover Effects על כל הכפתורים", description: "כל כפתור אינטראקטיבי צריך להגיב ל-hover עם שינוי ויזואלי ו-transition", priority: "P0", status: "done" },
-      { name: "אינדיקטור שינוי (+/-)", description: "ליד כל שיעור אזכור ומיקום ממוצע: חץ עלייה/ירידה עם מספר, בהשוואה לתקופה קודמת", priority: "P0", status: "done" },
-      { name: "התראות מוניטין באדום", description: "כשמשהו לא טוב (אתרים פסולים, חוסר אזכור) - צריך להיות צבוע באדום כ-ALERT בכל הטבלאות", priority: "P0", status: "done" },
-      { name: "הפרדת מוצרים ושירותים + B2C/B2B", description: "בטאב מוצרים: הפרדה ברורה בין מוצרים לשירותים, עם תגיות B2C / B2B על כל פריט", priority: "P1", status: "done" },
-      { name: "משיכת שם ועיצוב מוצר", description: "אם יש מוצרים, למשוך אוטומטית את השם, התמונה והעיצוב מתוך המוצר עצמו", priority: "P1", status: "not_started" },
-      { name: "נתונים מכל מנועי AI", description: "הרחבה מעבר ל-GPT וGemini: הוספת Bing Chat, Perplexity, Claude ומנועים נוספים", priority: "P1", status: "not_started" },
-      { name: "SEO Dashboard נפרד", description: "דשבורד SEO עצמאי עם נתוני keywords, דירוגים, traffic אורגני - נפרד מ-GEO", priority: "P1", status: "not_started" },
-      { name: "גרף סינון לפי זמן (Data Filter)", description: "אפשרות לסנן את כל הנתונים והגרפים לפי טווח זמן מותאם אישית", priority: "P1", status: "not_started" },
-      { name: "לוגו Geoscale כמו באתר", description: "עדכון הלוגו שיתאים בדיוק ללוגו באתר geoscale.ai", priority: "P2", status: "not_started" },
+      { name: "לוגו Geoscale כמו באתר", description: "עדכון הלוגו שיתאים בדיוק ללוגו באתר geoscale.ai בכל המסכים", priority: "P2", status: "not_started" },
+      { name: "מאגר אתרים פסולים", description: "שמירת אתרים שנפסלו + סיבות + אפשרות re-check עתידי", priority: "P2", status: "not_started" },
+      { name: "תקנון וחתימה דיגיטלית", description: "חוזה publishers: תנאי שימוש, איסור שינוי מחירים, חתימה דיגיטלית", priority: "P2", status: "not_started" },
+      { name: "Agency Markup & Margins UI", description: "ממשק ניהול אחוזי רווח 15-20% על מחירי publishers, עריכה ידנית, rounding", priority: "P2", status: "not_started" },
+      { name: "Analytics ל-Publishers", description: "Dashboard publishers מורחב: agencies שראו/קנו, הכנסות, סטטיסטיקות מפורטות", priority: "P2", status: "not_started" },
     ],
   },
 ];
@@ -308,18 +316,18 @@ export default function RoadmapPage() {
         {/* Title Section */}
         <div style={{ marginBottom: 32 }}>
           <h1 style={{ fontSize: 28, fontWeight: 800, color: "#000", marginBottom: 8, fontFamily: "'Inter', sans-serif" }}>
-            Roadmap <span style={{ fontWeight: 400, color: "#727272" }}>-</span> ScalePublish Development Plan
+            Roadmap <span style={{ fontWeight: 400, color: "#727272" }}>-</span> Geoscale Feature Plan
           </h1>
           <p style={{ fontSize: 14, color: "#727272", fontFamily: "'Heebo', sans-serif" }}>
-            תוכנית פיתוח מפורטת עם אבני דרך
+            פיצ&apos;רים ממוינים לפי רמת קריטיות — מה חסר בפרודקשן לעומת הדמו ומה הלקוחות צריכים
           </p>
         </div>
 
         {/* Summary Stats */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16, marginBottom: 32 }}>
           {[
-            { label: "פיצ'רים", value: "32", accent: false },
-            { label: "שלבים", value: "5", accent: false },
+            { label: "פיצ'רים", value: "39", accent: false },
+            { label: "רמות קריטיות", value: "5", accent: false },
           ].map((stat, i) => (
             <div
               key={i}
@@ -352,24 +360,24 @@ export default function RoadmapPage() {
 
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <div style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
-              <span style={{ width: 8, height: 8, borderRadius: 4, background: "#E07800", display: "inline-block", marginTop: 4, flexShrink: 0 }} />
-              <span style={{ fontSize: 12, color: "#555", lineHeight: 1.6 }}>אישור UX מאלכסיי לפני תחילת פיתוח שלב 2</span>
+              <span style={{ width: 8, height: 8, borderRadius: 4, background: "#DC2626", display: "inline-block", marginTop: 4, flexShrink: 0 }} />
+              <span style={{ fontSize: 12, color: "#555", lineHeight: 1.6 }}>פרומפט Multi-Query חייב אישור מאלכסיי לפני שילוב במערכת הייצור</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+              <span style={{ width: 8, height: 8, borderRadius: 4, background: "#DC2626", display: "inline-block", marginTop: 4, flexShrink: 0 }} />
+              <span style={{ fontSize: 12, color: "#555", lineHeight: 1.6 }}>כל הפיצ&apos;רים הויזואליים (גרפים, tooltips, alerts) מוכנים בדמו - חסר רק מעבר לפרודקשן</span>
             </div>
             <div style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
               <span style={{ width: 8, height: 8, borderRadius: 4, background: "#E07800", display: "inline-block", marginTop: 4, flexShrink: 0 }} />
-              <span style={{ fontSize: 12, color: "#555", lineHeight: 1.6 }}>גישה ל-DataForSEO/Ahrefs API למערכת הדירוג</span>
+              <span style={{ fontSize: 12, color: "#555", lineHeight: 1.6 }}>גישה ל-DataForSEO/Ahrefs API למערכת דירוג Publishers ולדשבורד SEO</span>
             </div>
             <div style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
               <span style={{ width: 8, height: 8, borderRadius: 4, background: "#E07800", display: "inline-block", marginTop: 4, flexShrink: 0 }} />
-              <span style={{ fontSize: 12, color: "#555", lineHeight: 1.6 }}>הגדרת אחוזי רווח Agency לפני שלב Pricing</span>
+              <span style={{ fontSize: 12, color: "#555", lineHeight: 1.6 }}>פורטל Publishers דורש אפיון UX נפרד + תקנון משפטי</span>
             </div>
             <div style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
               <span style={{ width: 8, height: 8, borderRadius: 4, background: "#E07800", display: "inline-block", marginTop: 4, flexShrink: 0 }} />
-              <span style={{ fontSize: 12, color: "#555", lineHeight: 1.6 }}>פורטל Publishers דורש אפיון UX נפרד לממשק publisher</span>
-            </div>
-            <div style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
-              <span style={{ width: 8, height: 8, borderRadius: 4, background: "#E07800", display: "inline-block", marginTop: 4, flexShrink: 0 }} />
-              <span style={{ fontSize: 12, color: "#555", lineHeight: 1.6 }}>Agency Markup חייב QA מדוקדק למניעת טעויות מחיר</span>
+              <span style={{ fontSize: 12, color: "#555", lineHeight: 1.6 }}>הרחבת מנועי AI (Perplexity, Claude, Bing) תלויה ב-API access ותמחור</span>
             </div>
           </div>
         </div>
