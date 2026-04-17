@@ -118,6 +118,10 @@ const phases: Phase[] = [
       { name: "מערכת דירוג אוטומטית (SEO)", description: "בדיקת publishers מול DataForSEO/Ahrefs: DR, keywords, organic traffic, Google index", priority: "P1", status: "not_started" },
       { name: "מערכת דירוג אוטומטית (GIO)", description: "בדיקת הופעה של publishers ב-ChatGPT, Gemini, Bing Chat בשאילתות רלוונטיות", priority: "P1", status: "not_started" },
       { name: "קטגוריזציה אוטומטית", description: "AI-based categorization של אתרי publishers + אפשרות עריכה ידנית", priority: "P1", status: "not_started" },
+      { name: "פרסום חיצוני (External Publishing)", description: "workflow מלא לפרסום מאמרים באתרי publishers: בחירת אתר, העלאת תוכן, מעקב סטטוס פרסום. כרגע הטאב קיים אבל ריק", priority: "P1", status: "not_started" },
+      { name: "ייצוא נתונים ודוחות", description: "אפשרות לייצא כל דוח סריקה כ-PDF/CSV: סקירה, שאילתות, קהלים, מתחרים. שליחה אוטומטית ללקוח", priority: "P1", status: "not_started" },
+      { name: "שיתוף דוחות עם לקוחות", description: "ממשק הזמנת לקוח לצפייה בדוחות שלו: הרשאות read-only, לוגו לבן, branding מותאם", priority: "P1", status: "not_started" },
+      { name: "התראות שינויים (Notifications)", description: "מערכת התראות אימייל/SMS כשיש שינוי משמעותי בסריקה: ירידה באזכורים, מתחרה חדש, אזכור שלילי", priority: "P1", status: "not_started" },
     ],
   },
   {
@@ -142,6 +146,9 @@ const phases: Phase[] = [
       { name: "תקנון וחתימה דיגיטלית", description: "חוזה publishers: תנאי שימוש, איסור שינוי מחירים, חתימה דיגיטלית", priority: "P2", status: "not_started" },
       { name: "Agency Markup & Margins UI", description: "ממשק ניהול אחוזי רווח 15-20% על מחירי publishers, עריכה ידנית, rounding", priority: "P2", status: "not_started" },
       { name: "Analytics ל-Publishers", description: "Dashboard publishers מורחב: agencies שראו/קנו, הכנסות, סטטיסטיקות מפורטות", priority: "P2", status: "not_started" },
+      { name: "Mobile Responsive Design", description: "התאמת כל המסכים למובייל וטאבלט: דשבורד, סריקות, טבלאות שאילתות, גרפים", priority: "P2", status: "not_started" },
+      { name: "Multi-Language (עברית + English)", description: "תמיכה מלאה בשתי שפות עם toggle: ממשק, דוחות, תוכן מיוצר. כרגע דמו נפרד לכל שפה", priority: "P2", status: "not_started" },
+      { name: "דשבורד שימוש API", description: "מעקב אחר credits, קריאות API, rate limiting. כרגע יש לינק 'שימוש API' בפוטר אבל אין ממשק", priority: "P2", status: "not_started" },
     ],
   },
 ];
@@ -326,7 +333,7 @@ export default function RoadmapPage() {
         {/* Summary Stats */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16, marginBottom: 32 }}>
           {[
-            { label: "פיצ'רים", value: "39", accent: false },
+            { label: "פיצ'רים", value: "46", accent: false },
             { label: "רמות קריטיות", value: "5", accent: false },
           ].map((stat, i) => (
             <div
