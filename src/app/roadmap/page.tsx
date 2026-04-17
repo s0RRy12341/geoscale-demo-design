@@ -99,19 +99,19 @@ Before writing, generate this mapping from the original query (do NOT include it
 - Think of it as: one query in -> one comprehensive article out that ranks for 8-15 related queries
 
 ### Example
-Original query from scan: "what is the best project management tool for remote teams"
+Original query from scan: "best CRM for small business"
 
-Generated sub-queries:
-| H2 Section | Sub-Query Generated From Original |
+System generates sub-queries:
+| H2 Section | Generated Sub-Query |
 |---|---|
-| Top project management tools for remote teams in 2025 | "best project management tools remote teams" |
-| How to choose a PM tool when your team is fully distributed | "how to choose project management software remote" |
-| Asana vs Monday vs ClickUp for remote collaboration | "asana vs monday vs clickup remote" |
-| Free project management tools that actually work remotely | "free project management tools remote teams" |
-| What features matter most for async remote work | "project management features async teams" |
-| FAQ: pricing / integrations / onboarding time / security | long-tail queries from the same topic |
+| How to pick the right CRM when you have under 20 employees | "how to choose CRM small business" |
+| Top 5 CRMs for small businesses compared | "CRM comparison small business 2025" |
+| Free CRM options that scale with you | "free CRM small business" |
+| HubSpot vs Salesforce vs Pipedrive for small teams | "hubspot vs salesforce small business" |
+| CRM features you actually need (and ones you don't) | "essential CRM features small business" |
+| FAQ: pricing / migration / mobile app / integrations | long-tail queries from same topic |
 
-All of these were generated from ONE original query. The article answers all of them.`;
+All generated from ONE query. The article answers all of them.`;
 
 // ── Data ──
 // Sorted by criticality — NO dates, just priority order
